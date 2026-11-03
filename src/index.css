@@ -1,0 +1,42 @@
+:root {
+  --color-bg: #f5f6f8;
+  --color-surface: #ffffff;
+  --color-text: #1f2328;
+  --color-muted: #59636e;
+  --color-border: #d8dee4;
+  --color-primary: #2457c5;
+  --content-width: 1080px;
+
+  font-family: system-ui, -apple-system, 'Segoe UI', 'Malgun Gothic', sans-serif;
+  line-height: 1.6;
+  color: var(--color-text);
+  background: var(--color-bg);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+h1 {
+  margin: 0 0 16px;
+  font-size: 1.75rem;
+}
+
+a {
+  color: var(--color-primary);
+}
+
+button {
+  font: inherit;
+}
+
+/* 아직 구현 전인 페이지에 붙이는 안내 문구 */
+.placeholder-note {
+  color: var(--color-muted);
+}
