@@ -1,7 +1,43 @@
+import { Link } from 'react-router'
+import { LAB } from '../../data/lab.js'
+import { NAV_ITEMS } from './navItems.js'
+
+// 푸터 메뉴는 시안처럼 "홈"을 빼고 보여 준다
+const FOOTER_LINKS = NAV_ITEMS.filter((item) => item.path !== '/')
+
 export default function Footer() {
   return (
     <footer className="footer">
-      <p>© 2026 연구실 성과 아카이브 · 리액트프로그래밍 바이브 코딩 과제 (체험판)</p>
+      <div className="footer__top">
+        <div className="footer__lab">
+          <span className="footer__lab-name">{LAB.name}</span>
+          <span className="footer__text">
+            {LAB.department}
+            <br />
+            {LAB.location}
+          </span>
+        </div>
+
+        <div className="footer__group">
+          <span className="footer__heading">메뉴</span>
+          {FOOTER_LINKS.map((item) => (
+            <Link key={item.path} to={item.path}>
+              {item.label}
+            </Link>
+          ))}
+        </div>
+
+        <div className="footer__group">
+          <span className="footer__heading">연락처</span>
+          <a href={`mailto:${LAB.contactEmail}`}>{LAB.contactEmail}</a>
+          <span className="footer__text">{LAB.phone}</span>
+        </div>
+      </div>
+
+      <div className="footer__bottom">
+        <span>© 2026 {LAB.name}</span>
+        <span>체험판 — 성과 데이터는 이 브라우저에만 저장됩니다</span>
+      </div>
     </footer>
   )
 }

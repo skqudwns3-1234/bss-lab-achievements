@@ -6,7 +6,7 @@ export default function AchievementFormPage() {
 
   return (
     <section>
-      <h1>{id ? '성과 수정' : '성과 등록'}</h1>
+      <h1 className="page-title">{id ? '성과 수정' : '성과 등록'}</h1>
       <p className="placeholder-note">3단계에서 구현합니다.</p>
     </section>
   )
