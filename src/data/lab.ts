@@ -9,7 +9,7 @@ export const LAB = {
   phone: '[전화번호]',
 
   // ===== 부원 모집 정보 — 홈 ④ 지원 안내에 쓰임. 모집할 때마다 아래 값만 고치면 된다 =====
-  // 지원 안내를 홈에 보일지 말지는 pages/HomePage.jsx 맨 위 SHOW_RECRUIT_BOX로 켜고 끈다
+  // 지원 안내를 홈에 보일지 말지는 pages/HomePage.tsx 맨 위 SHOW_RECRUIT_BOX로 켜고 끈다
   recruitment: {
     // 모집 기간 — 'YYYY-MM-DD' 형식으로 고치기 (지금 값은 예시)
     startDate: '2026-11-01',

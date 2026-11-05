@@ -1,6 +1,6 @@
 import { Link } from 'react-router'
-import { LAB } from '../../data/lab.js'
-import { NAV_ITEMS } from './navItems.js'
+import { LAB } from '../../data/lab.ts'
+import { NAV_ITEMS } from './navItems.ts'
 
 // 푸터 메뉴는 시안처럼 "홈"을 빼고 보여 준다
 const FOOTER_LINKS = NAV_ITEMS.filter((item) => item.path !== '/')

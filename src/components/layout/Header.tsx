@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, NavLink } from 'react-router'
-import { NAV_ITEMS } from './navItems.js'
+import { NAV_ITEMS } from './navItems.ts'
 
 export default function Header() {
   // 모바일 화면에서 메뉴 펼침 여부. 넓은 화면에서는 CSS가 항상 메뉴를 보여 준다.

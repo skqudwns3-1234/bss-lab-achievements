@@ -1,11 +1,11 @@
 import { BrowserRouter, Routes, Route } from 'react-router'
-import Layout from './components/layout/Layout.jsx'
-import HomePage from './pages/HomePage.jsx'
-import AboutPage from './pages/AboutPage.jsx'
-import MembersPage from './pages/MembersPage.jsx'
-import AchievementsPage from './pages/AchievementsPage.jsx'
-import AchievementFormPage from './pages/AchievementFormPage.jsx'
-import NotFoundPage from './pages/NotFoundPage.jsx'
+import Layout from './components/layout/Layout.tsx'
+import HomePage from './pages/HomePage.tsx'
+import AboutPage from './pages/AboutPage.tsx'
+import MembersPage from './pages/MembersPage.tsx'
+import AchievementsPage from './pages/AchievementsPage.tsx'
+import AchievementFormPage from './pages/AchievementFormPage.tsx'
+import NotFoundPage from './pages/NotFoundPage.tsx'
 
 export default function App() {
   return (
