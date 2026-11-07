@@ -30,7 +30,6 @@ export default function Footer() {
         <div className="footer__group">
           <span className="footer__heading">연락처</span>
           <a href={`mailto:${LAB.contactEmail}`}>{LAB.contactEmail}</a>
-          <span className="footer__text">{LAB.phone}</span>
         </div>
       </div>
 

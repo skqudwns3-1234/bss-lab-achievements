@@ -1,13 +1,13 @@
-// 연구실 기본 정보 (이름 외 나머지는 5단계에서 실제 내용으로 채움)
-// 필드 이름은 기말 API 명세의 GET /api/lab에 맞추고, shortName·department·phone만 더했다.
+// 연구실 기본 정보 — 푸터·홈·소개에 쓰임. 바뀌면 여기 값만 고친다
+// 필드 이름은 기말 API 명세의 GET /api/lab에 맞추고, shortName·fullName·department만 더했다.
+// 전화번호는 공용 번호가 없어 넣지 않음 — 개인 휴대폰 번호는 공개하지 않는다 (P113, NFR-10)
 export const LAB = {
   name: 'BigdataSystemSoftware 연구실(BSS)',
   shortName: 'BSS', // 지원 메일 제목 등 짧게 쓸 때
   fullName: 'BigdataSystemSoftware', // BSS 풀 네임 — 연구실 소개 첫머리에 쓰임. 한글 정식 이름도 정해지면 여기 옆에 추가
-  department: '[학과 · 대학교]',
-  location: '[연구실 위치 — 건물·호수]',
-  contactEmail: 'lab@example.com',
-  phone: '[전화번호]',
+  department: '대진대학교 컴퓨터공학과',
+  location: '이공학관 다동 A9-401',
+  contactEmail: '20231298@daejin.ac.kr', // 공용 메일이 없어 사용자 본인 학교 메일 (P113). 공용 메일이 생기면 바꾸기
 
   // ===== 부원 모집 정보 — 홈 ④ 지원 안내에 쓰임. 모집할 때마다 아래 값만 고치면 된다 =====
   // 지원 안내를 홈에 보일지 말지는 pages/HomePage.tsx 맨 위 SHOW_RECRUIT_BOX로 켜고 끈다
