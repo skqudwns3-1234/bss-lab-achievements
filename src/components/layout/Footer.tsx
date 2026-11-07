@@ -1,8 +1,11 @@
-import { Link } from 'react-router'
+import { Link, useLocation } from 'react-router'
 import { LAB } from '../../data/lab.ts'
 import { NAV_ITEMS } from './navItems.ts'
+import { scrollToTopIfCurrent } from './scrollToTop.ts'
 
 export default function Footer() {
+  const { pathname } = useLocation()
+
   return (
     <footer className="footer">
       <div className="footer__top">
@@ -19,7 +22,7 @@ export default function Footer() {
           <span className="footer__heading">메뉴</span>
           {/* 헤더 메뉴와 같은 목록 — 시안은 "홈"을 뺐지만, 맨 아래에서 바로 홈으로 갈 수 있게 넣음 (P116) */}
           {NAV_ITEMS.map((item) => (
-            <Link key={item.path} to={item.path}>
+            <Link key={item.path} to={item.path} onClick={() => scrollToTopIfCurrent(item.path, pathname)}>
               {item.label}
             </Link>
           ))}
