@@ -11,8 +11,8 @@ export default function Header() {
     <header className="header">
       <div className="header__inner">
         <Link to="/" className="header__logo" onClick={() => setMenuOpen(false)}>
-          <span className="header__logo-main">lab archive.</span>
-          <span className="header__logo-sub">{LAB.shortName} 연구실 성과 아카이브</span>
+          <span className="header__logo-main">{LAB.shortName} archive.</span>
+          <span className="header__logo-sub">연구실 성과 아카이브</span>
         </Link>
 
         <button
