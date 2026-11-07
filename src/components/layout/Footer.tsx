@@ -2,9 +2,6 @@ import { Link } from 'react-router'
 import { LAB } from '../../data/lab.ts'
 import { NAV_ITEMS } from './navItems.ts'
 
-// 푸터 메뉴는 시안처럼 "홈"을 빼고 보여 준다
-const FOOTER_LINKS = NAV_ITEMS.filter((item) => item.path !== '/')
-
 export default function Footer() {
   return (
     <footer className="footer">
@@ -20,7 +17,8 @@ export default function Footer() {
 
         <div className="footer__group">
           <span className="footer__heading">메뉴</span>
-          {FOOTER_LINKS.map((item) => (
+          {/* 헤더 메뉴와 같은 목록 — 시안은 "홈"을 뺐지만, 맨 아래에서 바로 홈으로 갈 수 있게 넣음 (P116) */}
+          {NAV_ITEMS.map((item) => (
             <Link key={item.path} to={item.path}>
               {item.label}
             </Link>
