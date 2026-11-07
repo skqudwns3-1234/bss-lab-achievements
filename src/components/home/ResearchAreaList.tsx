@@ -11,7 +11,8 @@ export default function ResearchAreaList({ areas }: ResearchAreaListProps) {
   return (
     <ol className="research-list">
       {areas.map((area, index) => (
-        <li key={area.title} className="research-list__item">
+        // key에 순서를 붙여 같은 제목이 두 번 있어도 겹치지 않게 (P170)
+        <li key={`${index}-${area.title}`} className="research-list__item">
           <span className="research-list__number" aria-hidden="true">
             {padCount(index + 1)}
           </span>

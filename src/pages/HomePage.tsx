@@ -39,15 +39,18 @@ export default function HomePage() {
       </section>
 
       {/* ② 연구 분야: RESEARCH AREAS, 분야 칸들 (1-3) — 분야 목록은 lab.ts의 researchAreas */}
-      <section className="home__section" aria-labelledby="home-research-title">
-        <div className="home-section__head">
-          <p className="eyebrow">RESEARCH AREAS</p>
-          <h2 id="home-research-title" className="section-title">
-            우리가 다루는 문제
-          </h2>
-        </div>
-        <ResearchAreaList areas={LAB.researchAreas} />
-      </section>
+      {/* 연구 분야가 0개면 제목만 남은 빈 구역이 되므로 구역째 숨김 (EX-23, P170) */}
+      {LAB.researchAreas.length > 0 && (
+        <section className="home__section" aria-labelledby="home-research-title">
+          <div className="home-section__head">
+            <p className="eyebrow">RESEARCH AREAS</p>
+            <h2 id="home-research-title" className="section-title">
+              우리가 다루는 문제
+            </h2>
+          </div>
+          <ResearchAreaList areas={LAB.researchAreas} />
+        </section>
+      )}
 
       {/* ③ 최근 성과: RECENT ACHIEVEMENTS, 카드 4장 */}
       <section className="home__section" aria-label="최근 성과">

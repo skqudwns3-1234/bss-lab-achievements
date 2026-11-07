@@ -404,6 +404,11 @@
   font-weight: 500;
 }
 
+/* 마감일이 지나면 회색 알약 "모집 마감" (EX-19) */
+.recruit__badge--closed {
+  background: var(--color-faint);
+}
+
 .recruit__deadline {
   font-family: var(--font-display);
   font-weight: 500;

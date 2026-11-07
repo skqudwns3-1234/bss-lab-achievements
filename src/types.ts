@@ -58,3 +58,11 @@ export type LoadResult = {
   achievements: Achievement[]
   notices: string[] // 비어 있으면 문제 없음. 있으면 2-5에서 원본 백업 → 고친 목록 저장 → 안내 한 번 (P167 A안)
 }
+
+// 지원 안내 상태 — 홈 ④와 푸터가 같은 판단을 쓰도록 한곳(utils/recruitment.ts)에서 계산 (P170)
+export type RecruitStatus = {
+  closed: boolean // 마감일이 지났는지 → "모집 마감", 지원서 버튼·푸터 링크 숨김
+  deadline: string | null // 화면에 보일 마감일 'YYYY-MM-DD' (형식이 틀리거나 없는 날짜면 null → 숨김)
+  applyUrl: string | null // 지원서 링크 (비었거나 편집용·https 아님이면 null → 버튼 숨김)
+  problems: string[] // lab.ts 값이 이상할 때 개발자 도구에 남길 경고
+}

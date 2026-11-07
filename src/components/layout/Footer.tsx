@@ -1,13 +1,16 @@
 import { Link, useLocation } from 'react-router'
 import { LAB } from '../../data/lab.ts'
 import ArrowIcon from '../common/ArrowIcon.tsx'
+import { getRecruitStatus, todayYmd } from '../../utils/recruitment.ts'
 import { NAV_ITEMS } from './navItems.ts'
 import { scrollToTopIfCurrent } from './scrollToTop.ts'
 
 // 푸터 (P143 정돈): 왼쪽 연구실 정보 / 오른쪽 메뉴·연락처를 한 묶음으로
 export default function Footer() {
   const { pathname } = useLocation()
-  const { isOpen, formUrl } = LAB.recruitment
+  // 모집 중이고, 마감 전이고, 올바른 응답용 링크일 때만 "지원서 작성" (홈 ④와 같은 판단, P170)
+  const { isOpen } = LAB.recruitment
+  const { applyUrl } = getRecruitStatus(LAB.recruitment, todayYmd())
 
   return (
     <footer className="footer">
@@ -35,8 +38,8 @@ export default function Footer() {
             <span className="footer__text">{LAB.location} (방문)</span>
             <a href={`mailto:${LAB.contactEmail}`}>{LAB.contactEmail}</a>
             {/* 모집 기간에만 — 어느 페이지에서든 바로 지원할 수 있게 (P142) */}
-            {isOpen && formUrl && (
-              <a className="footer__apply" href={formUrl} target="_blank" rel="noopener noreferrer">
+            {isOpen && applyUrl && (
+              <a className="footer__apply" href={applyUrl} target="_blank" rel="noopener noreferrer">
                 지원서 작성
                 <ArrowIcon size={12} />
               </a>
