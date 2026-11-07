@@ -5,3 +5,12 @@ export type ResearchArea = {
   title: string // 분야 이름
   description: string // 설명 한두 문장
 }
+
+// 부원 모집 정보 — 홈 ④ 지원 안내 (lab.ts의 recruitment)
+export type Recruitment = {
+  endDate: string // 마감일 'YYYY-MM-DD' (시작일은 표시하지 않음 — P128)
+  title: string // 지원 안내 제목
+  qualifications: string[] // 지원 자격 (0개면 제목까지 숨김 — EX-14)
+  posterUrl: string // 포스터 그림 주소 (비면 포스터 칸 숨김 — EX-18)
+  formUrl: string // 구글 폼 응답용 링크 (비면 버튼 숨김 — EX-15)
+}

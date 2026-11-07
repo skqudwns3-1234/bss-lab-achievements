@@ -5,3 +5,9 @@
 export function padCount(n: number): string {
   return String(n).padStart(2, '0')
 }
+
+// 날짜 표시용: '2026-12-01' → '2026.12.01'
+// 지원 안내 마감일(1-4)과 성과 날짜에 같이 쓴다
+export function formatDate(ymd: string): string {
+  return ymd.replaceAll('-', '.')
+}

@@ -139,6 +139,13 @@ button {
   color: #ffffff;
 }
 
+/* 큰 버튼 — 꼭 눌러야 하는 버튼 하나에만 (홈 "지원서 작성", 1-4) */
+.btn--large {
+  height: 60px;
+  padding: 0 32px;
+  font-size: 18px;
+}
+
 .btn--small {
   height: var(--control-height-sm);
   padding: 0 18px;

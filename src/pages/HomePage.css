@@ -116,7 +116,7 @@
   color: var(--color-muted);
 }
 
-/* ④ 연락 상자 */
+/* ④ 지원 안내 상자 */
 .home__contact {
   padding: var(--section-gap) 0 40px;
 }
@@ -125,6 +125,115 @@
   padding: clamp(32px, 5vw, 64px);
   border-radius: var(--radius-panel);
   background: var(--color-surface-strong);
+}
+
+/* ④ 지원 안내 내용 (RecruitBox) — 넓은 화면: 왼쪽 글 + 오른쪽 포스터 / 760px 이하: 위아래로 쌓임 */
+.recruit {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: clamp(32px, 5vw, 64px);
+  align-items: stretch;
+}
+
+.recruit__body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.recruit__status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+}
+
+.recruit__badge {
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  background: var(--color-text);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.recruit__deadline {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 15px;
+  color: var(--color-muted);
+}
+
+.recruit__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(28px, 3.6vw, 44px);
+  line-height: 1.25;
+  letter-spacing: -0.04em;
+  text-wrap: balance; /* 두 줄이 되면 줄 길이를 비슷하게 — "모집" 한 단어만 넘어가지 않게 */
+}
+
+.recruit__group-title {
+  margin: 0 0 10px;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.recruit__list {
+  margin: 0;
+  padding-left: 20px;
+  color: var(--color-muted);
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+/* 버튼은 글 묶음 맨 아래로 */
+.recruit__apply {
+  margin-top: auto;
+}
+
+/* 포스터 미리보기 — 버튼 모양을 지운 그림 단추. 누르면 팝업 */
+.recruit__poster {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: clamp(180px, 20vw, 240px);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-muted);
+  font-size: 13px;
+  cursor: zoom-in;
+}
+
+.recruit__poster img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1131 / 1600; /* 포스터 비율 — 그림이 늦게 떠도 자리가 흔들리지 않게 */
+  border-radius: 12px;
+  background: var(--color-surface);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 0 0 1px var(--color-border);
+}
+
+@media (max-width: 760px) {
+  .recruit {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* 휴대폰: 버튼은 가로 꽉 차게, 포스터는 가운데 */
+  .recruit__apply {
+    align-self: stretch;
+    justify-content: center;
+  }
+
+  .recruit__poster {
+    justify-self: center;
+    width: min(240px, 70%);
+  }
 }
 
 /* ── 뼈대 확인용 자리 표시 (각 구역에 내용을 넣으면 지운다) ── */
@@ -155,7 +264,3 @@
   min-height: 380px;
 }
 
-.home-placeholder--contact {
-  min-height: 200px;
-  border-color: var(--color-border-strong);
-}
