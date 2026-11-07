@@ -8,6 +8,7 @@ export type ResearchArea = {
 
 // 부원 모집 정보 — 홈 ④ 지원 안내 (lab.ts의 recruitment)
 export type Recruitment = {
+  isOpen: boolean // 모집 스위치 — false면 홈 지원 안내·푸터 지원서 링크 숨김 (BR-16, P143)
   endDate: string // 마감일 'YYYY-MM-DD' (시작일은 표시하지 않음 — P128)
   title: string // 지원 안내 제목
   qualifications: string[] // 지원 자격 (0개면 제목까지 숨김 — EX-14)

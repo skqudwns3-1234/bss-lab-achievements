@@ -6,9 +6,6 @@ import ResearchAreaList from '../components/home/ResearchAreaList.tsx'
 import { LAB } from '../data/lab.ts'
 import './HomePage.css'
 
-// ④ 지원 안내(연락 상자) 표시 스위치 — 부원 모집 기간에만 true, 기간이 끝나면 false로 바꾼다
-const SHOW_RECRUIT_BOX = true
-
 // 홈 (spec/01_home.md). 1-1 뼈대, 1-2 첫 화면, 1-3 연구 분야, 1-4 지원 안내, 1-8 물방울 배경까지 채움.
 export default function HomePage() {
   return (
@@ -60,16 +57,16 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ===== ④ 지원 안내 시작 — 맨 위 SHOW_RECRUIT_BOX로 켜고 끔. 아예 없애려면 여기부터 ===== */}
+      {/* ===== ④ 지원 안내 시작 — lab.ts의 recruitment.isOpen으로 켜고 끔. 아예 없애려면 여기부터 ===== */}
       {/* 회색 큰 상자 — 모집 정보·포스터는 lab.ts의 recruitment에서 고친다 (1-4) */}
-      {SHOW_RECRUIT_BOX && (
+      {LAB.recruitment.isOpen && (
         <section className="home__contact" aria-labelledby="home-recruit-title">
           <div className="home__contact-box">
             <RecruitBox recruitment={LAB.recruitment} />
           </div>
         </section>
       )}
-      {/* ===== ④ 지원 안내 끝 — 아예 없애려면 여기까지 지우고, 맨 위 SHOW_RECRUIT_BOX 줄도 지운다 ===== */}
+      {/* ===== ④ 지원 안내 끝 — 아예 없애려면 여기까지 지운다 ===== */}
     </div>
   )
 }

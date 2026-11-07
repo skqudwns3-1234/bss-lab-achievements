@@ -101,19 +101,33 @@
   padding: 0 var(--gutter) 48px;
 }
 
+/* 왼쪽 연구실 정보 / 오른쪽 메뉴·연락처 묶음 — 칸이 화면 폭을 나눠 갖지 않고 내용만큼만 (P143) */
 .footer__top {
   border-top: 1px solid var(--color-border-strong);
   padding-top: 48px;
   display: flex;
   flex-wrap: wrap;
+  justify-content: space-between;
   gap: 40px;
 }
 
 .footer__lab {
-  flex: 2 1 280px;
   display: flex;
   flex-direction: column;
   gap: 8px;
+  max-width: 360px;
+}
+
+.footer__intro {
+  margin: 0;
+  font-size: 14px;
+  color: var(--color-text);
+}
+
+.footer__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px 72px;
 }
 
 .footer__lab-name {
@@ -124,7 +138,6 @@
 }
 
 .footer__group {
-  flex: 1 1 160px;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -145,6 +158,18 @@
 
 .footer__group a:hover {
   color: var(--color-text);
+}
+
+/* 지원서 작성 링크는 조금 눈에 띄게 */
+.footer__group .footer__apply {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+  color: var(--color-text);
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .footer__bottom {

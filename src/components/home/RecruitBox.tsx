@@ -8,7 +8,7 @@ type RecruitBoxProps = {
   recruitment: Recruitment // 모집 정보 (lab.ts의 recruitment)
 }
 
-// 홈 ④ 지원 안내 (spec/01_home 1-4). 보일지 말지는 HomePage의 SHOW_RECRUIT_BOX가 정한다.
+// 홈 ④ 지원 안내 (spec/01_home 1-4). 보일지 말지는 lab.ts의 recruitment.isOpen이 정한다 (HomePage에서 확인).
 // 왼쪽: 모집 중·마감일, 제목, 지원 자격, "지원서 작성" 버튼 / 오른쪽: 포스터 (누르면 크게)
 export default function RecruitBox({ recruitment }: RecruitBoxProps) {
   const { endDate, title, qualifications, posterUrl, formUrl } = recruitment

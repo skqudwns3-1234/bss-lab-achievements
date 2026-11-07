@@ -1,36 +1,47 @@
 import { Link, useLocation } from 'react-router'
 import { LAB } from '../../data/lab.ts'
+import ArrowIcon from '../common/ArrowIcon.tsx'
 import { NAV_ITEMS } from './navItems.ts'
 import { scrollToTopIfCurrent } from './scrollToTop.ts'
 
+// 푸터 (P143 정돈): 왼쪽 연구실 정보 / 오른쪽 메뉴·연락처를 한 묶음으로
 export default function Footer() {
   const { pathname } = useLocation()
+  const { isOpen, formUrl } = LAB.recruitment
 
   return (
     <footer className="footer">
       <div className="footer__top">
         <div className="footer__lab">
           <span className="footer__lab-name">{LAB.shortName} 연구실</span>
-          <span className="footer__text">
-            {LAB.department}
-            <br />
-            {LAB.location}
-          </span>
+          <p className="footer__intro">{LAB.intro}</p>
+          <span className="footer__text">{LAB.department}</span>
         </div>
 
-        <div className="footer__group">
-          <span className="footer__heading">메뉴</span>
-          {/* 헤더 메뉴와 같은 목록 — 시안은 "홈"을 뺐지만, 맨 아래에서 바로 홈으로 갈 수 있게 넣음 (P116) */}
-          {NAV_ITEMS.map((item) => (
-            <Link key={item.path} to={item.path} onClick={() => scrollToTopIfCurrent(item.path, pathname)}>
-              {item.label}
-            </Link>
-          ))}
-        </div>
+        {/* 오른쪽 묶음: 메뉴 + 연락처 */}
+        <div className="footer__links">
+          <div className="footer__group">
+            <span className="footer__heading">메뉴</span>
+            {/* 헤더 메뉴와 같은 목록 — 시안은 "홈"을 뺐지만, 맨 아래에서 바로 홈으로 갈 수 있게 넣음 (P116) */}
+            {NAV_ITEMS.map((item) => (
+              <Link key={item.path} to={item.path} onClick={() => scrollToTopIfCurrent(item.path, pathname)}>
+                {item.label}
+              </Link>
+            ))}
+          </div>
 
-        <div className="footer__group">
-          <span className="footer__heading">연락처</span>
-          <a href={`mailto:${LAB.contactEmail}`}>{LAB.contactEmail}</a>
+          <div className="footer__group">
+            <span className="footer__heading">연락처</span>
+            <span className="footer__text">{LAB.location} (방문)</span>
+            <a href={`mailto:${LAB.contactEmail}`}>{LAB.contactEmail}</a>
+            {/* 모집 기간에만 — 어느 페이지에서든 바로 지원할 수 있게 (P142) */}
+            {isOpen && formUrl && (
+              <a className="footer__apply" href={formUrl} target="_blank" rel="noopener noreferrer">
+                지원서 작성
+                <ArrowIcon size={12} />
+              </a>
+            )}
+          </div>
         </div>
       </div>
 
