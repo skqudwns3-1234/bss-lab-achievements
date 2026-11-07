@@ -198,11 +198,45 @@
   }
 }
 
+/* 출렁임 (P138) — 마우스가 가까이 들어오는 순간 HeroArt.tsx가 droplet--wobble을 붙인다.
+   모양(border-radius)이 살짝 찌그러지고 가로·세로가 번갈아 늘었다 줄며 제자리로.
+   밀려나는 움직임(transform)과 따로 놀도록 scale 속성을 따로 쓴다 */
+.droplet--wobble {
+  animation: droplet-wobble 0.9s ease-out;
+}
+
+@keyframes droplet-wobble {
+  0% {
+    border-radius: 50%;
+    scale: 1 1;
+  }
+  20% {
+    border-radius: 46% 54% 52% 48% / 54% 46% 54% 46%;
+    scale: 1.05 0.95;
+  }
+  45% {
+    border-radius: 53% 47% 47% 53% / 46% 54% 46% 54%;
+    scale: 0.97 1.03;
+  }
+  70% {
+    border-radius: 49% 51% 51% 49% / 51% 49% 51% 49%;
+    scale: 1.015 0.985;
+  }
+  100% {
+    border-radius: 50%;
+    scale: 1 1;
+  }
+}
+
 /* "동작 줄이기"를 켠 사용자에게는 움직임 없음 (HeroArt.tsx에서도 감시를 시작하지 않음) */
 @media (prefers-reduced-motion: reduce) {
   .droplet,
   .droplet__shine {
     transition: none;
+  }
+
+  .droplet--wobble {
+    animation: none;
   }
 }
 

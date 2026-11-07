@@ -6,10 +6,13 @@ const REACH = 160
 const MAX_PUSH = 28
 // 가장 가까이 왔을 때 반짝임이 마우스 쪽으로 움직이는 거리(px)
 const MAX_SHINE = 8
+// 마우스가 이 정도(0~1)보다 가까이 들어오는 순간 한 번 출렁인다
+const WOBBLE_AT = 0.15
 
 // 홈 첫 화면 오른쪽의 물방울 장식 (spec/01_home 1-8, 시안 Main.dc.html의 .hero-art, D4).
 // 그림 파일 없이 CSS만으로 그린다. 받는 값·상태 없음.
 // 마우스가 다가가면 물방울이 살짝 밀려나고 반짝임이 마우스 쪽으로 움직인다 (P136–P137).
+// 가까이 들어오는 순간에는 젤리처럼 한 번 출렁인다 (P138).
 // 스타일은 HomePage.css의 "물방울 배경" 부분.
 export default function HeroArt() {
   // 물방울 묶음 상자 — 안의 물방울들을 직접 움직이려고 붙잡아 둔다.
@@ -30,7 +33,23 @@ export default function HeroArt() {
     const droplets = Array.from(art.querySelectorAll<HTMLElement>('.droplet'))
     // 물방울마다 지금 밀려난 거리 — 위치를 잴 때 이만큼 빼야 원래 자리를 기준으로 계산된다
     const offsets = new Map<HTMLElement, { x: number; y: number }>()
+    // 물방울마다 지난번에 마우스가 가까이 있었는지 — "들어오는 순간"에만 출렁이게
+    const wasNear = new Map<HTMLElement, boolean>()
     let frame = 0
+
+    // 출렁임: CSS 애니메이션 클래스를 뺐다가 다시 붙여 처음부터 재생
+    function wobble(droplet: HTMLElement) {
+      droplet.classList.remove('droplet--wobble')
+      void droplet.offsetWidth // 브라우저가 클래스 제거를 반영하게 한 번 계산시킴 (이게 없으면 다시 붙여도 재생 안 됨)
+      droplet.classList.add('droplet--wobble')
+    }
+
+    // 출렁임이 끝나면 클래스를 떼어 다음 출렁임을 준비
+    function handleAnimationEnd(event: AnimationEvent) {
+      if (event.animationName === 'droplet-wobble') {
+        ;(event.target as HTMLElement).classList.remove('droplet--wobble')
+      }
+    }
 
     function move(droplet: HTMLElement, x: number, y: number, shineX: number, shineY: number) {
       offsets.set(droplet, { x, y })
@@ -55,6 +74,10 @@ export default function HeroArt() {
           const distance = Math.hypot(dx, dy) || 1
           // 0(멀리) ~ 1(아주 가까이)
           const power = Math.max(0, 1 - distance / (rect.width / 2 + REACH))
+          const near = power > WOBBLE_AT
+          if (near && !wasNear.get(droplet)) wobble(droplet)
+          wasNear.set(droplet, near)
+
           const dirX = dx / distance
           const dirY = dy / distance
           move(
@@ -71,15 +94,20 @@ export default function HeroArt() {
     // 마우스가 창 밖으로 나가면 모두 제자리로
     function handlePointerLeave() {
       cancelAnimationFrame(frame)
-      for (const droplet of droplets) move(droplet, 0, 0, 0, 0)
+      for (const droplet of droplets) {
+        move(droplet, 0, 0, 0, 0)
+        wasNear.set(droplet, false)
+      }
     }
 
     window.addEventListener('pointermove', handlePointerMove)
+    art.addEventListener('animationend', handleAnimationEnd)
     document.documentElement.addEventListener('pointerleave', handlePointerLeave)
 
     return () => {
       cancelAnimationFrame(frame)
       window.removeEventListener('pointermove', handlePointerMove)
+      art.removeEventListener('animationend', handleAnimationEnd)
       document.documentElement.removeEventListener('pointerleave', handlePointerLeave)
     }
   }, [])
