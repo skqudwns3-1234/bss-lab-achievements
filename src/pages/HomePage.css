@@ -3,12 +3,203 @@
 .home {
   display: flex;
   flex-direction: column;
+  /* 물방울 상자가 오른쪽으로 40px 튀어나와도 가로 스크롤이 생기지 않게 잘라 둔다 (1-8).
+     hidden과 달리 clip은 스크롤 영역을 새로 만들지 않는다 */
+  overflow-x: clip;
 }
 
 /* ① 첫 화면 — position: relative는 D4 물방울 배경을 이 구역 안에 겹쳐 놓기 위한 기준 */
 .home__hero {
   position: relative;
   padding: 48px 0 80px;
+}
+
+/* ── ① 물방울 배경 (HeroArt, 1-8) — 시안 Main.dc.html의 .hero-art 값 그대로 ── */
+
+/* 첫 화면 오른쪽에 800×800 상자를 겹쳐 둔다. 글보다 뒤(z-index 0), 클릭은 통과 */
+.hero-art {
+  position: absolute;
+  top: -24px;
+  right: -40px;
+  z-index: 0;
+  width: 800px;
+  height: 800px;
+  pointer-events: none;
+}
+
+/* 점 무늬 바닥 — 26px 간격 점, 가운데는 진하고 가장자리로 갈수록 사라지게(mask) */
+.hero-art__dots {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(#cfcfce 1.2px, transparent 1.6px);
+  background-size: 26px 26px;
+  mask-image: radial-gradient(closest-side, #000 30%, transparent 100%);
+  opacity: 0.8;
+}
+
+/* 바닥 그림자 — 흐린 타원 */
+.hero-art__shadow {
+  position: absolute;
+  border-radius: 50%;
+}
+
+.hero-art__shadow--1 {
+  left: 260px;
+  top: 676px;
+  width: 300px;
+  height: 44px;
+  background: radial-gradient(ellipse, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0) 30%),
+    rgba(40, 44, 52, 0.14);
+  filter: blur(14px);
+}
+
+.hero-art__shadow--2 {
+  left: 90px;
+  top: 640px;
+  width: 230px;
+  height: 36px;
+  background: radial-gradient(ellipse, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0) 30%),
+    rgba(40, 44, 52, 0.16);
+  filter: blur(12px);
+}
+
+.hero-art__shadow--3 {
+  left: 610px;
+  top: 640px;
+  width: 90px;
+  height: 18px;
+  background: rgba(40, 44, 52, 0.16);
+  filter: blur(7px);
+}
+
+/* 물방울 공통: 동그라미 + 가장자리만 살짝 어두운 원형 그러데이션 + 얇은 흰 테두리 */
+.droplet {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 50% 45%,
+    rgba(255, 255, 255, 0.04) 0%,
+    rgba(255, 255, 255, 0) 55%,
+    rgba(150, 158, 172, 0.16) 80%,
+    rgba(90, 98, 112, 0.3) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.7);
+}
+
+/* 크기별 위치와 그림자 (안쪽 위는 어둡게, 안쪽 아래는 밝게, 바깥 아래로 그림자) */
+.droplet--xl {
+  left: 300px;
+  top: 40px;
+  width: 380px;
+  height: 380px;
+  backdrop-filter: brightness(1.04) contrast(1.06);
+  box-shadow: inset 16px 22px 30px rgba(60, 68, 82, 0.3),
+    inset -20px -24px 34px rgba(255, 255, 255, 0.85), 0 70px 80px -60px rgba(0, 0, 0, 0.22);
+}
+
+.droplet--lg {
+  left: 110px;
+  top: 330px;
+  width: 270px;
+  height: 270px;
+  backdrop-filter: brightness(1.04) contrast(1.06);
+  box-shadow: inset 12px 16px 22px rgba(60, 68, 82, 0.3),
+    inset -14px -18px 26px rgba(255, 255, 255, 0.85), 0 60px 70px -50px rgba(0, 0, 0, 0.22);
+}
+
+.droplet--md {
+  left: 620px;
+  top: 330px;
+  width: 96px;
+  height: 96px;
+  box-shadow: inset 5px 7px 10px rgba(60, 68, 82, 0.3),
+    inset -6px -8px 12px rgba(255, 255, 255, 0.85), 0 40px 40px -30px rgba(0, 0, 0, 0.2);
+}
+
+.droplet--sm {
+  left: 236px;
+  top: 96px;
+  width: 72px;
+  height: 72px;
+  box-shadow: inset 4px 6px 8px rgba(60, 68, 82, 0.3),
+    inset -5px -6px 10px rgba(255, 255, 255, 0.85), 0 30px 30px -22px rgba(0, 0, 0, 0.2);
+}
+
+/* 하이라이트: 왼쪽 위 흰 반짝임(shine) + 작은 점(dot) + 아래쪽 밝은 빛(glow) */
+.droplet__shine,
+.droplet__dot,
+.droplet__glow {
+  position: absolute;
+  border-radius: 50%;
+}
+
+.droplet__shine {
+  left: 20%;
+  top: 15%;
+  width: 20%;
+  height: 11%;
+  background: rgba(255, 255, 255, 0.96);
+  filter: blur(0.6px);
+  transform: rotate(-35deg);
+}
+
+.droplet__dot {
+  left: 41%;
+  top: 13%;
+  width: 4%;
+  height: 4%;
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.droplet__glow {
+  right: 10%;
+  bottom: 8%;
+  width: 50%;
+  height: 30%;
+  background: radial-gradient(ellipse at 60% 60%, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0) 65%);
+  filter: blur(3px);
+  transform: rotate(-25deg);
+}
+
+/* 작은 물방울은 반짝임이 조금 크고 흐림은 덜하게 (시안 값) */
+.droplet--md .droplet__shine,
+.droplet--sm .droplet__shine {
+  width: 22%;
+  height: 12%;
+  filter: none;
+}
+
+.droplet--md .droplet__glow {
+  filter: blur(1.5px);
+}
+
+.droplet--sm .droplet__glow {
+  filter: blur(1px);
+}
+
+/* 태블릿 폭: 시안에는 값이 없는 구간. PC 크기 그대로면 물방울이 글을 거의 다 덮어서
+   단계적으로 줄인다 (AI 추가, P135 피드백 대기) */
+@media (max-width: 1100px) {
+  .hero-art {
+    transform: scale(0.8);
+    transform-origin: top right;
+  }
+}
+
+@media (max-width: 900px) {
+  .hero-art {
+    transform: scale(0.66);
+    opacity: 0.75;
+  }
+}
+
+/* 휴대폰: 오른쪽 위를 기준으로 55%로 줄이고 옅게 — 글을 가리지 않게 (시안 값) */
+@media (max-width: 760px) {
+  .hero-art {
+    transform: scale(0.55);
+    transform-origin: top right;
+    opacity: 0.45;
+  }
 }
 
 /* 글자 묶음은 물방울(1-8)보다 위에 오게 */
@@ -56,6 +247,13 @@
 /* ②·③ 일반 구역 */
 .home__section {
   padding: var(--section-gap) 0;
+}
+
+/* ②·③·④는 물방울 배경(z-index 0)보다 위에 그린다 — 물방울 그림자가 아래 구역 글자를 덮지 않게 (1-8) */
+.home__section,
+.home__contact {
+  position: relative;
+  z-index: 1;
 }
 
 /* ②·③ 구역 머리: 영문 꾸밈 글씨 + 구역 제목 — 시안 값 */
