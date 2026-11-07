@@ -1,25 +1,9 @@
 import type { RecruitStatus, Recruitment } from '../types.ts'
+import { isValidYmd } from './date.ts'
 
 // 지원 안내 판단 (P169–P170 예외 처리 점검). 홈 ④ RecruitBox와 푸터가 같이 쓴다.
 // 오늘 날짜를 받아서 계산하는 순수 함수라 테스트할 때 날짜를 마음대로 넣어 볼 수 있다.
-
-const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/
-
-// 오늘 날짜 'YYYY-MM-DD' (보는 사람 컴퓨터의 날짜 기준)
-export function todayYmd(now: Date = new Date()): string {
-  const month = String(now.getMonth() + 1).padStart(2, '0')
-  const day = String(now.getDate()).padStart(2, '0')
-  return `${now.getFullYear()}-${month}-${day}`
-}
-
-// 'YYYY-MM-DD' 형식이면서 실제로 있는 날짜인지 — '2026-02-30'처럼 없는 날짜는 false
-// (성과 등록 폼의 날짜 검사에서도 다시 쓸 수 있다)
-export function isValidYmd(ymd: string): boolean {
-  if (!DATE_PATTERN.test(ymd)) return false
-  const [year, month, day] = ymd.split('-').map(Number)
-  const date = new Date(year, month - 1, day)
-  return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day
-}
+// (날짜 함수 todayYmd·isValidYmd는 utils/date.ts — P177)
 
 // 지원 안내 상태 계산
 // - 마감일 형식이 틀리면 마감일을 숨기고 경고 (마감 여부도 판단하지 않음)

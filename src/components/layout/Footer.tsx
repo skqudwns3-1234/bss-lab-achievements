@@ -1,7 +1,8 @@
 import { Link, useLocation } from 'react-router'
 import { LAB } from '../../data/lab.ts'
 import ArrowIcon from '../common/ArrowIcon.tsx'
-import { getRecruitStatus, todayYmd } from '../../utils/recruitment.ts'
+import { todayYmd } from '../../utils/date.ts'
+import { getRecruitStatus } from '../../utils/recruitment.ts'
 import { NAV_ITEMS } from './navItems.ts'
 import { scrollToTopIfCurrent } from './scrollToTop.ts'
 

@@ -1,5 +1,6 @@
 import { SAMPLE_ACHIEVEMENTS } from '../data/sampleAchievements.ts'
-import type { Achievement, AchievementType, LoadResult } from '../types.ts'
+import type { Achievement, LoadResult } from '../types.ts'
+import { findRequiredProblem, isAchievementType, showValue } from './achievements.ts'
 
 // 저장소(localStorage) 읽기·쓰기 (spec/02 2-4, design.md 7절, P164–P167).
 // 어떤 값이 들어 있어도 앱이 멈추지 않게 한다 (NFR-05, EX-11). 불러오기는 읽기만 하고,
@@ -7,9 +8,6 @@ import type { Achievement, AchievementType, LoadResult } from '../types.ts'
 
 export const STORAGE_KEY = 'lab-achievements:items' // 성과 목록
 export const BACKUP_KEY = 'lab-achievements:backup' // 문제가 있던 원본을 덮어쓰기 전에 옮겨 두는 곳
-
-const TYPES: AchievementType[] = ['PAPER', 'AWARD', 'PATENT', 'CONTEST']
-const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/
 
 // 없어도 살릴 수 있는 글자 칸 — 없거나 글자가 아니면 빈 값으로 채운다 (옛 데이터에 지도교수 칸이 없는 경우 등)
 type OptionalTextKey = 'authors' | 'advisors' | 'venue' | 'doi' | 'link'
@@ -34,16 +32,6 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
 }
 
-// 정해 둔 4가지 유형인지
-function isAchievementType(value: unknown): value is AchievementType {
-  return TYPES.some((type) => type === value)
-}
-
-// 안내 문장에 값을 보여 주기 위한 글자 (없으면 "없음")
-function show(value: unknown): string {
-  return value === undefined ? '없음' : JSON.stringify(value)
-}
-
 // 항목 하나 검사: 필수 칸(번호·유형·제목·날짜)이 틀리면 빼고, 선택 칸이 없으면 빈 값으로 채워 살린다
 function checkItem(item: unknown, position: number, seenIds: Set<number>): ItemCheck {
   const where = `${position}번째 항목`
@@ -53,13 +41,15 @@ function checkItem(item: unknown, position: number, seenIds: Set<number>): ItemC
 
   const { id, type, title, achievedOn } = item
   if (typeof id !== 'number' || !Number.isInteger(id) || id < 1) {
-    return drop(`번호가 1 이상의 정수가 아니에요 (값: ${show(id)}).`)
+    return drop(`번호가 1 이상의 정수가 아니에요 (값: ${showValue(id)}).`)
   }
   if (seenIds.has(id)) return drop(`앞의 항목과 번호가 겹쳐요 (번호 ${id}).`)
-  if (!isAchievementType(type)) return drop(`유형 ${show(type)}은 없는 유형이에요 (번호 ${id}).`)
-  if (typeof title !== 'string' || title.trim() === '') return drop(`제목이 비어 있어요 (번호 ${id}).`)
-  if (typeof achievedOn !== 'string' || !DATE_PATTERN.test(achievedOn)) {
-    return drop(`날짜가 YYYY-MM-DD 형식이 아니에요 (번호 ${id}, 값: ${show(achievedOn)}).`)
+  // 유형·제목·날짜는 저장할 때(reducer)와 같은 규칙으로 검사 — 없는 날짜(2026-02-30)도 걸러짐 (A 점검 P177)
+  const problem = findRequiredProblem({ type, title, achievedOn })
+  if (problem) return drop(`${problem} (번호 ${id}).`)
+  // 위 검사를 통과했으면 아래 셋은 늘 맞다 — TypeScript가 타입을 알 수 있게 한 번 더 좁히는 줄
+  if (!isAchievementType(type) || typeof title !== 'string' || typeof achievedOn !== 'string') {
+    return drop('형식이 맞지 않아요.')
   }
 
   // 여기부터는 살린다 — 빠지거나 형식이 다른 선택 칸만 채우고 안내

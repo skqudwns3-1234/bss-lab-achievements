@@ -86,6 +86,13 @@ describe('loadAchievements — 불러오기 (EX-11, P164)', () => {
     expect(result.notices[1]).toContain('제목이 비어')
   })
 
+  test('UT-54 없는 날짜(2026-02-30) 항목도 빼고 안내 — 저장할 때와 같은 규칙 (P177)', () => {
+    useFakeStorage(saved([stored(1), stored(2, { achievedOn: '2026-02-30' })]))
+    const result = loadAchievements()
+    expect(result.achievements.map((a) => a.id)).toEqual([1])
+    expect(result.notices[0]).toContain('2026-02-30')
+  })
+
   test('UT-24 지도교수 칸이 없는 옛 항목은 빈 값으로 채워 살리고 안내', () => {
     const old = stored(1)
     delete (old as Record<string, unknown>).advisors

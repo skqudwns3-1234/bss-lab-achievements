@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'vitest'
 import type { Recruitment } from '../types.ts'
-import { getRecruitStatus, isValidYmd, todayYmd } from './recruitment.ts'
+import { isValidYmd, todayYmd } from './date.ts'
+import { getRecruitStatus } from './recruitment.ts'
 
 // 지원 안내 판단 테스트 (P170, test-cases UT-32~39). 실행: npm test
 

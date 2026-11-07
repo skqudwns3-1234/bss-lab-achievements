@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import type { Recruitment } from '../../types.ts'
 import { formatDate } from '../../utils/achievements.ts'
-import { getRecruitStatus, todayYmd } from '../../utils/recruitment.ts'
+import { todayYmd } from '../../utils/date.ts'
+import { getRecruitStatus } from '../../utils/recruitment.ts'
 import ArrowIcon from '../common/ArrowIcon.tsx'
 import ImageModal from '../common/ImageModal.tsx'
 

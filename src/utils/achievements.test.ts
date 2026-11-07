@@ -2,6 +2,7 @@ import { describe, expect, test, vi } from 'vitest'
 import type { Achievement, AchievementFilter, AchievementInput, AchievementType } from '../types.ts'
 import {
   achievementsReducer,
+  findRequiredProblem,
   applyChange,
   countByType,
   filterAchievements,
@@ -206,5 +207,29 @@ describe('applyChange — 저장 먼저, 성공하면 반영 (EX-12)', () => {
     const next = applyChange(list, { type: 'add', input: input('x') }, save)
     expect(ids(next ?? [])).toEqual([1, 2])
     expect(save).toHaveBeenCalledWith(next)
+  })
+})
+
+// ── A 점검 후 추가 (P176–P177): 저장할 때도 불러올 때와 같은 규칙 ──
+describe('findRequiredProblem · 틀린 입력은 저장하지 않기', () => {
+  const list = [make(1, 'PAPER', '2026-01-01')]
+
+  test('UT-51 필수 칸 검사: 문제가 없으면 null, 있으면 이유', () => {
+    expect(findRequiredProblem(input('제목'))).toBeNull()
+    expect(findRequiredProblem({ ...input('제목'), type: 'BOOK' })).toContain('"BOOK"')
+    expect(findRequiredProblem(input('   '))).toContain('제목이 비어')
+    expect(findRequiredProblem({ ...input('제목'), achievedOn: '2026-02-30' })).toContain('2026-02-30')
+  })
+
+  test('UT-52 빈 제목은 추가하지 않고, 저장도 하지 않는다', () => {
+    const save = vi.fn(() => true)
+    expect(achievementsReducer(list, { type: 'add', input: input('  ') })).toBe(list)
+    expect(applyChange(list, { type: 'add', input: input('  ') }, save)).toBeNull()
+    expect(save).not.toHaveBeenCalled()
+  })
+
+  test('UT-53 없는 날짜(2026-02-30)·틀린 형식(2026/11/08)은 추가·수정하지 않는다', () => {
+    expect(achievementsReducer(list, { type: 'add', input: { ...input('x'), achievedOn: '2026-02-30' } })).toBe(list)
+    expect(achievementsReducer(list, { type: 'update', id: 1, input: { ...input('x'), achievedOn: '2026/11/08' } })).toBe(list)
   })
 })

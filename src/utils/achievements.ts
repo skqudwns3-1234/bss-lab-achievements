@@ -1,4 +1,5 @@
 import type { Achievement, AchievementFilter, AchievementType, AchievementsAction, NewestSummary } from '../types.ts'
+import { isValidYmd } from './date.ts'
 
 // 화면에 보여 줄 값을 계산하는 함수들 (design.md 9절, spec/02 2-3a).
 // 화면(React)·저장소와 상관없는 순수 함수만 둔다 — 같은 값을 넣으면 늘 같은 결과, 받은 목록은 바꾸지 않음.
@@ -23,6 +24,30 @@ export const TYPE_LABELS: Record<AchievementType, string> = {
   AWARD: '수상',
   PATENT: '특허',
   CONTEST: '공모전',
+}
+
+// 정해 둔 유형 4가지 (TYPE_LABELS와 같은 순서)
+export const ACHIEVEMENT_TYPES: AchievementType[] = ['PAPER', 'AWARD', 'PATENT', 'CONTEST']
+
+// 정해 둔 4가지 유형인지
+export function isAchievementType(value: unknown): value is AchievementType {
+  return ACHIEVEMENT_TYPES.some((type) => type === value)
+}
+
+// 안내 문장에 값을 보여 주기 위한 글자 (없으면 "없음")
+export function showValue(value: unknown): string {
+  return value === undefined ? '없음' : JSON.stringify(value)
+}
+
+// 필수 칸 검사 — 유형·제목·날짜. 문제가 없으면 null, 있으면 이유 문장.
+// 저장할 때(achievementsReducer)와 불러올 때(storage)가 **같은 규칙**을 쓴다 — 앱이 저장한 값이 다음 방문에 버려지지 않게 (A 점검 P176–P177)
+export function findRequiredProblem(value: { type: unknown; title: unknown; achievedOn: unknown }): string | null {
+  if (!isAchievementType(value.type)) return `유형 ${showValue(value.type)}은 없는 유형이에요`
+  if (typeof value.title !== 'string' || value.title.trim() === '') return '제목이 비어 있어요'
+  if (typeof value.achievedOn !== 'string' || !isValidYmd(value.achievedOn)) {
+    return `날짜가 실제 있는 YYYY-MM-DD 날짜가 아니에요 (값: ${showValue(value.achievedOn)})`
+  }
+  return null
 }
 
 // 'YYYY-MM-DD' → 연도 숫자 (앞 4글자)
@@ -87,14 +112,16 @@ export function nextId(list: Achievement[]): number {
 // ── 성과 목록 바꾸기 (spec/02 2-5, P174–P175) ──
 
 // 목록을 바꾸는 규칙을 한곳에 모은 함수(reducer). 원본은 그대로 두고 새 목록을 돌려준다.
-// 없는 번호를 수정·삭제하면 받은 목록을 그대로 돌려준다 — "바뀐 게 없다"는 표시 (applyChange가 이걸로 실패를 안다)
+// 없는 번호를 수정·삭제하거나, 필수 칸이 틀린 입력이면 받은 목록을 그대로 돌려준다 — "바뀐 게 없다"는 표시
+// (applyChange가 이걸로 실패를 안다. 틀린 값이 목록에 들어가 저장됐다가 다음 방문에 버려지는 일을 막음 — P177)
 export function achievementsReducer(state: Achievement[], action: AchievementsAction): Achievement[] {
   switch (action.type) {
     case 'add':
+      if (findRequiredProblem(action.input)) return state
       return [...state, { ...action.input, id: nextId(state), isSample: false }]
     case 'update': {
       const target = state.find((achievement) => achievement.id === action.id)
-      if (!target) return state
+      if (!target || findRequiredProblem(action.input)) return state
       // 번호와 예시 여부는 그대로 — 예시 성과를 고쳐도 "예시" 배지는 남는다 (P174)
       return state.map((achievement) =>
         achievement.id === action.id ? { ...action.input, id: target.id, isSample: target.isSample } : achievement,
