@@ -1,5 +1,6 @@
 import { Link } from 'react-router'
 import ArrowIcon from '../components/common/ArrowIcon.tsx'
+import ResearchAreaList from '../components/home/ResearchAreaList.tsx'
 import { LAB } from '../data/lab.ts'
 import './HomePage.css'
 
@@ -37,12 +38,15 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ② 연구 분야: RESEARCH AREAS, 분야 칸들 */}
-      <section className="home__section" aria-label="연구 분야">
-        <div className="home-placeholder home-placeholder--research">
-          ② 연구 분야
-          <small>RESEARCH AREAS · 번호 · 분야 이름 · 설명</small>
+      {/* ② 연구 분야: RESEARCH AREAS, 분야 칸들 (1-3) — 분야 목록은 lab.ts의 researchAreas */}
+      <section className="home__section" aria-labelledby="home-research-title">
+        <div className="home-section__head">
+          <p className="eyebrow">RESEARCH AREAS</p>
+          <h2 id="home-research-title" className="section-title">
+            우리가 다루는 문제
+          </h2>
         </div>
+        <ResearchAreaList areas={LAB.researchAreas} />
       </section>
 
       {/* ③ 최근 성과: RECENT ACHIEVEMENTS, 카드 4장 */}

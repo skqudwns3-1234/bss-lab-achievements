@@ -58,6 +58,64 @@
   padding: var(--section-gap) 0;
 }
 
+/* ②·③ 구역 머리: 영문 꾸밈 글씨 + 구역 제목 — 시안 값 */
+.home-section__head {
+  margin-bottom: 48px;
+}
+
+.home-section__head .eyebrow {
+  margin: 0 0 12px;
+}
+
+.home-section__head .section-title {
+  margin: 0;
+  line-height: 1.15;
+}
+
+/* ② 연구 분야 칸들 (ResearchAreaList)
+   grid: 한 칸을 최소 300px로 잡고, 한 줄에 들어가는 만큼 같은 폭으로 나눈다.
+   넓은 화면은 3칸 한 줄, 좁으면 2칸·1칸으로 자동으로 줄어든다.
+   flex와 달리 마지막 줄에 칸이 하나 남아도 줄 전체로 늘어나지 않는다 (P125) */
+.research-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+  gap: 24px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.research-list__item {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 24px;
+  border-top: 1px solid var(--color-text);
+}
+
+.research-list__number {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 48px;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.research-list__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 1.35;
+  letter-spacing: -0.03em;
+}
+
+.research-list__desc {
+  margin: 0;
+  font-size: 15px;
+  color: var(--color-muted);
+}
+
 /* ④ 연락 상자 */
 .home__contact {
   padding: var(--section-gap) 0 40px;
@@ -93,10 +151,6 @@
 }
 
 /* 시안의 대략적인 높이 */
-.home-placeholder--research {
-  min-height: 320px;
-}
-
 .home-placeholder--recent {
   min-height: 380px;
 }
