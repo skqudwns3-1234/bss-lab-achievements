@@ -38,3 +38,17 @@ export type Achievement = {
 // 등록·수정 폼에서 다루는 값 — 위에서 id와 isSample만 뺀 것
 // (id는 저장할 때 정하고, isSample은 사용자가 고치는 값이 아님)
 export type AchievementInput = Omit<Achievement, 'id' | 'isSample'>
+
+// 성과 목록 검색 조건 (spec/02 2-3a) — 성과 페이지의 검색칸·유형·연도
+export type AchievementFilter = {
+  query: string // 검색어 — 제목·저자·지도교수에서 찾음 (P157)
+  type: AchievementType | 'ALL' // 유형 ('ALL'이면 전체)
+  year: number | 'ALL' // 연도 ('ALL'이면 전체)
+}
+
+// 홈 NEW 알약 내용 — "최근 등록 · 2026.10.11 공모전 2건" (spec/02 2-3a)
+export type NewestSummary = {
+  date: string // 가장 최근 날짜 'YYYY-MM-DD'
+  label: string // 그날 성과가 한 유형이면 그 이름(예: 공모전), 섞이면 '성과' (P161)
+  count: number // 그날 성과 개수
+}
