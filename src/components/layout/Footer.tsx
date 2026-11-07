@@ -10,7 +10,7 @@ export default function Footer() {
     <footer className="footer">
       <div className="footer__top">
         <div className="footer__lab">
-          <span className="footer__lab-name">{LAB.name}</span>
+          <span className="footer__lab-name">{LAB.shortName} 연구실</span>
           <span className="footer__text">
             {LAB.department}
             <br />
@@ -34,6 +34,7 @@ export default function Footer() {
       </div>
 
       <div className="footer__bottom">
+        {/* 저작권 줄은 공식 표기라 전체 이름 (P114) */}
         <span>© 2026 {LAB.name}</span>
         <span>체험판 — 성과 데이터는 이 브라우저에만 저장됩니다</span>
       </div>
