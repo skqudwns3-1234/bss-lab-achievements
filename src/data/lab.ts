@@ -3,6 +3,7 @@
 export const LAB = {
   name: 'BigdataSystemSoftware 연구실(BSS)',
   shortName: 'BSS', // 지원 메일 제목 등 짧게 쓸 때
+  fullName: 'BigdataSystemSoftware', // BSS 풀 네임 — 연구실 소개 첫머리에 쓰임. 한글 정식 이름도 정해지면 여기 옆에 추가
   department: '[학과 · 대학교]',
   location: '[연구실 위치 — 건물·호수]',
   contactEmail: 'lab@example.com',
