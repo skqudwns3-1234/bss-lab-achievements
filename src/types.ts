@@ -52,3 +52,9 @@ export type NewestSummary = {
   label: string // 그날 성과가 한 유형이면 그 이름(예: 공모전), 섞이면 '성과' (P161)
   count: number // 그날 성과 개수
 }
+
+// 저장소에서 성과를 불러온 결과 (spec/02 2-4) — 목록 + 무엇이 잘못돼서 어떻게 고쳤는지 안내 문장
+export type LoadResult = {
+  achievements: Achievement[]
+  notices: string[] // 비어 있으면 문제 없음. 있으면 2-5에서 원본 백업 → 고친 목록 저장 → 안내 한 번 (P167 A안)
+}
