@@ -66,3 +66,10 @@ export type RecruitStatus = {
   applyUrl: string | null // 지원서 링크 (비었거나 편집용·https 아님이면 null → 버튼 숨김)
   problems: string[] // lab.ts 값이 이상할 때 개발자 도구에 남길 경고
 }
+
+// 성과 목록을 바꾸는 방법 (spec/02 2-5) — achievementsReducer가 처리
+export type AchievementsAction =
+  | { type: 'add'; input: AchievementInput } // 새 번호를 붙여 끝에 추가
+  | { type: 'update'; id: number; input: AchievementInput } // 내용만 바꿈 (번호·예시 여부는 그대로, P174)
+  | { type: 'delete'; id: number }
+  | { type: 'replace'; achievements: Achievement[] } // 다른 탭에서 바뀐 목록으로 통째로 (P174)

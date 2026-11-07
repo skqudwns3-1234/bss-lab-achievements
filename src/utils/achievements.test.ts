@@ -1,6 +1,14 @@
-import { describe, expect, test } from 'vitest'
-import type { Achievement, AchievementFilter, AchievementType } from '../types.ts'
-import { countByType, filterAchievements, getNewestSummary, nextId, sortByLatest } from './achievements.ts'
+import { describe, expect, test, vi } from 'vitest'
+import type { Achievement, AchievementFilter, AchievementInput, AchievementType } from '../types.ts'
+import {
+  achievementsReducer,
+  applyChange,
+  countByType,
+  filterAchievements,
+  getNewestSummary,
+  nextId,
+  sortByLatest,
+} from './achievements.ts'
 
 // 계산 함수 단위 테스트 (spec/02 2-3b, test-cases UT-01~18). 실행: npm test
 // 2-2 처음 데이터는 바뀔 수 있어서 쓰지 않고, 테스트마다 필요한 작은 성과를 직접 만든다.
@@ -136,5 +144,67 @@ describe('nextId — 새 성과 번호 (BR-12)', () => {
     expect(nextId([])).toBe(1)
     // 1·2·3 중 2를 지운 상태 — "개수 + 1"이면 3이 되어 기존 3번과 겹친다
     expect(nextId([make(1, 'PAPER', '2026-01-01'), make(3, 'PAPER', '2026-01-01')])).not.toBe(3)
+  })
+})
+
+// ── 2-5 목록 바꾸기 (UT-40~48) ──
+
+// 폼에서 들어오는 값 (번호·예시 여부 없음)
+function input(title: string): AchievementInput {
+  return { type: 'PAPER', title, achievedOn: '2026-11-08', authors: '', advisors: '', venue: '', doi: '', link: '' }
+}
+
+describe('achievementsReducer — 목록 바꾸는 규칙 (design 6.1)', () => {
+  const list = [make(1, 'PAPER', '2026-01-01'), make(3, 'AWARD', '2026-02-01', { isSample: true })]
+
+  test('UT-40 추가: 새 번호(가장 큰 번호 + 1)와 실제 성과로 끝에 붙이고, 원본은 그대로', () => {
+    const next = achievementsReducer(list, { type: 'add', input: input('새 성과') })
+    expect(ids(next)).toEqual([1, 3, 4])
+    expect(next[2]).toMatchObject({ id: 4, title: '새 성과', isSample: false })
+    expect(ids(list)).toEqual([1, 3])
+  })
+
+  test('UT-41 수정: 내용만 바꾸고 번호와 예시 여부는 그대로 (예시 배지 유지, P174)', () => {
+    const next = achievementsReducer(list, { type: 'update', id: 3, input: input('고친 제목') })
+    expect(next[1]).toMatchObject({ id: 3, title: '고친 제목', isSample: true })
+    expect(next[0]).toBe(list[0]) // 다른 항목은 건드리지 않음
+  })
+
+  test('UT-42 없는 번호를 수정하면 받은 목록을 그대로 돌려준다', () => {
+    expect(achievementsReducer(list, { type: 'update', id: 99, input: input('x') })).toBe(list)
+  })
+
+  test('UT-43 삭제: 그 번호만 뺀다', () => {
+    expect(ids(achievementsReducer(list, { type: 'delete', id: 1 }))).toEqual([3])
+  })
+
+  test('UT-44 없는 번호를 삭제하면 받은 목록을 그대로 돌려준다', () => {
+    expect(achievementsReducer(list, { type: 'delete', id: 99 })).toBe(list)
+  })
+
+  test('UT-45 통째로 바꾸기: 받은 목록으로 (다른 탭에서 바뀐 경우, P174)', () => {
+    const other = [make(7, 'CONTEST', '2026-10-11')]
+    expect(achievementsReducer(list, { type: 'replace', achievements: other })).toBe(other)
+  })
+})
+
+describe('applyChange — 저장 먼저, 성공하면 반영 (EX-12)', () => {
+  const list = [make(1, 'PAPER', '2026-01-01')]
+
+  test('UT-46 없는 번호면 저장도 하지 않고 실패(null)', () => {
+    const save = vi.fn(() => true)
+    expect(applyChange(list, { type: 'delete', id: 99 }, save)).toBeNull()
+    expect(save).not.toHaveBeenCalled()
+  })
+
+  test('UT-47 저장에 실패하면 실패(null) — 화면은 그대로', () => {
+    expect(applyChange(list, { type: 'add', input: input('x') }, () => false)).toBeNull()
+  })
+
+  test('UT-48 저장에 성공하면 저장한 그 목록을 돌려준다', () => {
+    const save = vi.fn(() => true)
+    const next = applyChange(list, { type: 'add', input: input('x') }, save)
+    expect(ids(next ?? [])).toEqual([1, 2])
+    expect(save).toHaveBeenCalledWith(next)
   })
 })

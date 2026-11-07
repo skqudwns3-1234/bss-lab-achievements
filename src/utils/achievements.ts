@@ -1,4 +1,4 @@
-import type { Achievement, AchievementFilter, AchievementType, NewestSummary } from '../types.ts'
+import type { Achievement, AchievementFilter, AchievementType, AchievementsAction, NewestSummary } from '../types.ts'
 
 // 화면에 보여 줄 값을 계산하는 함수들 (design.md 9절, spec/02 2-3a).
 // 화면(React)·저장소와 상관없는 순수 함수만 둔다 — 같은 값을 넣으면 늘 같은 결과, 받은 목록은 바꾸지 않음.
@@ -82,4 +82,43 @@ export function getYears(list: Achievement[]): number[] {
 // "개수 + 1"이 아닌 이유 — 1·2·3 중 2를 지우면 개수가 2라서 새 번호 3이 기존 3번과 겹친다
 export function nextId(list: Achievement[]): number {
   return list.length === 0 ? 1 : Math.max(...list.map((achievement) => achievement.id)) + 1
+}
+
+// ── 성과 목록 바꾸기 (spec/02 2-5, P174–P175) ──
+
+// 목록을 바꾸는 규칙을 한곳에 모은 함수(reducer). 원본은 그대로 두고 새 목록을 돌려준다.
+// 없는 번호를 수정·삭제하면 받은 목록을 그대로 돌려준다 — "바뀐 게 없다"는 표시 (applyChange가 이걸로 실패를 안다)
+export function achievementsReducer(state: Achievement[], action: AchievementsAction): Achievement[] {
+  switch (action.type) {
+    case 'add':
+      return [...state, { ...action.input, id: nextId(state), isSample: false }]
+    case 'update': {
+      const target = state.find((achievement) => achievement.id === action.id)
+      if (!target) return state
+      // 번호와 예시 여부는 그대로 — 예시 성과를 고쳐도 "예시" 배지는 남는다 (P174)
+      return state.map((achievement) =>
+        achievement.id === action.id ? { ...action.input, id: target.id, isSample: target.isSample } : achievement,
+      )
+    }
+    case 'delete':
+      if (!state.some((achievement) => achievement.id === action.id)) return state
+      return state.filter((achievement) => achievement.id !== action.id)
+    case 'replace':
+      return action.achievements
+  }
+}
+
+// "저장 먼저, 성공하면 반영" 판단 (EX-12, design 6.1). 저장된 새 목록을 돌려주고, 실패하면 null.
+// - 바뀐 게 없으면(없는 번호) 저장도 하지 않고 null
+// - 저장에 실패하면 null → 화면은 그대로
+// 화면(Provider) 없이 테스트하려고 순수 함수로 뺐다 — 저장 함수는 받아서 쓴다
+export function applyChange(
+  current: Achievement[],
+  action: AchievementsAction,
+  save: (list: Achievement[]) => boolean,
+): Achievement[] | null {
+  const next = achievementsReducer(current, action)
+  if (next === current) return null
+  if (!save(next)) return null
+  return next
 }
