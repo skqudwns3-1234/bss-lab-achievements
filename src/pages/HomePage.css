@@ -317,6 +317,107 @@
   line-height: 1.15;
 }
 
+/* ③ 구역 머리: 왼쪽 제목, 오른쪽 "전체 성과 보기" — 좁으면 아래로 (시안 값) */
+.home-section__head--split {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+  margin-bottom: 40px;
+}
+
+/* ③ 최근 성과 카드들 (RecentAchievementCard, 1-5) — 넓으면 4장 한 줄, 1100px 이하 2장씩 두 줄 (P180).
+   grid는 같은 줄의 카드 높이를 저절로 맞춘다 */
+.recent-list {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+@media (max-width: 1100px) {
+  .recent-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* 카드 1장 — 카드 전체가 버튼. 버튼 기본 모양을 지우고 시안 카드 모양으로 */
+.recent-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 280px;
+  padding: 28px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.recent-card:hover {
+  border-color: var(--color-border-strong);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+}
+
+/* 배지와 날짜 — 카드가 좁으면(휴대폰 2×2) 날짜가 다음 줄로 내려가 카드 밖으로 넘치지 않게 (1-5 확인 중 발견) */
+.recent-card__top {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px 12px;
+}
+
+.recent-card__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.recent-card__date {
+  font-size: 13px;
+  color: var(--color-muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* 제목 최대 4줄, 저자·학회 각 1줄 — 넘치면 … (P062) */
+.recent-card__title {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
+  overflow: hidden;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: -0.02em;
+}
+
+.recent-card__meta {
+  display: block;
+  min-height: 1.6em; /* 비어 있어도 줄 높이는 남겨 카드끼리 높이를 맞춤 */
+  overflow: hidden;
+  font-size: 14px;
+  color: var(--color-muted);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.recent-card__more {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  margin-top: auto;
+  font-size: 14px;
+  font-weight: 500;
+}
+
 /* ② 연구 분야 칸들 (ResearchAreaList)
    grid: 한 칸을 최소 300px로 잡고, 한 줄에 들어가는 만큼 같은 폭으로 나눈다.
    넓은 화면은 3칸 한 줄, 좁으면 2칸·1칸으로 자동으로 줄어든다.
@@ -485,32 +586,3 @@
     width: min(240px, 70%);
   }
 }
-
-/* ── 뼈대 확인용 자리 표시 (각 구역에 내용을 넣으면 지운다) ── */
-.home-placeholder {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 24px;
-  border: 2px dashed var(--color-border-input);
-  border-radius: var(--radius-card);
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 20px;
-  text-align: center;
-  color: var(--color-muted);
-}
-
-.home-placeholder small {
-  font-family: var(--font-body);
-  font-weight: 400;
-  font-size: 14px;
-}
-
-/* 시안의 대략적인 높이 */
-.home-placeholder--recent {
-  min-height: 380px;
-}
-

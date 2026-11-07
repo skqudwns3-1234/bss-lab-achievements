@@ -155,10 +155,19 @@ button {
 /* ── 유형 배지, 선택 칩, 입력칸 ── */
 .badge {
   display: inline-block;
-  padding: 2px 10px;
+  padding: 4px 12px; /* 시안 값 (1-5에서 맞춤) */
   font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
   border: 1px solid var(--color-text);
   border-radius: var(--radius-pill);
+}
+
+/* 지어낸 예시 성과 표시 (BR-19) — 실제 성과와 헷갈리지 않게 회색 점선 */
+.badge--sample {
+  border-style: dashed;
+  border-color: var(--color-faint);
+  color: var(--color-muted);
 }
 
 .chip {
