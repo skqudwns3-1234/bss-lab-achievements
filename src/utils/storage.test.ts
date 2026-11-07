@@ -103,6 +103,14 @@ describe('loadAchievements — 불러오기 (EX-11, P164)', () => {
     expect(result.notices[0]).toContain('겹쳐')
   })
 
+  test('UT-31 항목이 있었는데 전부 틀리면 처음 데이터 + 안내 (P169)', () => {
+    useFakeStorage(saved([stored(1, { type: 'BOOK' }), 'abc']))
+    const result = loadAchievements()
+    expect(result.achievements).toEqual(SAMPLE_ACHIEVEMENTS)
+    expect(result.notices).toHaveLength(3)
+    expect(result.notices[2]).toContain('모두 형식에 맞지 않아')
+  })
+
   test('UT-26 브라우저가 저장소를 막아도 멈추지 않고 처음 데이터 + 안내', () => {
     useFakeStorage({}, { failRead: true })
     const result = loadAchievements()

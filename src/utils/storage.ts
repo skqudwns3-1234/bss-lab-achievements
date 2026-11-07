@@ -121,6 +121,15 @@ export function loadAchievements(): LoadResult {
       seenIds.add(result.achievement.id)
     }
   })
+
+  // 항목이 있었는데 전부 틀려 0건이 되면 → 데이터가 망가진 것으로 보고 처음 데이터로 (P168–P169).
+  // 사용자가 일부러 다 지운 빈 목록([])과는 다르다. 원본은 2-5에서 백업 칸에 남긴다
+  if (items.length > 0 && achievements.length === 0) {
+    return {
+      achievements: [...SAMPLE_ACHIEVEMENTS],
+      notices: [...notices, '저장된 항목이 모두 형식에 맞지 않아 처음 데이터로 시작했어요.'],
+    }
+  }
   return { achievements, notices }
 }
 
