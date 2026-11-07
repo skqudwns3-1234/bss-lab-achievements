@@ -72,9 +72,18 @@
   filter: blur(7px);
 }
 
-/* 물방울 공통: 동그라미 + 가장자리만 살짝 어두운 원형 그러데이션 + 얇은 흰 테두리 */
+/* 물방울 = 바깥 상자(.droplet: 위치·크기·바닥 그림자) + 몸통(.droplet__body: 유리 질감·하이라이트).
+   마우스가 닿으면 HeroArt.tsx가 몸통의 모양(clip-path)을 매 프레임 바꿔 표면이 눌린다 (P146).
+   몸통만 잘라 내고, 바닥 그림자는 바깥 상자에 두어 잘리지 않게 한다 */
 .droplet {
   position: absolute;
+  border-radius: 50%;
+}
+
+/* 몸통: 동그라미 + 가장자리만 살짝 어두운 원형 그러데이션 + 얇은 흰 테두리 */
+.droplet__body {
+  position: absolute;
+  inset: 0;
   border-radius: 50%;
   background: radial-gradient(
     circle at 50% 45%,
@@ -84,20 +93,20 @@
     rgba(90, 98, 112, 0.3) 100%
   );
   border: 1px solid rgba(255, 255, 255, 0.7);
-  /* 마우스가 다가오면 HeroArt.tsx가 --push-x/y를 바꾼다. 끝이 살짝 넘쳤다 돌아오는 곡선이라 물처럼 출렁임 (P137) */
-  transform: translate(var(--push-x, 0px), var(--push-y, 0px));
-  transition: transform 0.9s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* 크기별 위치와 그림자 (안쪽 위는 어둡게, 안쪽 아래는 밝게, 바깥 아래로 그림자) */
+/* 크기별 위치와 그림자 — 바깥 상자에는 바닥 그림자, 몸통에는 안쪽 그림자 2겹(위는 어둡게, 아래는 밝게) */
 .droplet--xl {
   left: 300px;
   top: 40px;
   width: 380px;
   height: 380px;
+  box-shadow: 0 70px 80px -60px rgba(0, 0, 0, 0.22);
+}
+
+.droplet--xl .droplet__body {
   backdrop-filter: brightness(1.04) contrast(1.06);
-  box-shadow: inset 16px 22px 30px rgba(60, 68, 82, 0.3),
-    inset -20px -24px 34px rgba(255, 255, 255, 0.85), 0 70px 80px -60px rgba(0, 0, 0, 0.22);
+  box-shadow: inset 16px 22px 30px rgba(60, 68, 82, 0.3), inset -20px -24px 34px rgba(255, 255, 255, 0.85);
 }
 
 .droplet--lg {
@@ -105,9 +114,12 @@
   top: 330px;
   width: 270px;
   height: 270px;
+  box-shadow: 0 60px 70px -50px rgba(0, 0, 0, 0.22);
+}
+
+.droplet--lg .droplet__body {
   backdrop-filter: brightness(1.04) contrast(1.06);
-  box-shadow: inset 12px 16px 22px rgba(60, 68, 82, 0.3),
-    inset -14px -18px 26px rgba(255, 255, 255, 0.85), 0 60px 70px -50px rgba(0, 0, 0, 0.22);
+  box-shadow: inset 12px 16px 22px rgba(60, 68, 82, 0.3), inset -14px -18px 26px rgba(255, 255, 255, 0.85);
 }
 
 .droplet--md {
@@ -115,8 +127,11 @@
   top: 330px;
   width: 96px;
   height: 96px;
-  box-shadow: inset 5px 7px 10px rgba(60, 68, 82, 0.3),
-    inset -6px -8px 12px rgba(255, 255, 255, 0.85), 0 40px 40px -30px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 40px 40px -30px rgba(0, 0, 0, 0.2);
+}
+
+.droplet--md .droplet__body {
+  box-shadow: inset 5px 7px 10px rgba(60, 68, 82, 0.3), inset -6px -8px 12px rgba(255, 255, 255, 0.85);
 }
 
 .droplet--sm {
@@ -124,8 +139,11 @@
   top: 96px;
   width: 72px;
   height: 72px;
-  box-shadow: inset 4px 6px 8px rgba(60, 68, 82, 0.3),
-    inset -5px -6px 10px rgba(255, 255, 255, 0.85), 0 30px 30px -22px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 30px 30px -22px rgba(0, 0, 0, 0.2);
+}
+
+.droplet--sm .droplet__body {
+  box-shadow: inset 4px 6px 8px rgba(60, 68, 82, 0.3), inset -5px -6px 10px rgba(255, 255, 255, 0.85);
 }
 
 /* 하이라이트: 왼쪽 위 흰 반짝임(shine) + 작은 점(dot) + 아래쪽 밝은 빛(glow) */
@@ -143,9 +161,7 @@
   height: 11%;
   background: rgba(255, 255, 255, 0.96);
   filter: blur(0.6px);
-  /* 반짝임은 마우스 쪽으로 조금 (--shine-x/y) */
-  transform: translate(var(--shine-x, 0px), var(--shine-y, 0px)) rotate(-35deg);
-  transition: transform 0.6s ease-out;
+  transform: rotate(-35deg);
 }
 
 .droplet__dot {
@@ -195,48 +211,6 @@
   .hero-art {
     transform: scale(0.66);
     opacity: 0.75;
-  }
-}
-
-/* 출렁임 (P138) — 마우스가 가까이 들어오는 순간 HeroArt.tsx가 droplet--wobble을 붙인다.
-   모양(border-radius)이 살짝 찌그러지고 가로·세로가 번갈아 늘었다 줄며 제자리로.
-   밀려나는 움직임(transform)과 따로 놀도록 scale 속성을 따로 쓴다 */
-.droplet--wobble {
-  animation: droplet-wobble 0.9s ease-out;
-}
-
-@keyframes droplet-wobble {
-  0% {
-    border-radius: 50%;
-    scale: 1 1;
-  }
-  20% {
-    border-radius: 46% 54% 52% 48% / 54% 46% 54% 46%;
-    scale: 1.05 0.95;
-  }
-  45% {
-    border-radius: 53% 47% 47% 53% / 46% 54% 46% 54%;
-    scale: 0.97 1.03;
-  }
-  70% {
-    border-radius: 49% 51% 51% 49% / 51% 49% 51% 49%;
-    scale: 1.015 0.985;
-  }
-  100% {
-    border-radius: 50%;
-    scale: 1 1;
-  }
-}
-
-/* "동작 줄이기"를 켠 사용자에게는 움직임 없음 (HeroArt.tsx에서도 감시를 시작하지 않음) */
-@media (prefers-reduced-motion: reduce) {
-  .droplet,
-  .droplet__shine {
-    transition: none;
-  }
-
-  .droplet--wobble {
-    animation: none;
   }
 }
 
