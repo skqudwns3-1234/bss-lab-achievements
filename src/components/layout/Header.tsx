@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link, NavLink } from 'react-router'
+import { LAB } from '../../data/lab.ts'
 import { NAV_ITEMS } from './navItems.ts'
 
 export default function Header() {
@@ -11,7 +12,7 @@ export default function Header() {
       <div className="header__inner">
         <Link to="/" className="header__logo" onClick={() => setMenuOpen(false)}>
           <span className="header__logo-main">lab archive.</span>
-          <span className="header__logo-sub">연구실 성과 아카이브</span>
+          <span className="header__logo-sub">{LAB.shortName} 연구실 성과 아카이브</span>
         </Link>
 
         <button

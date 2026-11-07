@@ -21,7 +21,7 @@ export default function HomePage() {
 
           <div className="home-hero__body">
             <p className="home-hero__desc">
-              {LAB.name}의 논문·수상·특허·공모전 성과를 모아 보여 줍니다. 제목이나 저자로
+              {LAB.shortName} 연구실의 논문·수상·특허·공모전 성과를 모아 보여 줍니다. 제목이나 저자로
               검색하고, 유형과 연도로 걸러 볼 수 있어요.
             </p>
             <div className="home-hero__actions">
