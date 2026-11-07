@@ -106,16 +106,17 @@ button {
   color: var(--color-muted);
 }
 
-/* ── 버튼: 알약 모양 ── */
+/* ── 버튼: 알약 모양 (시안 값 — 높이 48px, 좌우 22px, 글씨 14px) ── */
 .btn {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   height: var(--control-height);
-  padding: 0 24px;
+  padding: 0 22px;
   border: 1px solid transparent;
   border-radius: var(--radius-pill);
   font: inherit;
+  font-size: 14px;
   font-weight: 500;
   text-decoration: none;
   cursor: pointer;
@@ -126,10 +127,11 @@ button {
   color: #ffffff;
 }
 
+/* 흰 버튼: 테두리 대신 연한 선(그림자 1px)과 아주 옅은 그림자 — 시안 그대로 */
 .btn--secondary {
   background: var(--color-surface);
   color: var(--color-text);
-  border-color: var(--color-border-input);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 0 0 1px var(--color-border);
 }
 
 .btn--danger {

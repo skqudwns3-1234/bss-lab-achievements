@@ -1,17 +1,39 @@
+import { Link } from 'react-router'
+import ArrowIcon from '../components/common/ArrowIcon.tsx'
+import { LAB } from '../data/lab.ts'
 import './HomePage.css'
 
 // ④ 지원 안내(연락 상자) 표시 스위치 — 부원 모집 기간에만 true, 기간이 끝나면 false로 바꾼다
 const SHOW_RECRUIT_BOX = true
 
-// 홈 뼈대 (spec/01_home.md 1-1). 구역 4개의 자리만 잡고, 내용은 1-2부터 채운다.
+// 홈 (spec/01_home.md). 1-1 뼈대, 1-2 첫 화면 제목·설명·버튼까지 채움.
 export default function HomePage() {
   return (
     <div className="home">
-      {/* ① 첫 화면: NEW 알약, 큰 제목, 설명, 버튼 2개, 통계 4칸 (+ D4 물방울 배경) */}
+      {/* ① 첫 화면: 큰 제목, 설명, 버튼 2개 (NEW 알약·통계 4칸은 성과 데이터 뒤에, D4 물방울 배경은 1-8) */}
       <section className="home__hero" aria-label="첫 화면">
-        <div className="home-placeholder home-placeholder--hero">
-          ① 첫 화면
-          <small>NEW 알약 · 큰 제목 · 설명 · 버튼 2개 · 통계 4칸</small>
+        <div className="home-hero__content">
+          <h1 className="home-hero__title">
+            연구의 기록을
+            <br />
+            <span className="home-hero__title-sub">한곳에서.</span>
+          </h1>
+
+          <div className="home-hero__body">
+            <p className="home-hero__desc">
+              {LAB.name}의 논문·수상·특허·공모전 성과를 모아 보여 줍니다. 제목이나 저자로
+              검색하고, 유형과 연도로 걸러 볼 수 있어요.
+            </p>
+            <div className="home-hero__actions">
+              <Link to="/achievements" className="btn btn--primary">
+                성과 둘러보기
+                <ArrowIcon />
+              </Link>
+              <Link to="/members" className="btn btn--secondary">
+                부원 보기
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
 

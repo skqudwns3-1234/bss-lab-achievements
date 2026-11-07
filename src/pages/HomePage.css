@@ -11,6 +11,48 @@
   padding: 48px 0 80px;
 }
 
+/* 글자 묶음은 물방울(1-8)보다 위에 오게 */
+.home-hero__content {
+  position: relative;
+  z-index: 1;
+}
+
+/* 큰 제목 두 줄 — 시안 값 */
+.home-hero__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(52px, 7.6vw, 108px);
+  line-height: 1.12;
+  letter-spacing: -0.05em;
+}
+
+.home-hero__title-sub {
+  color: var(--color-faint);
+}
+
+/* 설명 + 버튼 묶음 */
+.home-hero__body {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 400px;
+  margin-top: 40px;
+}
+
+.home-hero__desc {
+  margin: 0;
+  font-size: 15px;
+  color: var(--color-muted);
+}
+
+/* 버튼 2개 — 화면이 좁으면 다음 줄로 */
+.home-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 /* ②·③ 일반 구역 */
 .home__section {
   padding: var(--section-gap) 0;
@@ -51,10 +93,6 @@
 }
 
 /* 시안의 대략적인 높이 */
-.home-placeholder--hero {
-  min-height: 520px;
-}
-
 .home-placeholder--research {
   min-height: 320px;
 }
