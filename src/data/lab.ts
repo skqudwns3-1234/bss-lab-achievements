@@ -4,7 +4,8 @@
 export const LAB = {
   name: 'BigdataSystemSoftware 연구실(BSS)',
   shortName: 'BSS', // 지원 메일 제목 등 짧게 쓸 때
-  fullName: 'BigdataSystemSoftware', // BSS 풀 네임 — 연구실 소개 첫머리에 쓰임. 한글 정식 이름도 정해지면 여기 옆에 추가
+  fullName: 'BigdataSystemSoftware', // BSS 풀 네임 — 연구실 소개 첫머리에 쓰임
+  koreanName: '빅데이터 시스템 소프트웨어', // 풀 네임의 한글 이름 (P122)
   department: '대진대학교 컴퓨터공학과',
   location: '이공학관 다동 A9-401',
   contactEmail: '20231298@daejin.ac.kr', // 공용 메일이 없어 사용자 본인 학교 메일 (P113). 공용 메일이 생기면 바꾸기
