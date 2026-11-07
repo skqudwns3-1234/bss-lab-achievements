@@ -84,6 +84,9 @@
     rgba(90, 98, 112, 0.3) 100%
   );
   border: 1px solid rgba(255, 255, 255, 0.7);
+  /* 마우스가 다가오면 HeroArt.tsx가 --push-x/y를 바꾼다. 끝이 살짝 넘쳤다 돌아오는 곡선이라 물처럼 출렁임 (P137) */
+  transform: translate(var(--push-x, 0px), var(--push-y, 0px));
+  transition: transform 0.9s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 /* 크기별 위치와 그림자 (안쪽 위는 어둡게, 안쪽 아래는 밝게, 바깥 아래로 그림자) */
@@ -140,7 +143,9 @@
   height: 11%;
   background: rgba(255, 255, 255, 0.96);
   filter: blur(0.6px);
-  transform: rotate(-35deg);
+  /* 반짝임은 마우스 쪽으로 조금 (--shine-x/y) */
+  transform: translate(var(--shine-x, 0px), var(--shine-y, 0px)) rotate(-35deg);
+  transition: transform 0.6s ease-out;
 }
 
 .droplet__dot {
@@ -190,6 +195,14 @@
   .hero-art {
     transform: scale(0.66);
     opacity: 0.75;
+  }
+}
+
+/* "동작 줄이기"를 켠 사용자에게는 움직임 없음 (HeroArt.tsx에서도 감시를 시작하지 않음) */
+@media (prefers-reduced-motion: reduce) {
+  .droplet,
+  .droplet__shine {
+    transition: none;
   }
 }
 
