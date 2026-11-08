@@ -1,0 +1,147 @@
+/* 성과 자세히 보기 팝업 (AchievementModal.tsx, 1-9) */
+
+/* 화면 전체를 덮는 어두운 배경 — 팝업 상자를 가운데에 */
+.achievement-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(17, 17, 17, 0.55);
+}
+
+/* 팝업 상자 — 내용이 길면 상자 안에서만 스크롤, 끝에 닿아도 뒤 화면이 따라 스크롤되지 않게(overscroll-behavior) */
+.achievement-modal__panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  max-width: 560px;
+  max-height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 32px;
+  border-radius: var(--radius-form);
+  background: var(--color-surface);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
+}
+
+/* 배지·날짜·닫기 줄 — 내용이 길어 팝업 안을 스크롤해도 위에 붙어 있게(sticky).
+   휴대폰은 바깥 여백이 좁아 바깥을 누르기 어려우므로 닫기 버튼이 늘 보여야 함 (1-9 2중 점검에서 발견).
+   팝업 안쪽 여백만큼 바깥으로 넓혀(음수 margin) 위 끝에 붙인다 */
+.achievement-modal__top {
+  position: sticky;
+  top: -32px;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin: -32px -32px 0;
+  padding: 32px 32px 12px;
+  background: var(--color-surface);
+}
+
+.achievement-modal__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.achievement-modal__date {
+  font-size: 13px;
+  color: var(--color-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.achievement-modal__close {
+  margin-left: auto;
+  height: var(--control-height-sm);
+  padding: 0 16px;
+  border: 1px solid var(--color-border-input);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.achievement-modal__title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 1.45;
+  letter-spacing: -0.02em;
+}
+
+/* 저자·지도교수·학회·DOI — 왼쪽 이름, 오른쪽 값 */
+.achievement-modal__info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  font-size: 15px;
+}
+
+.achievement-modal__row {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  gap: 16px;
+}
+
+.achievement-modal__row dt {
+  color: var(--color-muted);
+}
+
+.achievement-modal__row dd {
+  margin: 0;
+}
+
+.achievement-modal__row a {
+  color: var(--color-text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.achievement-modal__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* 휴대폰: 가장자리 12px만 남기고 거의 꽉 찬 화면, 이름은 값 위로 (P182) */
+@media (max-width: 760px) {
+  .achievement-modal {
+    align-items: stretch;
+    padding: 12px;
+  }
+
+  .achievement-modal__panel {
+    max-width: none;
+    padding: 20px;
+    border-radius: var(--radius-card);
+  }
+
+  .achievement-modal__top {
+    top: -20px;
+    margin: -20px -20px 0;
+    padding: 20px 20px 10px;
+  }
+
+  .achievement-modal__title {
+    font-size: 19px;
+  }
+
+  .achievement-modal__row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2px;
+  }
+
+  .achievement-modal__actions .btn {
+    flex: 1;
+    justify-content: center;
+  }
+}

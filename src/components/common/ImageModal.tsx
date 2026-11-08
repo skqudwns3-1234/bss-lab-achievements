@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useModal } from '../../hooks/useModal.ts'
 import './ImageModal.css'
 
 type ImageModalProps = {
@@ -8,41 +8,20 @@ type ImageModalProps = {
 }
 
 // 그림 하나를 화면 가득 크게 보여 주는 팝업 (1-4 모집 포스터, P133).
-// 닫는 방법 3가지: X 버튼, 바깥(어두운 배경) 누르기, Esc 키
+// 닫는 방법 3가지: X 버튼, 바깥(어두운 배경) 누르기, Esc 키.
+// Esc·스크롤 막기·포커스(열면 닫기 버튼, 닫으면 포스터 버튼으로)·Tab 가두기는 공통 훅 useModal이 맡는다 (1-9, P183)
 export default function ImageModal({ src, alt, onClose }: ImageModalProps) {
-  // 팝업이 열리면 닫기 버튼에 포커스 — 키보드 사용자가 바로 닫을 수 있게
-  const closeButtonRef = useRef<HTMLButtonElement>(null)
-
-  // 팝업이 떠 있는 동안: Esc 키로 닫기 + 뒤 화면 스크롤 막기.
-  // 키보드·문서(body)는 React 화면 밖이라 useEffect에서 연결하고,
-  // 팝업이 사라질 때 return의 정리 함수(cleanup)로 원래대로 되돌린다.
-  useEffect(() => {
-    closeButtonRef.current?.focus()
-
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === 'Escape') onClose()
-    }
-    document.addEventListener('keydown', handleKeyDown)
-
-    const previousOverflow = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown)
-      document.body.style.overflow = previousOverflow
-    }
-  }, [onClose])
+  const { dialogRef, closeButtonRef, backdropProps } = useModal(onClose)
 
   return (
-    // 바깥(어두운 배경)을 누르면 닫힘. 안쪽 그림을 누를 때는 닫히지 않게 currentTarget과 비교
+    // 바깥(어두운 배경)을 누르면 닫힘. 안쪽 그림을 누를 때는 닫히지 않음 (useModal의 backdropProps)
     <div
+      ref={dialogRef}
       className="image-modal"
       role="dialog"
       aria-modal="true"
       aria-label={alt}
-      onClick={(event) => {
-        if (event.target === event.currentTarget) onClose()
-      }}
+      {...backdropProps}
     >
       <button ref={closeButtonRef} type="button" className="image-modal__close" onClick={onClose}>
         닫기 ✕

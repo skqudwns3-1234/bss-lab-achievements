@@ -418,6 +418,34 @@
   font-weight: 500;
 }
 
+/* 휴대폰 2×2 카드 줄이기 (1-9, P060·P182): 여백 16px, 제목 16px·최대 3줄, 저자·학회 숨김 → 전체 내용은 팝업에서 */
+@media (max-width: 760px) {
+  .recent-list {
+    gap: 12px;
+  }
+
+  .recent-card {
+    gap: 12px;
+    min-height: 0;
+    padding: 16px;
+    border-radius: var(--radius-input);
+  }
+
+  .recent-card__title {
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    font-size: 16px;
+  }
+
+  .recent-card__meta {
+    display: none;
+  }
+
+  .recent-card__more {
+    min-height: 0; /* 카드 전체가 버튼이라 "자세히" 글자 자체는 작아도 됨 */
+  }
+}
+
 /* ② 연구 분야 칸들 (ResearchAreaList)
    grid: 한 칸을 최소 300px로 잡고, 한 줄에 들어가는 만큼 같은 폭으로 나눈다.
    넓은 화면은 3칸 한 줄, 좁으면 2칸·1칸으로 자동으로 줄어든다.

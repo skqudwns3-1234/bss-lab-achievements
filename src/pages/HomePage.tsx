@@ -1,5 +1,6 @@
-import { useMemo } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { Link } from 'react-router'
+import AchievementModal from '../components/achievements/AchievementModal.tsx'
 import ArrowIcon from '../components/common/ArrowIcon.tsx'
 import EmptyState from '../components/common/EmptyState.tsx'
 import HeroArt from '../components/home/HeroArt.tsx'
@@ -8,16 +9,29 @@ import RecruitBox from '../components/home/RecruitBox.tsx'
 import ResearchAreaList from '../components/home/ResearchAreaList.tsx'
 import { useAchievements } from '../context/useAchievements.ts'
 import { LAB } from '../data/lab.ts'
+import type { Achievement } from '../types.ts'
 import { sortByLatest } from '../utils/achievements.ts'
 import './HomePage.css'
 
-// 홈 (spec/01_home.md). 1-1 뼈대, 1-2 첫 화면, 1-3 연구 분야, 1-4 지원 안내, 1-8 물방울 배경, 1-5 최근 성과까지 채움.
+// 홈 (spec/01_home.md). 1-1 뼈대, 1-2 첫 화면, 1-3 연구 분야, 1-4 지원 안내, 1-8 물방울 배경, 1-5 최근 성과, 1-9 팝업까지 채움.
 export default function HomePage() {
   // 성과 목록 상자(2-5)에서 꺼내 쓴다 — 다른 탭에서 바뀌어도 자동으로 다시 그려짐
   const { achievements } = useAchievements()
 
   // 최근 성과: 최신순 앞 4개 (H6, BR-14). 목록이 바뀔 때만 다시 정렬하려고 useMemo (1-5)
   const recent = useMemo(() => sortByLatest(achievements).slice(0, 4), [achievements])
+
+  // 팝업으로 열린 성과 — 성과 자체가 아니라 번호(id)를 기억하고 지금 목록에서 찾는다 (1-9, P182).
+  // 그래서 팝업이 열린 채 다른 탭에서 그 성과를 고치면 바로 반영되고, 지우면 팝업이 저절로 닫힌다
+  const [selectedId, setSelectedId] = useState<number | null>(null)
+  const selected = achievements.find((achievement) => achievement.id === selectedId) ?? null
+  // ★ 사라진 번호는 바로 잊는다 — 안 잊으면 나중에 새 성과가 같은 번호(가장 큰 번호 + 1)를 받을 때 팝업이 다시 튀어나옴.
+  //   렌더 중에 상태를 맞추는 방식(React 공식 문서) — useEffect로 한 번 더 그리는 것보다 단순
+  if (selectedId !== null && !selected) setSelectedId(null)
+
+  // 열고 닫는 함수는 useCallback으로 고정 — 카드·팝업에 넘기는 함수가 그릴 때마다 새로 생기지 않게
+  const openModal = useCallback((achievement: Achievement) => setSelectedId(achievement.id), [])
+  const closeModal = useCallback(() => setSelectedId(null), [])
 
   return (
     <div className="home">
@@ -63,7 +77,7 @@ export default function HomePage() {
         </section>
       )}
 
-      {/* ③ 최근 성과: RECENT ACHIEVEMENTS, 카드 4장 (1-5). 카드를 누르면 팝업은 1-9에서 연결 */}
+      {/* ③ 최근 성과: RECENT ACHIEVEMENTS, 카드 4장 (1-5). 카드를 누르면 성과 팝업 (1-9) */}
       <section className="home__section" aria-labelledby="home-recent-title">
         <div className="home-section__head home-section__head--split">
           <div>
@@ -84,8 +98,7 @@ export default function HomePage() {
         ) : (
           <div className="recent-list">
             {recent.map((achievement) => (
-              // onOpen: 눌렀다는 신호만 — 팝업은 1-9에서 연결 (P180)
-              <RecentAchievementCard key={achievement.id} achievement={achievement} onOpen={() => {}} />
+              <RecentAchievementCard key={achievement.id} achievement={achievement} onOpen={openModal} />
             ))}
           </div>
         )}
@@ -101,6 +114,9 @@ export default function HomePage() {
         </section>
       )}
       {/* ===== ④ 지원 안내 끝 — 아예 없애려면 여기까지 지운다 ===== */}
+
+      {/* 성과 팝업 (1-9) — 열린 성과가 있을 때만 */}
+      {selected && <AchievementModal achievement={selected} onClose={closeModal} />}
     </div>
   )
 }
