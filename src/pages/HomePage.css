@@ -255,6 +255,30 @@
   z-index: 1;
 }
 
+/* NEW 알약 (1-7) — 시안 값: 흰 알약 + 회색 테두리, 안쪽 검정 "NEW" */
+.home-hero__new {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 32px;
+  padding: 6px 14px 6px 8px;
+  border: 1px solid var(--color-border-input);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  color: var(--color-muted);
+  font-size: 13px;
+}
+
+.home-hero__new-tag {
+  flex-shrink: 0;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  background: var(--color-text);
+  color: var(--color-surface);
+  font-size: 12px;
+  font-weight: 500;
+}
+
 /* 큰 제목 두 줄 — 시안 값 */
 .home-hero__title {
   margin: 0;

@@ -71,11 +71,14 @@ export function countByType(list: Achievement[]): Record<AchievementType, number
 
 // 홈 NEW 알약 내용: 가장 최근 날짜 + 그날 성과 개수.
 // 그날 성과가 한 유형이면 유형 이름("공모전 2건"), 섞이면 "성과 2건"으로 합친다 (P161).
-// 성과가 하나도 없으면 null → 알약을 숨긴다 (EX-09)
-export function getNewestSummary(list: Achievement[]): NewestSummary | null {
-  if (list.length === 0) return null
-  const date = sortByLatest(list)[0].achievedOn
-  const sameDay = list.filter((achievement) => achievement.achievedOn === date)
+// today('YYYY-MM-DD')보다 뒤 날짜(미래) 성과는 빼고 계산한다 — 미래 날짜를 허용해서(Q1) 아직 오지 않은 날이
+// "최근 등록"으로 뜨지 않게 (1-7, P186). 오늘 당일은 포함. 날짜 형식이 같아서 글자 비교로 앞뒤를 알 수 있다.
+// 남는 성과가 없으면 null → 알약을 숨긴다 (EX-09, EX-32)
+export function getNewestSummary(list: Achievement[], today: string): NewestSummary | null {
+  const past = list.filter((achievement) => achievement.achievedOn <= today)
+  if (past.length === 0) return null
+  const date = sortByLatest(past)[0].achievedOn
+  const sameDay = past.filter((achievement) => achievement.achievedOn === date)
   const types = new Set(sameDay.map((achievement) => achievement.type))
   const label = types.size === 1 ? TYPE_LABELS[sameDay[0].type] : '성과'
   return { date, label, count: sameDay.length }

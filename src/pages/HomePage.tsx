@@ -11,10 +11,18 @@ import StatList from '../components/home/StatList.tsx'
 import { useAchievements } from '../context/useAchievements.ts'
 import { LAB } from '../data/lab.ts'
 import type { Achievement } from '../types.ts'
-import { ACHIEVEMENT_TYPES, TYPE_LABELS, countByType, sortByLatest } from '../utils/achievements.ts'
+import {
+  ACHIEVEMENT_TYPES,
+  TYPE_LABELS,
+  countByType,
+  formatDate,
+  getNewestSummary,
+  sortByLatest,
+} from '../utils/achievements.ts'
+import { todayYmd } from '../utils/date.ts'
 import './HomePage.css'
 
-// 홈 (spec/01_home.md). 1-1 뼈대, 1-2 첫 화면, 1-3 연구 분야, 1-4 지원 안내, 1-8 물방울 배경, 1-5 최근 성과, 1-9 팝업, 1-6 통계까지 채움.
+// 홈 (spec/01_home.md). 1-1 뼈대, 1-2 첫 화면, 1-3 연구 분야, 1-4 지원 안내, 1-8 물방울 배경, 1-5 최근 성과, 1-9 팝업, 1-6 통계, 1-7 NEW 알약까지 — 홈 완성.
 export default function HomePage() {
   // 성과 목록 상자(2-5)에서 꺼내 쓴다 — 다른 탭에서 바뀌어도 자동으로 다시 그려짐
   const { achievements } = useAchievements()
@@ -22,13 +30,20 @@ export default function HomePage() {
   // 최근 성과: 최신순 앞 4개 (H6, BR-14). 목록이 바뀔 때만 다시 정렬하려고 useMemo (1-5)
   const recent = useMemo(() => sortByLatest(achievements).slice(0, 4), [achievements])
 
-  // 통계 4칸: **실제 성과만** 유형별로 센다 — 예시 성과는 빼고 (1-6, P184, BR-20).
-  // 논문·수상·특허·공모전 순서(ACHIEVEMENT_TYPES)로 칸을 만든다. 팝업을 열고 닫을 때처럼 목록은 그대로인데
-  // 홈만 다시 그려질 때 다시 세지 않으려고 useMemo — 목록이 바뀔 때만 계산 (지금 8건에서는 차이가 작음)
+  // 실제 성과만 (예시 성과는 뺌) — 통계 4칸(1-6)과 NEW 알약(1-7)이 같은 기준으로 같이 씀 (BR-20, P184·P186).
+  // 아래 계산들은 팝업을 열고 닫을 때처럼 목록은 그대로인데 홈만 다시 그려질 때 다시 하지 않으려고 useMemo
+  // — 목록이 바뀔 때만 계산 (지금 8건에서는 차이가 작음)
+  const real = useMemo(() => achievements.filter((achievement) => !achievement.isSample), [achievements])
+
+  // 통계 4칸: 실제 성과를 유형별로 세서 논문·수상·특허·공모전 순서(ACHIEVEMENT_TYPES)로 칸을 만든다 (1-6)
   const stats = useMemo(() => {
-    const counts = countByType(achievements.filter((achievement) => !achievement.isSample))
+    const counts = countByType(real)
     return ACHIEVEMENT_TYPES.map((type) => ({ label: TYPE_LABELS[type], count: counts[type] }))
-  }, [achievements])
+  }, [real])
+
+  // NEW 알약: 실제 성과 중 오늘까지의 가장 최근 날짜와 그날 개수 (1-7, P186). 없으면 null → 숨김 (EX-09, EX-32).
+  // 오늘 날짜는 계산할 때 한 번 읽는다 — 켜 둔 채 자정이 지나면 목록이 바뀌거나 새로고침할 때 반영 (영향 작아 그대로)
+  const newest = useMemo(() => getNewestSummary(real, todayYmd()), [real])
 
   // 팝업으로 열린 성과 — 성과 자체가 아니라 번호(id)를 기억하고 지금 목록에서 찾는다 (1-9, P182).
   // 그래서 팝업이 열린 채 다른 탭에서 그 성과를 고치면 바로 반영되고, 지우면 팝업이 저절로 닫힌다
@@ -44,10 +59,17 @@ export default function HomePage() {
 
   return (
     <div className="home">
-      {/* ① 첫 화면: 큰 제목, 설명, 버튼 2개 + 물방울 배경(1-8) + 통계 4칸(1-6). NEW 알약은 1-7 */}
+      {/* ① 첫 화면: NEW 알약(1-7), 큰 제목, 설명, 버튼 2개 + 물방울 배경(1-8) + 통계 4칸(1-6) */}
       <section className="home__hero" aria-label="첫 화면">
         <HeroArt />
         <div className="home-hero__content">
+          {/* NEW 알약 — 보기만 하고 눌러도 동작 없음 (시안대로, P186) */}
+          {newest && (
+            <p className="home-hero__new">
+              <span className="home-hero__new-tag">NEW</span>
+              최근 등록 · {formatDate(newest.date)} {newest.label} {newest.count}건
+            </p>
+          )}
           <h1 className="home-hero__title">
             연구의 기록을
             <br />

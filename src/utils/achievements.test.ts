@@ -82,23 +82,37 @@ describe('countByType — 유형별 개수 (홈 통계)', () => {
 })
 
 describe('getNewestSummary — 홈 NEW 알약 (BR-15)', () => {
+  // 오늘 날짜를 정해 두고 계산 — 테스트가 실제 날짜에 따라 바뀌지 않게 (1-7)
+  const TODAY = '2026-11-08'
+
   test('UT-07 가장 최근 날짜가 한 유형뿐이면 유형 이름', () => {
     const list = [make(7, 'CONTEST', '2026-10-11'), make(8, 'CONTEST', '2026-10-11'), make(6, 'PAPER', '2026-07-06')]
-    expect(getNewestSummary(list)).toEqual({ date: '2026-10-11', label: '공모전', count: 2 })
+    expect(getNewestSummary(list, TODAY)).toEqual({ date: '2026-10-11', label: '공모전', count: 2 })
   })
 
   test('UT-08 가장 최근 날짜에 유형이 섞이면 "성과"로 합친다 (P161)', () => {
     const list = [make(5, 'AWARD', '2026-07-06'), make(6, 'PAPER', '2026-07-06')]
-    expect(getNewestSummary(list)).toEqual({ date: '2026-07-06', label: '성과', count: 2 })
+    expect(getNewestSummary(list, TODAY)).toEqual({ date: '2026-07-06', label: '성과', count: 2 })
   })
 
   test('UT-09 예전 날짜의 성과는 세지 않는다', () => {
     const list = [make(1, 'PAPER', '2026-01-01'), make(2, 'PAPER', '2026-01-01'), make(3, 'PATENT', '2026-05-05')]
-    expect(getNewestSummary(list)).toEqual({ date: '2026-05-05', label: '특허', count: 1 })
+    expect(getNewestSummary(list, TODAY)).toEqual({ date: '2026-05-05', label: '특허', count: 1 })
   })
 
   test('UT-10 0건이면 null (알약 숨김, EX-09)', () => {
-    expect(getNewestSummary([])).toBeNull()
+    expect(getNewestSummary([], TODAY)).toBeNull()
+  })
+
+  test('UT-58 오늘 이후(미래) 성과는 빼고 그 전 최근 날짜로, 미래만 있으면 null (EX-32, P186)', () => {
+    const list = [make(9, 'PAPER', '2026-12-01'), make(7, 'CONTEST', '2026-10-11'), make(8, 'CONTEST', '2026-10-11')]
+    expect(getNewestSummary(list, TODAY)).toEqual({ date: '2026-10-11', label: '공모전', count: 2 })
+    expect(getNewestSummary([make(9, 'PAPER', '2026-12-01'), make(10, 'AWARD', '2026-11-09')], TODAY)).toBeNull()
+  })
+
+  test('UT-59 오늘 당일 성과는 포함 (경계)', () => {
+    const list = [make(11, 'PATENT', TODAY), make(7, 'CONTEST', '2026-10-11')]
+    expect(getNewestSummary(list, TODAY)).toEqual({ date: TODAY, label: '특허', count: 1 })
   })
 })
 
