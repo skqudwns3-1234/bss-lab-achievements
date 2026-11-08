@@ -8,6 +8,7 @@ import {
   filterAchievements,
   getNewestSummary,
   nextId,
+  padCount,
   sortByLatest,
 } from './achievements.ts'
 
@@ -231,5 +232,14 @@ describe('findRequiredProblem · 틀린 입력은 저장하지 않기', () => {
   test('UT-53 없는 날짜(2026-02-30)·틀린 형식(2026/11/08)은 추가·수정하지 않는다', () => {
     expect(achievementsReducer(list, { type: 'add', input: { ...input('x'), achievedOn: '2026-02-30' } })).toBe(list)
     expect(achievementsReducer(list, { type: 'update', id: 1, input: { ...input('x'), achievedOn: '2026/11/08' } })).toBe(list)
+  })
+})
+
+describe('padCount — 숫자 두 자리 (BR-13, 1-6)', () => {
+  test('UT-57 한 자리는 앞에 0, 두 자리 이상은 그대로', () => {
+    expect(padCount(0)).toBe('00') // 성과 0건 (EX-09)
+    expect(padCount(9)).toBe('09')
+    expect(padCount(10)).toBe('10')
+    expect(padCount(100)).toBe('100') // 100 이상은 자르지 않음
   })
 })

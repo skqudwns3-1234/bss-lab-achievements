@@ -291,6 +291,55 @@
   gap: 8px;
 }
 
+/* ── 통계 4칸 (StatList, 1-6) — 시안 값: 위로 104px, 가는 선, 이름 17px, 숫자 72px ──
+   시안은 flex(칸 최소 200px)라 768px 근처에서 3칸 + 1칸으로 갈라짐 → grid로 4칸 한 줄 / 휴대폰 2×2만 (P184) */
+.stat-list {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 104px 0 0;
+  border-top: 1px solid var(--color-border-input);
+}
+
+.stat-list__item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 28px 24px 0 0;
+}
+
+.stat-list__label {
+  font-family: var(--font-display);
+  font-size: 17px;
+  color: var(--color-muted);
+}
+
+.stat-list__count {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 72px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 휴대폰: 2×2, 숫자 48px — 위 간격·줄 사이는 시안에 없어 AI가 정한 값 */
+@media (max-width: 760px) {
+  .stat-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: 24px;
+    margin-top: 64px;
+  }
+
+  .stat-list__item {
+    padding: 20px 16px 0 0;
+  }
+
+  .stat-list__count {
+    font-size: 48px;
+  }
+}
+
 /* ②·③ 일반 구역 */
 .home__section {
   padding: var(--section-gap) 0;

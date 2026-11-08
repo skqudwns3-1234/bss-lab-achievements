@@ -53,6 +53,12 @@ export type NewestSummary = {
   count: number // 그날 성과 개수
 }
 
+// 홈 통계 한 칸 (spec/01 1-6) — 이름과 개수. StatList가 배열로 받아 그린다
+export type StatItem = {
+  label: string // 칸 이름 (예: 논문)
+  count: number // 개수 — 화면에서는 padCount로 두 자리 (BR-13)
+}
+
 // 저장소에서 성과를 불러온 결과 (spec/02 2-4) — 목록 + 무엇이 잘못돼서 어떻게 고쳤는지 안내 문장
 export type LoadResult = {
   achievements: Achievement[]

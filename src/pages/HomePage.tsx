@@ -7,19 +7,28 @@ import HeroArt from '../components/home/HeroArt.tsx'
 import RecentAchievementCard from '../components/home/RecentAchievementCard.tsx'
 import RecruitBox from '../components/home/RecruitBox.tsx'
 import ResearchAreaList from '../components/home/ResearchAreaList.tsx'
+import StatList from '../components/home/StatList.tsx'
 import { useAchievements } from '../context/useAchievements.ts'
 import { LAB } from '../data/lab.ts'
 import type { Achievement } from '../types.ts'
-import { sortByLatest } from '../utils/achievements.ts'
+import { ACHIEVEMENT_TYPES, TYPE_LABELS, countByType, sortByLatest } from '../utils/achievements.ts'
 import './HomePage.css'
 
-// 홈 (spec/01_home.md). 1-1 뼈대, 1-2 첫 화면, 1-3 연구 분야, 1-4 지원 안내, 1-8 물방울 배경, 1-5 최근 성과, 1-9 팝업까지 채움.
+// 홈 (spec/01_home.md). 1-1 뼈대, 1-2 첫 화면, 1-3 연구 분야, 1-4 지원 안내, 1-8 물방울 배경, 1-5 최근 성과, 1-9 팝업, 1-6 통계까지 채움.
 export default function HomePage() {
   // 성과 목록 상자(2-5)에서 꺼내 쓴다 — 다른 탭에서 바뀌어도 자동으로 다시 그려짐
   const { achievements } = useAchievements()
 
   // 최근 성과: 최신순 앞 4개 (H6, BR-14). 목록이 바뀔 때만 다시 정렬하려고 useMemo (1-5)
   const recent = useMemo(() => sortByLatest(achievements).slice(0, 4), [achievements])
+
+  // 통계 4칸: **실제 성과만** 유형별로 센다 — 예시 성과는 빼고 (1-6, P184, BR-20).
+  // 논문·수상·특허·공모전 순서(ACHIEVEMENT_TYPES)로 칸을 만든다. 팝업을 열고 닫을 때처럼 목록은 그대로인데
+  // 홈만 다시 그려질 때 다시 세지 않으려고 useMemo — 목록이 바뀔 때만 계산 (지금 8건에서는 차이가 작음)
+  const stats = useMemo(() => {
+    const counts = countByType(achievements.filter((achievement) => !achievement.isSample))
+    return ACHIEVEMENT_TYPES.map((type) => ({ label: TYPE_LABELS[type], count: counts[type] }))
+  }, [achievements])
 
   // 팝업으로 열린 성과 — 성과 자체가 아니라 번호(id)를 기억하고 지금 목록에서 찾는다 (1-9, P182).
   // 그래서 팝업이 열린 채 다른 탭에서 그 성과를 고치면 바로 반영되고, 지우면 팝업이 저절로 닫힌다
@@ -35,7 +44,7 @@ export default function HomePage() {
 
   return (
     <div className="home">
-      {/* ① 첫 화면: 큰 제목, 설명, 버튼 2개 + 물방울 배경(1-8). NEW 알약·통계 4칸은 성과 데이터 뒤에 */}
+      {/* ① 첫 화면: 큰 제목, 설명, 버튼 2개 + 물방울 배경(1-8) + 통계 4칸(1-6). NEW 알약은 1-7 */}
       <section className="home__hero" aria-label="첫 화면">
         <HeroArt />
         <div className="home-hero__content">
@@ -60,6 +69,9 @@ export default function HomePage() {
               </Link>
             </div>
           </div>
+
+          {/* 통계 4칸 — 유형별 실제 성과 개수 (1-6) */}
+          <StatList stats={stats} />
         </div>
       </section>
 
