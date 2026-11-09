@@ -1,0 +1,101 @@
+/* 성과 목록 줄 (AchievementList·AchievementRow, spec/02 B-1) — 시안 Achievements.dc.html 값 */
+
+.achievement-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--color-border);
+}
+
+/* 한 줄: 넓은 화면은 [날짜 104px | 내용] 두 칸. 내용 칸 안에 배지 줄·제목·저자 줄이 차례로 */
+.achievement-row {
+  display: grid;
+  grid-template-columns: 104px minmax(0, 1fr);
+  grid-template-areas:
+    'date top'
+    'date title'
+    'date meta';
+  /* 위아래 간격은 gap 대신 제목·저자 줄의 margin으로 — 저자·DOI가 없어 셋째 줄이 비면 gap이 빈 간격으로 남아서 (B-1 예외 확인) */
+  gap: 0 32px;
+  padding: 28px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.achievement-row__date {
+  grid-area: date;
+  padding-top: 3px;
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--color-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.achievement-row__top {
+  grid-area: top;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.achievement-row__venue {
+  font-size: 13px;
+  color: var(--color-muted);
+}
+
+/* 제목은 전체를 보여 준다 (줄 수 제한 없음, P192) */
+.achievement-row__title {
+  grid-area: title;
+  margin: 8px 0 0;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1.45;
+  letter-spacing: -0.02em;
+}
+
+.achievement-row__meta {
+  grid-area: meta;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  margin: 8px 0 0;
+  font-size: 14px;
+  color: var(--color-muted);
+}
+
+/* 저자·DOI는 flex 칸이라, 띄어쓰기 없는 긴 글자(DOI)가 칸을 넓히며 화면 밖으로 나감 —
+   전체에 걸어 둔 overflow-wrap: break-word는 flex 칸의 최소 폭을 줄이지 못해서, 여기는 anywhere로 (B-1 예외 확인에서 발견, EX-24) */
+.achievement-row__meta > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.achievement-row__doi {
+  font-size: 13px;
+  color: #6b6b6b; /* 시안 값 — 저자보다 한 단계 옅게 */
+}
+
+/* 휴대폰: 날짜를 배지 줄 오른쪽으로 올리고, 제목·저자는 한 칸 전체로 (P192) */
+@media (max-width: 760px) {
+  .achievement-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      'top date'
+      'title title'
+      'meta meta';
+    gap: 0 12px;
+    padding: 20px 0;
+  }
+
+  /* 배지 높이에 맞춰 위쪽에 — 학회 이름이 길어 배지 줄이 두 줄이 돼도 날짜가 가운데로 뜨지 않게 */
+  .achievement-row__date {
+    align-self: start;
+    padding-top: 4px;
+    font-size: 13px;
+  }
+
+  .achievement-row__title {
+    font-size: 17px;
+  }
+}

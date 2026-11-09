@@ -1,7 +1,7 @@
 import type { Achievement } from '../../types.ts'
 import { useModal } from '../../hooks/useModal.ts'
 import { TYPE_LABELS, formatDate } from '../../utils/achievements.ts'
-import { doiUrl, safeLink } from '../../utils/links.ts'
+import { doiLabel, doiUrl, safeLink } from '../../utils/links.ts'
 import ArrowIcon from '../common/ArrowIcon.tsx'
 import './AchievementModal.css'
 
@@ -65,7 +65,7 @@ export default function AchievementModal({ achievement, onClose }: AchievementMo
                 <dd>
                   {/* 화면에는 DOI 번호만 (주소째 붙여 넣었어도 "10.…"으로) */}
                   <a href={doiLink} target="_blank" rel="noopener noreferrer">
-                    {decodeURI(doiLink.replace('https://doi.org/', ''))}
+                    {doiLabel(doi)}
                   </a>
                 </dd>
               </div>

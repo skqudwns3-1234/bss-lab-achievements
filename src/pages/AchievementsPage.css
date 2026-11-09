@@ -1,0 +1,24 @@
+/* 성과 페이지 (spec/02 B) — 시안 Achievements.dc.html 값 */
+
+/* 꾸밈 글씨 + 큰 제목 */
+.achievements-page__head {
+  margin-bottom: 40px;
+}
+
+.achievements-page__head .eyebrow {
+  margin: 0 0 12px;
+}
+
+.achievements-page__head .page-title {
+  margin: 0;
+}
+
+/* 제목 옆 전체 개수 — 회색, 제목의 절반 크기 */
+.achievements-page__count {
+  margin-left: 4px;
+  color: var(--color-faint);
+  font-size: 0.5em;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}

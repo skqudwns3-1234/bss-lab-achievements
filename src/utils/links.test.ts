@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { doiUrl, safeLink } from './links.ts'
+import { doiLabel, doiUrl, safeLink } from './links.ts'
 
 // 링크·DOI 테스트 (spec/01 1-9, test-cases UT-55~56). 실행: npm test
 
@@ -25,5 +25,14 @@ describe('safeLink · doiUrl — 팝업에 거는 링크', () => {
   test('UT-60 주소로 만들 수 없는 DOI(짝 없는 특수 문자)는 오류 없이 null (홈 점검 P187–P188)', () => {
     expect(() => doiUrl('10.1/\ud800')).not.toThrow()
     expect(doiUrl('10.1/\ud800')).toBeNull()
+  })
+
+  test('UT-62 화면용 DOI는 번호만 (주소째·doi: 붙음도 번호, 특수 문자는 원래 글자로, 비었거나 깨지면 null — B-1)', () => {
+    expect(doiLabel('10.1038/nature14539')).toBe('10.1038/nature14539')
+    expect(doiLabel('https://doi.org/10.1038/nature14539')).toBe('10.1038/nature14539')
+    expect(doiLabel('doi: 10.1038/nature14539')).toBe('10.1038/nature14539')
+    expect(doiLabel('10.1000/a b<c>%41')).toBe('10.1000/a b<c>%41')
+    expect(doiLabel('  ')).toBeNull()
+    expect(doiLabel('10.1/\ud800')).toBeNull()
   })
 })
