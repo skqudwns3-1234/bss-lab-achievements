@@ -21,5 +21,11 @@ export function doiUrl(doi: string): string | null {
     .replace(/^https?:\/\/(dx\.)?doi\.org\//i, '')
     .replace(/^doi:\s*/i, '')
   if (value === '') return null
-  return `https://doi.org/${encodeURI(value)}`
+  try {
+    return `https://doi.org/${encodeURI(value)}`
+  } catch {
+    // 짝이 안 맞는 특수 문자(예: '\ud800')가 있으면 encodeURI가 오류를 던진다 — 잡지 않으면 팝업을 여는 순간
+    // 앱 전체가 하얗게 사라짐(홈 점검 P187에서 재현). 주소로 만들 수 없는 DOI라 줄을 숨긴다 (P188)
+    return null
+  }
 }

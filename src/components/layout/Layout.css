@@ -140,7 +140,6 @@
 .footer__group {
   display: flex;
   flex-direction: column;
-  gap: 4px;
 }
 
 .footer__heading {
@@ -156,16 +155,22 @@
   text-decoration: none;
 }
 
+/* 메뉴·연락처 줄은 높이 44px — 링크를 손가락으로 누르기 쉽게 (NFR-08, 홈 점검 P187–P188).
+   글자만 있는 위치 줄도 같은 높이로 맞춰 두 칸의 줄이 나란히 놓이게 */
+.footer__group a,
+.footer__group .footer__text {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+
 .footer__group a:hover {
   color: var(--color-text);
 }
 
 /* 지원서 작성 링크는 조금 눈에 띄게 */
 .footer__group .footer__apply {
-  display: inline-flex;
-  align-items: center;
   gap: 4px;
-  margin-top: 4px;
   color: var(--color-text);
   font-weight: 500;
   text-decoration: underline;

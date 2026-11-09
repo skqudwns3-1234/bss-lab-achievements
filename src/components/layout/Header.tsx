@@ -10,6 +10,14 @@ export default function Header() {
   // 지금 주소 — 같은 페이지 링크를 누르면 맨 위로 올리는 데 씀
   const { pathname } = useLocation()
 
+  // 주소가 바뀌면 메뉴를 접는다 — 링크를 누를 때뿐 아니라 브라우저 뒤로·앞으로 가기로 바뀔 때도 (홈 점검 P187–P188).
+  // 지난번 주소를 기억해 두고 그리는 중에 달라졌으면 맞춘다 (HomePage 팝업 번호와 같은 "렌더 중에 상태 맞추기")
+  const [menuPath, setMenuPath] = useState(pathname)
+  if (menuPath !== pathname) {
+    setMenuPath(pathname)
+    setMenuOpen(false)
+  }
+
   // 로고·메뉴를 누르면: 모바일 메뉴를 접고, 지금 페이지의 링크면 맨 위로
   function handleLinkClick(path: string) {
     setMenuOpen(false)

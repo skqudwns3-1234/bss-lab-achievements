@@ -21,4 +21,9 @@ describe('safeLink · doiUrl — 팝업에 거는 링크', () => {
     expect(doiUrl('10.1000/a b<c>')).toBe('https://doi.org/10.1000/a%20b%3Cc%3E')
     expect(doiUrl('  ')).toBeNull()
   })
+
+  test('UT-60 주소로 만들 수 없는 DOI(짝 없는 특수 문자)는 오류 없이 null (홈 점검 P187–P188)', () => {
+    expect(() => doiUrl('10.1/\ud800')).not.toThrow()
+    expect(doiUrl('10.1/\ud800')).toBeNull()
+  })
 })
