@@ -8,14 +8,15 @@
 
 /* 한 줄: 넓은 화면은 [날짜 104px | 내용] 두 칸. 내용 칸 안에 배지 줄·제목·저자 줄이 차례로 */
 .achievement-row {
-  position: relative; /* 제목 버튼의 덮개(::after)가 이 줄 크기만큼 펴지도록 (B-3) */
+  --row-bleed: 16px; /* 마우스를 올렸을 때 밝아지는 배경·누르는 범위·포커스 테두리를 글자보다 좌우로 이만큼 넓게 (P207) */
+  position: relative; /* 제목 버튼의 덮개(::after)와 배경(::before)이 이 줄 크기만큼 펴지도록 (B-3) */
+  isolation: isolate; /* 배경(::before, z-index -1)이 이 줄 안에서만 글자 뒤로 가게 — 페이지 배경 뒤로 숨지 않게 */
   display: grid;
-  /* 셋째 칸 = "자세히 ↗" (B-3). 배지 줄 오른쪽에만 있고, 제목·저자 줄은 그 칸까지 넓게 씀 */
-  grid-template-columns: 104px minmax(0, 1fr) auto;
+  grid-template-columns: 104px minmax(0, 1fr);
   grid-template-areas:
-    'date top more'
-    'date title title'
-    'date meta meta';
+    'date top'
+    'date title'
+    'date meta';
   /* 위아래 간격은 gap 대신 제목·저자 줄의 margin으로 — 저자·DOI가 없어 셋째 줄이 비면 gap이 빈 간격으로 남아서 (B-1 예외 확인) */
   gap: 0 32px;
   padding: 28px 0;
@@ -67,47 +68,67 @@
   letter-spacing: inherit;
   text-align: left;
   cursor: pointer;
+  /* 버튼은 띄어쓰기 없는 긴 제목의 폭만큼 넓어져 화면 밖으로 나감(전체의 break-word로는 못 막음) —
+     저자·DOI 칸(B-1)과 같은 이유로 anywhere (B-3 ↗ 확인 중 320px에서 발견, EX-24) */
+  overflow-wrap: anywhere;
 }
 
 .achievement-row__open::after {
   content: '';
   position: absolute;
-  inset: 0;
+  inset: 0 calc(var(--row-bleed) * -1);
+  border-radius: 16px;
 }
 
-/* 누를 수 있다는 표시: 줄에 마우스를 올리면 제목 밑줄 (손가락 커서는 덮개가 버튼의 cursor를 물려받음) */
-.achievement-row:hover .achievement-row__open {
-  text-decoration: underline;
-  text-underline-offset: 4px;
-  text-decoration-thickness: 1px;
+/* 제목 마지막 글자 + ↗ 묶음 — 사이에서 줄이 바뀌지 않게 */
+.achievement-row__title-end {
+  white-space: nowrap;
 }
 
-/* 키보드로 왔을 때는 제목 글자가 아니라 줄 전체에 테두리 — 줄 전체가 누르는 범위라서 */
+/* 제목 끝 작은 ↗ — 휴대폰(마우스 없음)에도 늘 보이는 "누르면 열림" 표시 (P206–P207, "자세히" 글자 대신) */
+.achievement-row__arrow {
+  display: inline-block;
+  margin-left: 6px;
+  color: var(--color-muted);
+  vertical-align: -0.05em;
+}
+
+/* 마우스를 올린 줄: 배경이 밝아지고 제목 밑줄 + ↗ 진하게 (손가락 커서는 덮개가 버튼의 cursor를 물려받음).
+   (hover: hover) — 마우스가 있는 기기에서만. 휴대폰은 누른 뒤에도 :hover가 남아 줄이 밝은 채로 굳어서 */
+.achievement-row::before {
+  content: '';
+  position: absolute;
+  inset: 0 calc(var(--row-bleed) * -1);
+  z-index: -1;
+  border-radius: 16px;
+  background: transparent;
+  transition: background-color 0.15s;
+}
+
+@media (hover: hover) {
+  .achievement-row:hover::before {
+    background: var(--color-surface);
+  }
+
+  .achievement-row:hover .achievement-row__open {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-thickness: 1px;
+  }
+
+  .achievement-row:hover .achievement-row__arrow {
+    color: var(--color-text);
+  }
+}
+
+/* 키보드로 왔을 때는 제목 글자가 아니라 줄 전체(밝아지는 배경과 같은 범위)에 테두리 — 줄 전체가 누르는 범위라서 */
 .achievement-row__open:focus-visible {
   outline: none;
 }
 
 .achievement-row__open:focus-visible::after {
   outline: 2px solid var(--color-text);
-  outline-offset: 2px;
-  border-radius: 8px;
-}
-
-.achievement-row__more {
-  grid-area: more;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  align-self: start;
-  padding-top: 3px;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--color-muted);
-  white-space: nowrap;
-}
-
-.achievement-row:hover .achievement-row__more {
-  color: var(--color-text);
+  outline-offset: 0;
 }
 
 .achievement-row__meta {
@@ -132,23 +153,17 @@
   color: #6b6b6b; /* 시안 값 — 저자보다 한 단계 옅게 */
 }
 
-/* 휴대폰: 날짜를 배지 줄 오른쪽으로 올리고, 제목·저자는 한 칸 전체로 (P192). "자세히"는 맨 아래 줄 (B-3) */
+/* 휴대폰: 날짜를 배지 줄 오른쪽으로 올리고, 제목·저자는 한 칸 전체로 (P192) */
 @media (max-width: 760px) {
   .achievement-row {
     grid-template-columns: minmax(0, 1fr) auto;
     grid-template-areas:
       'top date'
       'title title'
-      'meta meta'
-      'more more';
+      'meta meta';
     gap: 0 12px;
     padding: 20px 0;
-  }
-
-  .achievement-row__more {
-    justify-self: start;
-    margin-top: 10px;
-    padding-top: 0;
+    --row-bleed: 12px; /* 휴대폰 좌우 여백 안에 들어오게 조금 좁게 */
   }
 
   /* 배지 높이에 맞춰 위쪽에 — 학회 이름이 길어 배지 줄이 두 줄이 돼도 날짜가 가운데로 뜨지 않게 */

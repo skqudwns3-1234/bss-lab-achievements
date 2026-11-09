@@ -13,12 +13,18 @@ type AchievementRowProps = {
 // 날짜 / 유형·예시 배지·학회 / 제목(전체) / 저자 + DOI(작게). 비어 있는 칸은 숨긴다 — 카드와 달리 높이를 맞출 필요가 없어서.
 // 휴대폰에서는 CSS grid 자리 지정으로 날짜를 배지 줄 오른쪽에 올린다 (날짜는 한 번만 그림).
 // B-3: 제목이 버튼이고, CSS 덮개(::after)로 누르는 범위를 줄 전체로 넓힌다 — 줄 전체를 <button>으로 감싸면
-// 그 안의 제목(h2)이 제목으로 읽히지 않고, B-4에서 줄 안에 수정·삭제 버튼을 넣을 수 없어서 (버튼 안에 버튼 불가)
+// 그 안의 제목(h2)이 제목으로 읽히지 않고, B-4에서 줄 안에 수정·삭제 버튼을 넣을 수 없어서 (버튼 안에 버튼 불가).
+// 줄 끝 "자세히 ↗" 글자는 넣어 보고 사용자가 화면을 본 뒤 뺌 (P204). 대신 누를 수 있다는 표시는
+// 제목 끝 작은 ↗(휴대폰에도 늘 보임) + 마우스를 올리면 줄 배경이 밝아지고 제목 밑줄·손가락 커서 (P206–P207)
 function AchievementRow({ achievement, onOpen }: AchievementRowProps) {
   const { type, title, achievedOn, authors, venue, doi, isSample } = achievement
   // DOI는 번호만 — 주소째 저장했어도 번호, 비었거나 깨졌으면 null → 숨김 (EX-30·33, 팝업과 같은 함수)
   const doiText = doiLabel(doi)
   const hasAuthors = authors.trim() !== ''
+  // 제목을 "마지막 글자 앞 / 마지막 글자"로 나눔 — Array.from은 이모지처럼 두 칸짜리 글자도 한 글자로 셈
+  const titleChars = Array.from(title)
+  const titleHead = titleChars.slice(0, -1).join('')
+  const titleTail = titleChars.slice(-1).join('')
 
   return (
     <li className="achievement-row">
@@ -34,7 +40,16 @@ function AchievementRow({ achievement, onOpen }: AchievementRowProps) {
       {/* 제목 = 여는 버튼. 키보드는 Tab으로 제목에 와서 Enter·Space. 화면 낭독기는 "제목, 버튼"으로 읽음 */}
       <h2 className="achievement-row__title">
         <button type="button" className="achievement-row__open" onClick={() => onOpen(achievement)}>
-          {title}
+          {titleHead}
+          {/* 마지막 글자 + ↗를 줄바꿈 없는 묶음으로 — 제목이 줄 끝에 딱 맞을 때 ↗만 다음 줄로 떨어지지 않게
+              (320px에서 발견, P207. 묶는 건 한 글자뿐이라 긴 영어 단어도 그 앞에서는 그대로 줄이 바뀜).
+              ↗는 홈 카드 "자세히 ↗"와 같은 아이콘(사이트 안에서 "팝업 열기" 뜻), aria-hidden이라 낭독기는 제목만 읽음 */}
+          <span className="achievement-row__title-end">
+            {titleTail}
+            <span className="achievement-row__arrow">
+              <ArrowIcon />
+            </span>
+          </span>
         </button>
       </h2>
 
@@ -44,13 +59,6 @@ function AchievementRow({ achievement, onOpen }: AchievementRowProps) {
           {doiText && <span className="achievement-row__doi">DOI {doiText}</span>}
         </p>
       )}
-
-      {/* "자세히 ↗" — 누를 수 있다는 눈표시일 뿐이라 화면 낭독기에는 숨김(제목 버튼과 같은 말을 두 번 읽지 않게).
-          사용자가 보고 뺄지 정함 (P199) */}
-      <span className="achievement-row__more" aria-hidden="true">
-        자세히
-        <ArrowIcon />
-      </span>
     </li>
   )
 }
