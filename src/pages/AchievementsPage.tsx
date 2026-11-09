@@ -1,9 +1,11 @@
 import { useCallback, useMemo, useState } from 'react'
+import { Link } from 'react-router'
 import AchievementList from '../components/achievements/AchievementList.tsx'
 import AchievementModal from '../components/achievements/AchievementModal.tsx'
 import SearchFilterBar from '../components/achievements/SearchFilterBar.tsx'
 import EmptyState from '../components/common/EmptyState.tsx'
 import { useAchievements } from '../context/useAchievements.ts'
+import { useAdminMode } from '../context/useAdminMode.ts'
 import type { Achievement, AchievementFilter } from '../types.ts'
 import { countByType, filterAchievements, getYears, sortByLatest } from '../utils/achievements.ts'
 import './AchievementsPage.css'
@@ -13,11 +15,15 @@ const INITIAL_FILTER: AchievementFilter = { query: '', type: 'ALL', year: 'ALL' 
 
 // 성과 페이지 (spec/02 B). B-1: 꾸밈 글씨·제목·개수 + 최신순 줄 목록 + 0건 안내 (P192–P193).
 // B-2: 검색·유형 칩·연도로 걸러 보기 + 결과 없음 안내 (P194–P195).
-// B-3: 줄을 누르면 홈과 같은 성과 팝업 (P199). 관리 모드(B-4), 삭제(B-5)는 다음 단계
+// B-3: 줄을 누르면 홈과 같은 성과 팝업 (P199).
+// B-4: 관리 모드면 제목 줄에 "성과 등록", 줄마다 "수정" — 둘 다 주소로 이동만 (폼은 spec/03, P209). 삭제(B-5)는 다음 단계
 export default function AchievementsPage() {
   // 성과 목록 상자(2-5)에서 꺼내 쓴다 — 예시 성과도 모두 보임("예시" 배지로 구분, BR-19).
   // 다른 탭에서 바뀌어도 자동으로 다시 그려짐 (EX-25)
   const { achievements } = useAchievements()
+
+  // 관리 모드 켜짐 여부 — 헤더 스위치가 바꾸면 이 페이지도 다시 그려져 버튼이 생기고 사라진다 (B-4)
+  const { isAdmin } = useAdminMode()
 
   // 검색 조건 — 이 화면에서만 쓰는 값이라 이 페이지의 상태로 (주소에는 남기지 않음, Q-B6)
   const [filter, setFilter] = useState<AchievementFilter>(INITIAL_FILTER)
@@ -61,19 +67,44 @@ export default function AchievementsPage() {
   return (
     <section className="achievements-page" aria-labelledby="achievements-title">
       <div className="achievements-page__head">
-        <p className="eyebrow">PAPERS · AWARDS · PATENTS · CONTESTS</p>
-        {/* 제목 옆 개수 — 평소엔 전체(FR-06), 걸렀을 때만 "남은 수 / 전체" (Q-B2) */}
-        <h1 id="achievements-title" className="page-title">
-          성과{' '}
-          <span className="achievements-page__count">
-            {isFiltered ? `${filtered.length} / ${achievements.length}` : achievements.length}
-          </span>
-        </h1>
+        <div>
+          <p className="eyebrow">PAPERS · AWARDS · PATENTS · CONTESTS</p>
+          {/* 제목 옆 개수 — 평소엔 전체(FR-06), 걸렀을 때만 "남은 수 / 전체" (Q-B2) */}
+          <h1 id="achievements-title" className="page-title">
+            성과{' '}
+            <span className="achievements-page__count">
+              {isFiltered ? `${filtered.length} / ${achievements.length}` : achievements.length}
+            </span>
+          </h1>
+        </div>
+        {/* 관리 모드: 시안대로 제목 줄 오른쪽(휴대폰은 제목 아래)에 "성과 등록" — 등록 폼 주소로 이동만 (P209 ②) */}
+        {isAdmin && (
+          <Link to="/achievements/new" className="btn btn--primary">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              aria-hidden="true"
+            >
+              <path d="M12 5v14" />
+              <path d="M5 12h14" />
+            </svg>
+            성과 등록
+          </Link>
+        )}
       </div>
 
       {achievements.length === 0 ? (
-        // 성과가 0건 — 찾을 게 없으니 검색·필터 줄도 숨기고 안내만 (EX-09, P195)
-        <EmptyState message="아직 등록된 성과가 없어요." />
+        // 성과가 0건 — 찾을 게 없으니 검색·필터 줄도 숨기고 안내만 (EX-09, P195).
+        // 관리 모드면 바로 위 "성과 등록" 버튼을 가리키는 도움말만 더함 — 같은 버튼을 두 개 두지 않게 (P209 ⑥)
+        <EmptyState
+          message="아직 등록된 성과가 없어요."
+          hint={isAdmin ? "위의 '성과 등록'으로 첫 성과를 추가해 보세요." : undefined}
+        />
       ) : (
         <>
           <SearchFilterBar
@@ -94,7 +125,7 @@ export default function AchievementsPage() {
               />
             </div>
           ) : (
-            <AchievementList achievements={filtered} onOpen={openModal} />
+            <AchievementList achievements={filtered} isAdmin={isAdmin} onOpen={openModal} />
           )}
         </>
       )}

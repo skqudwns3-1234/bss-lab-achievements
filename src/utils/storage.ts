@@ -145,3 +145,26 @@ export function backupRawData(): boolean {
     return false
   }
 }
+
+// ── 관리 모드 켜짐 여부 (spec/02 B-4, design 6.2·7절, Q5) ──
+export const ADMIN_MODE_KEY = 'lab-achievements:adminMode' // "true" / "false"
+
+// 불러오기: 정확히 "true"일 때만 켜짐. 없거나 깨진 값("yes", "TRUE" 등)이거나 저장소를 못 읽으면 꺼짐 —
+// 모르는 값이면 방문자 화면(꺼짐)으로 시작하는 쪽이 안전해서
+export function loadAdminMode(): boolean {
+  try {
+    return localStorage.getItem(ADMIN_MODE_KEY) === 'true'
+  } catch {
+    return false
+  }
+}
+
+// 저장하기: 성공하면 true, 실패(사생활 보호 모드 등)하면 false — 실패해도 앱은 멈추지 않는다
+export function saveAdminMode(on: boolean): boolean {
+  try {
+    localStorage.setItem(ADMIN_MODE_KEY, String(on))
+    return true
+  } catch {
+    return false
+  }
+}

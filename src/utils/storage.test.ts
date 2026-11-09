@@ -1,8 +1,17 @@
 import { afterEach, describe, expect, test, vi } from 'vitest'
 import { SAMPLE_ACHIEVEMENTS } from '../data/sampleAchievements.ts'
-import { BACKUP_KEY, STORAGE_KEY, backupRawData, loadAchievements, saveAchievements } from './storage.ts'
+import {
+  ADMIN_MODE_KEY,
+  BACKUP_KEY,
+  STORAGE_KEY,
+  backupRawData,
+  loadAchievements,
+  loadAdminMode,
+  saveAchievements,
+  saveAdminMode,
+} from './storage.ts'
 
-// 저장소 읽기·쓰기 테스트 (spec/02 2-4, test-cases UT-19~30). 실행: npm test
+// 저장소 읽기·쓰기 테스트 (spec/02 2-4, test-cases UT-19~30, 관리 모드 UT-63~64). 실행: npm test
 // 테스트하는 곳(Node)에는 브라우저 저장소가 없어서, 진짜처럼 동작하는 가짜 저장소를 끼워 넣는다 (vi.stubGlobal).
 
 type FakeOptions = { failRead?: boolean; failWrite?: boolean }
@@ -150,5 +159,32 @@ describe('backupRawData — 원본 백업 (P167 A안)', () => {
   test('UT-30 백업에 실패하면 false (앱은 멈추지 않음)', () => {
     useFakeStorage({ [STORAGE_KEY]: 'abc' }, { failWrite: true })
     expect(backupRawData()).toBe(false)
+  })
+})
+
+describe('loadAdminMode·saveAdminMode — 관리 모드 저장 (B-4, Q5)', () => {
+  test('UT-63 정확히 "true"일 때만 켜짐 — 없음·"false"·깨진 값·저장소를 못 읽으면 꺼짐', () => {
+    useFakeStorage({ [ADMIN_MODE_KEY]: 'true' })
+    expect(loadAdminMode()).toBe(true)
+    for (const value of ['false', 'yes', 'TRUE', '1', '']) {
+      useFakeStorage({ [ADMIN_MODE_KEY]: value })
+      expect(loadAdminMode()).toBe(false)
+    }
+    useFakeStorage()
+    expect(loadAdminMode()).toBe(false)
+    useFakeStorage({ [ADMIN_MODE_KEY]: 'true' }, { failRead: true })
+    expect(loadAdminMode()).toBe(false)
+  })
+
+  test('UT-64 켜고 끈 값을 "true"/"false"로 저장해 다시 불러오면 같음, 저장에 실패하면 false', () => {
+    const data = useFakeStorage()
+    expect(saveAdminMode(true)).toBe(true)
+    expect(data.get(ADMIN_MODE_KEY)).toBe('true')
+    expect(loadAdminMode()).toBe(true)
+    expect(saveAdminMode(false)).toBe(true)
+    expect(data.get(ADMIN_MODE_KEY)).toBe('false')
+    expect(loadAdminMode()).toBe(false)
+    useFakeStorage({}, { failWrite: true })
+    expect(saveAdminMode(true)).toBe(false)
   })
 })

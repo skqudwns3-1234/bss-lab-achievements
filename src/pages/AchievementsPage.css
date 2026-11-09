@@ -1,7 +1,13 @@
 /* 성과 페이지 (spec/02 B) — 시안 Achievements.dc.html 값 */
 
 /* 꾸밈 글씨 + 큰 제목 */
+/* 제목 묶음 + (관리 모드) "성과 등록" 버튼 — 시안: 양 끝, 아래쪽 맞춤. 좁으면 버튼이 제목 아래로 (B-4) */
 .achievements-page__head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 24px;
   margin-bottom: 40px;
 }
 

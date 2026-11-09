@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router'
 import { LAB } from '../../data/lab.ts'
+import AdminModeToggle from './AdminModeToggle.tsx'
 import { NAV_ITEMS } from './navItems.ts'
 import { scrollToTopIfCurrent } from './scrollToTop.ts'
 
@@ -36,24 +37,29 @@ export default function Header() {
           type="button"
           className="header__menu-button"
           aria-expanded={menuOpen}
-          aria-controls="main-nav"
+          aria-controls="main-menu"
           onClick={() => setMenuOpen((open) => !open)}
         >
           {menuOpen ? '닫기' : '메뉴'}
         </button>
 
-        <nav id="main-nav" aria-label="주 메뉴" className={`header__nav ${menuOpen ? 'header__nav--open' : ''}`}>
-          {NAV_ITEMS.map((item) => (
-            <NavLink
-              key={item.path}
-              to={item.path}
-              className="header__link"
-              onClick={() => handleLinkClick(item.path)}
-            >
-              {item.label}
-            </NavLink>
-          ))}
-        </nav>
+        {/* 메뉴 + 관리 모드 스위치 묶음 — 휴대폰에서는 이 묶음이 통째로 펼쳐지고 접힌다 (스위치는 맨 아래, D1, B-4) */}
+        <div id="main-menu" className={`header__menu ${menuOpen ? 'header__menu--open' : ''}`}>
+          <nav aria-label="주 메뉴" className="header__nav">
+            {NAV_ITEMS.map((item) => (
+              <NavLink
+                key={item.path}
+                to={item.path}
+                className="header__link"
+                onClick={() => handleLinkClick(item.path)}
+              >
+                {item.label}
+              </NavLink>
+            ))}
+          </nav>
+          {/* 스위치를 눌러도 메뉴는 그대로 펼쳐 둔다 — 켜졌는지 바로 볼 수 있게 */}
+          <AdminModeToggle />
+        </div>
       </div>
     </header>
   )

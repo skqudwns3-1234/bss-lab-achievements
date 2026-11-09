@@ -53,10 +53,90 @@
   color: var(--color-muted);
 }
 
+/* 메뉴 + 관리 모드 스위치 묶음 (B-4) — 넓은 화면은 한 줄로 나란히 */
+.header__menu {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 16px;
+}
+
 .header__nav {
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
+}
+
+/* ── 관리 모드 스위치 (B-4, 시안 값): 알약 안에 "관리 모드" + 작은 스위치 ── */
+.admin-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 8px 8px 8px 16px;
+  border: 1px solid var(--color-border-input);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.admin-toggle--on {
+  border-color: var(--color-text);
+}
+
+.admin-toggle__switch {
+  display: flex;
+  justify-content: flex-start; /* 꺼짐: 동그라미 왼쪽 */
+  align-items: center;
+  width: 36px;
+  height: 22px;
+  padding: 2px;
+  border-radius: var(--radius-pill);
+  background: var(--color-border-input);
+}
+
+.admin-toggle--on .admin-toggle__switch {
+  justify-content: flex-end; /* 켜짐: 동그라미 오른쪽 + 검정 */
+  background: var(--color-text);
+}
+
+.admin-toggle__knob {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--color-surface);
+}
+
+/* ── 관리 모드 띠 (B-4, 시안 값): 헤더 바로 아래 가로 전체 검정 띠 ── */
+.admin-bar {
+  background: var(--color-text);
+  color: #ffffff;
+  font-size: 13px;
+}
+
+.admin-bar__inner {
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: 10px var(--gutter);
+}
+
+.admin-bar__text {
+  margin: 0;
+}
+
+/* 고친 내용 펼치기 — 요약 줄은 누르는 곳이라 높이 44px 이상 (NFR-08) */
+.admin-bar__notices summary {
+  padding: 12px 0;
+  color: #d4d4d4;
+  cursor: pointer;
+}
+
+.admin-bar__notices ul {
+  margin: 0 0 8px;
+  padding-left: 20px;
+  color: #d4d4d4;
 }
 
 .header__link {
@@ -205,13 +285,22 @@
     cursor: pointer;
   }
 
-  .header__nav {
+  /* 메뉴 + 스위치 묶음을 통째로 접고 펼친다. 스위치는 메뉴 맨 아래 (D1, B-4) */
+  .header__menu {
     display: none;
     width: 100%;
     flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding-bottom: 8px;
   }
 
-  .header__nav--open {
+  .header__menu--open {
     display: flex;
+  }
+
+  .header__nav {
+    width: 100%;
+    flex-direction: column;
   }
 }
