@@ -2,15 +2,19 @@ import { memo } from 'react'
 import type { Achievement } from '../../types.ts'
 import { TYPE_LABELS, formatDate } from '../../utils/achievements.ts'
 import { doiLabel } from '../../utils/links.ts'
+import ArrowIcon from '../common/ArrowIcon.tsx'
 
 type AchievementRowProps = {
   achievement: Achievement // 보여 줄 성과 하나
+  onOpen: (achievement: Achievement) => void // 줄을 누르면 "이 성과를 열어 줘" — 팝업은 AchievementsPage가 띄운다 (B-3)
 }
 
-// 성과 목록의 한 줄 (spec/02 B-1, design 5.4, P192–P193). 받은 값만 그리고 상태는 없다.
+// 성과 목록의 한 줄 (spec/02 B-1·B-3, design 5.4, P192–P193·P199). 받은 값만 그리고 상태는 없다.
 // 날짜 / 유형·예시 배지·학회 / 제목(전체) / 저자 + DOI(작게). 비어 있는 칸은 숨긴다 — 카드와 달리 높이를 맞출 필요가 없어서.
-// 휴대폰에서는 CSS grid 자리 지정으로 날짜를 배지 줄 오른쪽에 올린다 (날짜는 한 번만 그림)
-function AchievementRow({ achievement }: AchievementRowProps) {
+// 휴대폰에서는 CSS grid 자리 지정으로 날짜를 배지 줄 오른쪽에 올린다 (날짜는 한 번만 그림).
+// B-3: 제목이 버튼이고, CSS 덮개(::after)로 누르는 범위를 줄 전체로 넓힌다 — 줄 전체를 <button>으로 감싸면
+// 그 안의 제목(h2)이 제목으로 읽히지 않고, B-4에서 줄 안에 수정·삭제 버튼을 넣을 수 없어서 (버튼 안에 버튼 불가)
+function AchievementRow({ achievement, onOpen }: AchievementRowProps) {
   const { type, title, achievedOn, authors, venue, doi, isSample } = achievement
   // DOI는 번호만 — 주소째 저장했어도 번호, 비었거나 깨졌으면 null → 숨김 (EX-30·33, 팝업과 같은 함수)
   const doiText = doiLabel(doi)
@@ -27,7 +31,12 @@ function AchievementRow({ achievement }: AchievementRowProps) {
         {venue.trim() !== '' && <span className="achievement-row__venue">{venue}</span>}
       </div>
 
-      <h2 className="achievement-row__title">{title}</h2>
+      {/* 제목 = 여는 버튼. 키보드는 Tab으로 제목에 와서 Enter·Space. 화면 낭독기는 "제목, 버튼"으로 읽음 */}
+      <h2 className="achievement-row__title">
+        <button type="button" className="achievement-row__open" onClick={() => onOpen(achievement)}>
+          {title}
+        </button>
+      </h2>
 
       {(hasAuthors || doiText) && (
         <p className="achievement-row__meta">
@@ -35,10 +44,18 @@ function AchievementRow({ achievement }: AchievementRowProps) {
           {doiText && <span className="achievement-row__doi">DOI {doiText}</span>}
         </p>
       )}
+
+      {/* "자세히 ↗" — 누를 수 있다는 눈표시일 뿐이라 화면 낭독기에는 숨김(제목 버튼과 같은 말을 두 번 읽지 않게).
+          사용자가 보고 뺄지 정함 (P199) */}
+      <span className="achievement-row__more" aria-hidden="true">
+        자세히
+        <ArrowIcon />
+      </span>
     </li>
   )
 }
 
-// memo: 부모가 다시 그려져도 받은 성과(achievement)가 그대로면 이 줄은 다시 그리지 않는다.
-// B-2에서 검색어를 칠 때마다 목록이 다시 그려지는데, 내용이 안 바뀐 줄은 건너뛰게 (design 6.4·R5)
+// memo: 부모가 다시 그려져도 받은 성과(achievement)와 여는 함수(onOpen)가 그대로면 이 줄은 다시 그리지 않는다.
+// B-2에서 검색어를 칠 때마다 목록이 다시 그려지는데, 내용이 안 바뀐 줄은 건너뛰게 (design 6.4·R5).
+// onOpen이 그대로이려면 부모가 useCallback으로 고정해 넘겨야 한다 (B-3)
 export default memo(AchievementRow)

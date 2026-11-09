@@ -1,9 +1,10 @@
 import { useCallback, useMemo, useState } from 'react'
 import AchievementList from '../components/achievements/AchievementList.tsx'
+import AchievementModal from '../components/achievements/AchievementModal.tsx'
 import SearchFilterBar from '../components/achievements/SearchFilterBar.tsx'
 import EmptyState from '../components/common/EmptyState.tsx'
 import { useAchievements } from '../context/useAchievements.ts'
-import type { AchievementFilter } from '../types.ts'
+import type { Achievement, AchievementFilter } from '../types.ts'
 import { countByType, filterAchievements, getYears, sortByLatest } from '../utils/achievements.ts'
 import './AchievementsPage.css'
 
@@ -12,7 +13,7 @@ const INITIAL_FILTER: AchievementFilter = { query: '', type: 'ALL', year: 'ALL' 
 
 // 성과 페이지 (spec/02 B). B-1: 꾸밈 글씨·제목·개수 + 최신순 줄 목록 + 0건 안내 (P192–P193).
 // B-2: 검색·유형 칩·연도로 걸러 보기 + 결과 없음 안내 (P194–P195).
-// 줄을 누르면 팝업(B-3), 관리 모드(B-4), 삭제(B-5)는 다음 단계
+// B-3: 줄을 누르면 홈과 같은 성과 팝업 (P199). 관리 모드(B-4), 삭제(B-5)는 다음 단계
 export default function AchievementsPage() {
   // 성과 목록 상자(2-5)에서 꺼내 쓴다 — 예시 성과도 모두 보임("예시" 배지로 구분, BR-19).
   // 다른 탭에서 바뀌어도 자동으로 다시 그려짐 (EX-25)
@@ -43,6 +44,19 @@ export default function AchievementsPage() {
 
   // "조건 초기화" — EmptyState 버튼에 넘기는 함수라 useCallback으로 고정
   const resetFilter = useCallback(() => setFilter(INITIAL_FILTER), [])
+
+  // 팝업으로 열린 성과 — 홈(1-9)과 같은 방식: 성과 자체가 아니라 번호(id)를 기억하고 지금 목록에서 찾는다.
+  // 걸러진 목록(filtered)이 아니라 전체 목록(achievements)에서 찾아서, 열린 채 다른 탭 수정으로 검색 조건에서 빠져도 팝업은 그대로
+  const [selectedId, setSelectedId] = useState<number | null>(null)
+  const selected = achievements.find((achievement) => achievement.id === selectedId) ?? null
+  // ★ 사라진 번호는 그리는 중에 바로 잊는다 — 다른 탭에서 지우면 팝업이 닫히고,
+  //   나중에 새 성과가 같은 번호를 받아도 팝업이 다시 튀어나오지 않게 (EX-28·29)
+  if (selectedId !== null && !selected) setSelectedId(null)
+
+  // 열고 닫는 함수는 useCallback으로 고정 — 줄(AchievementRow)이 memo라서, 함수가 그릴 때마다 새로 생기면
+  // 검색어를 칠 때마다 모든 줄이 다시 그려진다 (memo가 깨짐)
+  const openModal = useCallback((achievement: Achievement) => setSelectedId(achievement.id), [])
+  const closeModal = useCallback(() => setSelectedId(null), [])
 
   return (
     <section className="achievements-page" aria-labelledby="achievements-title">
@@ -80,10 +94,13 @@ export default function AchievementsPage() {
               />
             </div>
           ) : (
-            <AchievementList achievements={filtered} />
+            <AchievementList achievements={filtered} onOpen={openModal} />
           )}
         </>
       )}
+
+      {/* 성과 팝업 (B-3) — 열린 성과가 있을 때만. 홈에서 만든 AchievementModal을 그대로 씀 */}
+      {selected && <AchievementModal achievement={selected} onClose={closeModal} />}
     </section>
   )
 }
