@@ -22,3 +22,8 @@
   letter-spacing: -0.03em;
   font-variant-numeric: tabular-nums;
 }
+
+/* 검색 결과 없음 안내 — 필터 줄과 띄움 (B-2) */
+.achievements-page__empty {
+  margin-top: 32px;
+}

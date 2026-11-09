@@ -207,3 +207,13 @@ button {
 .placeholder-note {
   color: var(--color-muted);
 }
+
+/* 화면에는 안 보이고 화면 낭독기만 읽는 글자 — 검색칸 라벨처럼 시안에서 숨긴 라벨에 (B-2) */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
