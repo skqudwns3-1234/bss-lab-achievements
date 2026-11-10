@@ -9,6 +9,7 @@ import {
   getNewestSummary,
   nextId,
   padCount,
+  parseAchievementId,
   sortByLatest,
 } from './achievements.ts'
 
@@ -255,5 +256,15 @@ describe('padCount — 숫자 두 자리 (BR-13, 1-6)', () => {
     expect(padCount(9)).toBe('09')
     expect(padCount(10)).toBe('10')
     expect(padCount(100)).toBe('100') // 100 이상은 자르지 않음
+  })
+})
+
+describe('parseAchievementId — 주소의 성과 번호 (EX-06, spec/03 C-1)', () => {
+  test('UT-65 1 이상의 정수 글자만 숫자로, 나머지는 null', () => {
+    expect(parseAchievementId('8')).toBe(8)
+    expect(parseAchievementId('9999')).toBe(9999) // 형식은 맞음 — 없는 번호인지는 목록에서 찾아 봄
+    for (const text of ['abc', '0', '1.5', '01', '-1', '1e2', ' 8', '']) {
+      expect(parseAchievementId(text)).toBeNull()
+    }
   })
 })

@@ -112,6 +112,12 @@ export function nextId(list: Achievement[]): number {
   return list.length === 0 ? 1 : Math.max(...list.map((achievement) => achievement.id)) + 1
 }
 
+// 주소의 성과 번호(글자) → 숫자. 1 이상의 정수 글자만 받고 아니면 null (spec/03 C-1, EX-06, P221–P222).
+// Number()만 쓰면 '1e2'→100, '01'→1, ' 8 '→8처럼 이상한 주소도 다른 성과로 이어져서 글자 모양부터 본다
+export function parseAchievementId(text: string): number | null {
+  return /^[1-9]\d*$/.test(text) ? Number(text) : null
+}
+
 // ── 성과 목록 바꾸기 (spec/02 2-5, P174–P175) ──
 
 // 목록을 바꾸는 규칙을 한곳에 모은 함수(reducer). 원본은 그대로 두고 새 목록을 돌려준다.
