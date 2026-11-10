@@ -29,7 +29,8 @@
   grid-template-areas:
     'date top admin'
     'date title admin'
-    'date meta admin';
+    'date meta admin'
+    'confirm confirm confirm'; /* 삭제 확인 칸 (B-5) — 열렸을 때만 생기는 맨 아래 줄 */
 }
 
 .achievement-row__admin {
@@ -56,6 +57,68 @@
   font-size: 13px;
   text-decoration: none;
   white-space: nowrap;
+  /* <button>(삭제)도 <a>(수정)와 똑같이 보이게 */
+  border: 0;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* ── 삭제 확인 칸 (B-5, 시안 값) — 흰 상자에 검정 테두리, 문장 왼쪽·버튼 오른쪽, 좁으면 줄바꿈 ── */
+.achievement-row__confirm {
+  grid-area: confirm;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 16px;
+  padding: 14px 16px 14px 20px;
+  border: 1px solid var(--color-text);
+  border-radius: 16px;
+  background: var(--color-surface);
+  /* 제목 버튼의 덮개(::after)보다 위로 — 안 올리면 확인 칸을 눌러도 팝업이 열림 */
+  position: relative;
+  z-index: 1;
+  cursor: default;
+}
+
+.achievement-row__confirm-text {
+  margin: 0;
+  font-size: 14px;
+}
+
+/* 저장 실패 안내 — 문장·버튼 줄 아래에 한 줄 전체 (B-5 ②) */
+.achievement-row__confirm-error {
+  flex: 1 1 100%;
+  order: 1; /* 코드에선 문장 바로 뒤지만 화면에선 버튼 다음(맨 아래 줄)으로 */
+  margin: 0;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-danger);
+}
+
+.achievement-row__confirm-actions {
+  display: flex;
+  gap: 6px;
+}
+
+/* 시안은 40px — 누르는 요소 44px 기준(NFR-08)에 맞춰 44px (P214 ⑤) */
+.achievement-row__confirm-button {
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--color-border-input);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.achievement-row__confirm-button--danger {
+  border-color: var(--color-danger);
+  background: var(--color-danger);
+  color: #ffffff;
 }
 
 .achievement-row__admin-button:hover {
@@ -212,7 +275,8 @@
       'top date'
       'title title'
       'meta meta'
-      'admin admin';
+      'admin admin'
+      'confirm confirm';
   }
 
   .achievement-row__admin {

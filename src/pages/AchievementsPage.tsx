@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router'
 import AchievementList from '../components/achievements/AchievementList.tsx'
 import AchievementModal from '../components/achievements/AchievementModal.tsx'
@@ -16,11 +16,12 @@ const INITIAL_FILTER: AchievementFilter = { query: '', type: 'ALL', year: 'ALL' 
 // 성과 페이지 (spec/02 B). B-1: 꾸밈 글씨·제목·개수 + 최신순 줄 목록 + 0건 안내 (P192–P193).
 // B-2: 검색·유형 칩·연도로 걸러 보기 + 결과 없음 안내 (P194–P195).
 // B-3: 줄을 누르면 홈과 같은 성과 팝업 (P199).
-// B-4: 관리 모드면 제목 줄에 "성과 등록", 줄마다 "수정" — 둘 다 주소로 이동만 (폼은 spec/03, P209). 삭제(B-5)는 다음 단계
+// B-4: 관리 모드면 제목 줄에 "성과 등록", 줄마다 "수정" — 둘 다 주소로 이동만 (폼은 spec/03, P209).
+// B-5: 줄의 "삭제" → 그 줄 아래 확인 칸 → 삭제 (P214–P215)
 export default function AchievementsPage() {
   // 성과 목록 상자(2-5)에서 꺼내 쓴다 — 예시 성과도 모두 보임("예시" 배지로 구분, BR-19).
   // 다른 탭에서 바뀌어도 자동으로 다시 그려짐 (EX-25)
-  const { achievements } = useAchievements()
+  const { achievements, deleteAchievement } = useAchievements()
 
   // 관리 모드 켜짐 여부 — 헤더 스위치가 바꾸면 이 페이지도 다시 그려져 버튼이 생기고 사라진다 (B-4)
   const { isAdmin } = useAdminMode()
@@ -64,13 +65,77 @@ export default function AchievementsPage() {
   const openModal = useCallback((achievement: Achievement) => setSelectedId(achievement.id), [])
   const closeModal = useCallback(() => setSelectedId(null), [])
 
+  // ── 삭제 (B-5, P214–P215) ──
+  // 확인 칸이 열린 성과 번호 — 한 번에 한 줄만 (③). 줄에는 번호가 아니라 "내가 확인 중인가" 참/거짓만 넘긴다(memo)
+  const [confirmingId, setConfirmingId] = useState<number | null>(null)
+  // 저장에 실패했는지 — 확인 칸 안에 "저장에 실패했습니다." (②)
+  const [deleteFailed, setDeleteFailed] = useState(false)
+  // 지운 뒤 제목에 포커스를 줄 성과 번호 (① 다음 줄, 없으면 이전 줄). 그 줄이 포커스를 주고 나면 onFocusDone으로 지움
+  const [focusId, setFocusId] = useState<number | null>(null)
+  // 다 지워서 줄이 없을 때 포커스를 옮길 페이지 제목 — DOM을 직접 가리켜야 해서 useRef
+  const titleRef = useRef<HTMLHeadingElement>(null)
+
+  // ★ 확인 칸 저절로 닫기 — 그리는 중에 맞추기 (팝업 번호와 같은 방식).
+  //   관리 모드가 꺼짐(이 탭·다른 탭) / 걸러진 목록에 없음(다른 탭에서 지움, 검색으로 빠짐 ④) → 닫는다.
+  //   안 닫으면 다시 켜거나 검색을 지웠을 때 확인 칸이 열린 채로 튀어나옴
+  if (confirmingId !== null && (!isAdmin || !filtered.some((achievement) => achievement.id === confirmingId))) {
+    setConfirmingId(null)
+    setDeleteFailed(false)
+  }
+
+  // 가장 최신의 걸러진 목록 — 지우는 함수가 "다음 줄"을 찾을 때 읽는다.
+  // 함수 의존값에 filtered를 넣으면 검색어를 칠 때마다 함수가 새로 생겨 모든 줄이 다시 그려지므로(memo 깨짐)
+  // 값만 기억하는 useRef에 두고, 그린 뒤(useEffect) 바꿔 둔다 — 그리는 중에 ref를 바꾸지 않기 (React 규칙)
+  const latestFiltered = useRef(filtered)
+  useEffect(() => {
+    latestFiltered.current = filtered
+  }, [filtered])
+
+  // 줄에 넘기는 함수들은 모두 useCallback으로 고정 — 줄이 memo라서 (B-3과 같은 이유)
+  const requestDelete = useCallback((achievement: Achievement) => {
+    setConfirmingId(achievement.id) // 다른 줄이 열려 있었으면 그 칸은 저절로 닫힘 (③)
+    setDeleteFailed(false)
+  }, [])
+
+  const cancelDelete = useCallback(() => {
+    setConfirmingId(null)
+    setDeleteFailed(false)
+  }, [])
+
+  const confirmDelete = useCallback(
+    (achievement: Achievement) => {
+      // 지우기 전에 다음 줄(맨 끝이면 이전 줄)을 찾아 둔다
+      const list = latestFiltered.current
+      const index = list.findIndex((item) => item.id === achievement.id)
+      const next = list[index + 1] ?? list[index - 1] ?? null
+
+      // 저장 먼저, 성공했을 때만 화면에서 사라짐 (EX-12 — 2-5의 deleteAchievement가 처리)
+      if (!deleteAchievement(achievement.id)) {
+        setDeleteFailed(true) // 줄은 그대로, 확인 칸은 열린 채로 → 바로 다시 시도 가능
+        return
+      }
+      setConfirmingId(null)
+      setDeleteFailed(false)
+      if (next) {
+        setFocusId(next.id)
+      } else {
+        titleRef.current?.focus() // 마지막 성과였으면 페이지 제목으로 (줄이 하나도 없음)
+      }
+    },
+    [deleteAchievement],
+  )
+
+  // 지운 뒤 포커스를 받은 줄이 부르면 표시를 지운다 — 남아 있으면 나중에 다시 그릴 때 또 포커스가 옮겨감
+  const clearFocus = useCallback(() => setFocusId(null), [])
+
   return (
     <section className="achievements-page" aria-labelledby="achievements-title">
       <div className="achievements-page__head">
         <div>
           <p className="eyebrow">PAPERS · AWARDS · PATENTS · CONTESTS</p>
           {/* 제목 옆 개수 — 평소엔 전체(FR-06), 걸렀을 때만 "남은 수 / 전체" (Q-B2) */}
-          <h1 id="achievements-title" className="page-title">
+          {/* tabIndex -1: Tab으로는 안 오고, 마지막 성과를 지운 뒤 코드로만 포커스를 옮겨 올 수 있게 (B-5 ①) */}
+          <h1 id="achievements-title" className="page-title" ref={titleRef} tabIndex={-1}>
             성과{' '}
             <span className="achievements-page__count">
               {isFiltered ? `${filtered.length} / ${achievements.length}` : achievements.length}
@@ -125,7 +190,18 @@ export default function AchievementsPage() {
               />
             </div>
           ) : (
-            <AchievementList achievements={filtered} isAdmin={isAdmin} onOpen={openModal} />
+            <AchievementList
+              achievements={filtered}
+              isAdmin={isAdmin}
+              confirmingId={confirmingId}
+              deleteFailed={deleteFailed}
+              focusId={focusId}
+              onOpen={openModal}
+              onDelete={requestDelete}
+              onCancelDelete={cancelDelete}
+              onConfirmDelete={confirmDelete}
+              onFocusDone={clearFocus}
+            />
           )}
         </>
       )}
