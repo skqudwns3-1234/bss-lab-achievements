@@ -1,5 +1,14 @@
-import type { Achievement, AchievementFilter, AchievementType, AchievementsAction, NewestSummary } from '../types.ts'
+import type {
+  Achievement,
+  AchievementErrors,
+  AchievementFilter,
+  AchievementInput,
+  AchievementType,
+  AchievementsAction,
+  NewestSummary,
+} from '../types.ts'
 import { isValidYmd } from './date.ts'
+import { safeLink } from './links.ts'
 
 // 화면에 보여 줄 값을 계산하는 함수들 (design.md 9절, spec/02 2-3a).
 // 화면(React)·저장소와 상관없는 순수 함수만 둔다 — 같은 값을 넣으면 늘 같은 결과, 받은 목록은 바꾸지 않음.
@@ -116,6 +125,62 @@ export function nextId(list: Achievement[]): number {
 // Number()만 쓰면 '1e2'→100, '01'→1, ' 8 '→8처럼 이상한 주소도 다른 성과로 이어져서 글자 모양부터 본다
 export function parseAchievementId(text: string): number | null {
   return /^[1-9]\d*$/.test(text) ? Number(text) : null
+}
+
+// ── 등록·수정 폼 (spec/03 C-2a, P224–P225) ──
+
+// 등록 폼의 처음 값 — 유형은 논문, 나머지는 빈 칸
+export const EMPTY_INPUT: AchievementInput = {
+  type: 'PAPER',
+  title: '',
+  achievedOn: '',
+  authors: '',
+  advisors: '',
+  venue: '',
+  doi: '',
+  link: '',
+}
+
+// 성과 → 폼 값. 번호와 예시 여부는 사용자가 고치는 값이 아니라 뺀다 (번호·예시 여부는 저장할 때 reducer가 그대로 둠)
+export function toInput(achievement: Achievement): AchievementInput {
+  const { type, title, achievedOn, authors, advisors, venue, doi, link } = achievement
+  return { type, title, achievedOn, authors, advisors, venue, doi, link }
+}
+
+// 유형마다 바뀌는 칸 이름 (Q-C3, 시안). 저장 칸은 같고 이름만 다르다. 제목·지도교수·링크는 그대로
+export const TYPE_FIELD_LABELS: Record<AchievementType, { venue: string; authors: string; achievedOn: string }> = {
+  PAPER: { venue: '학술지·학회', authors: '저자', achievedOn: '발행일' },
+  AWARD: { venue: '수여 기관·대회', authors: '수상자', achievedOn: '수상일' },
+  PATENT: { venue: '출원·등록 기관', authors: '발명자', achievedOn: '출원일' },
+  CONTEST: { venue: '대회 이름', authors: '참가자', achievedOn: '수상일' },
+}
+
+// 폼 검사 — 칸별 오류 문장 묶음, 문제없으면 빈 묶음 {} (EX-01, BR-02·04, EX-30). 문장은 시안 그대로.
+// 유형은 라디오라 늘 넷 중 하나 — 검사하지 않음. 저장 단계의 마지막 검사는 reducer의 findRequiredProblem (EX-26)
+export function validateAchievement(values: AchievementInput): AchievementErrors {
+  const errors: AchievementErrors = {}
+  if (values.title.trim() === '') errors.title = '제목을 입력해 주세요.'
+  // 달력 칸은 다 고르지 않았거나 연도를 다섯 자리로 치면 빈 글자·이상한 값이 와서 여기서 걸림
+  if (!isValidYmd(values.achievedOn)) errors.achievedOn = '날짜를 골라 주세요.'
+  // 팝업의 "원문 보기"와 같은 규칙(safeLink) — 폼이 받아 준 링크는 팝업에서도 열림
+  if (values.link.trim() !== '' && safeLink(values.link) === null) {
+    errors.link = 'http:// 또는 https://로 시작하는 주소만 넣을 수 있어요.'
+  }
+  return errors
+}
+
+// 저장 직전 글자 칸의 앞뒤 공백 지우기 (BR-03). 가운데 공백은 그대로, 공백만이면 빈 값
+export function normalizeInput(values: AchievementInput): AchievementInput {
+  return {
+    type: values.type,
+    title: values.title.trim(),
+    achievedOn: values.achievedOn,
+    authors: values.authors.trim(),
+    advisors: values.advisors.trim(),
+    venue: values.venue.trim(),
+    doi: values.doi.trim(),
+    link: values.link.trim(),
+  }
 }
 
 // ── 성과 목록 바꾸기 (spec/02 2-5, P174–P175) ──

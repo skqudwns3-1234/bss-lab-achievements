@@ -1,0 +1,147 @@
+/* 성과 등록·수정 폼 (spec/03 C-2a) — 시안 AchievementForm.dc.html 값.
+   흰 상자는 C-1에서 페이지에 있던 것을 옮김 */
+.achievement-form {
+  flex: 2 1 560px;
+  min-width: 0;
+  padding: clamp(24px, 4vw, 48px);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-form);
+  background: var(--color-surface);
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* 저장 실패 — 폼 맨 위 (EX-12). 포커스가 오면 화면이 여기로 스크롤됨 */
+.achievement-form__alert {
+  margin: 0;
+  padding: 14px 20px;
+  border: 1px solid var(--color-danger);
+  border-radius: 16px;
+  color: var(--color-danger);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.achievement-form__alert:focus {
+  outline: none; /* 누르는 곳이 아니라 읽을 곳이라 테두리는 빨간 선으로 충분 */
+}
+
+/* ── 유형 고르기: 숨긴 라디오 + 알약 ── */
+.achievement-form__types {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.achievement-form__types legend {
+  padding: 0;
+  margin-bottom: 12px;
+}
+
+.achievement-form__type-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.achievement-form__type {
+  position: relative;
+}
+
+/* 진짜 라디오는 화면에서만 숨김 — display:none이면 키보드로 못 와서 visually-hidden 방식 */
+.achievement-form__type-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.achievement-form__type-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 20px;
+  border: 1px solid var(--color-border-input);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.achievement-form__type-input:checked + .achievement-form__type-pill {
+  border-color: var(--color-text);
+  background: var(--color-text);
+  color: #ffffff;
+}
+
+/* 키보드로 왔을 때만 테두리 (마우스 클릭에는 안 보임) */
+.achievement-form__type-input:focus-visible + .achievement-form__type-pill {
+  outline: 2px solid var(--color-text);
+  outline-offset: 2px;
+}
+
+/* ── 칸 ── */
+.achievement-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+/* 날짜(1) : 학술지(2) 한 줄 — 좁으면 위아래 (시안) */
+.achievement-form__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.achievement-form__row .achievement-form__field:first-child {
+  flex: 1 1 200px;
+}
+
+.achievement-form__row .achievement-form__field:last-child {
+  flex: 2 1 280px;
+}
+
+.achievement-form__label,
+.achievement-form__types legend {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.achievement-form__required {
+  color: var(--color-danger);
+}
+
+.achievement-form .input {
+  width: 100%;
+  min-width: 0;
+  height: 52px;
+  font-size: 15px;
+  color: var(--color-text);
+}
+
+.achievement-form__error {
+  margin: 0;
+  font-size: 13px;
+  color: var(--color-danger);
+}
+
+/* 미래 날짜 안내 — 오류가 아니라 알림이라 회색 (Q-C2) */
+.achievement-form__note {
+  margin: 0;
+  font-size: 13px;
+  color: var(--color-muted);
+}
+
+/* 아래 버튼 줄 — 위에 가는 선, 오른쪽 맞춤 */
+.achievement-form__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-top: 24px;
+  border-top: 1px solid var(--color-border);
+}

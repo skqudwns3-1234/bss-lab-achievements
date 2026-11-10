@@ -1,8 +1,10 @@
 import { Link, Navigate, useNavigate, useParams } from 'react-router'
+import AchievementForm from '../components/achievements/AchievementForm.tsx'
 import EmptyState from '../components/common/EmptyState.tsx'
 import { useAchievements } from '../context/useAchievements.ts'
 import { useAdminMode } from '../context/useAdminMode.ts'
-import { parseAchievementId } from '../utils/achievements.ts'
+import type { AchievementInput } from '../types.ts'
+import { EMPTY_INPUT, parseAchievementId, toInput } from '../utils/achievements.ts'
 import './AchievementFormPage.css'
 
 // 단계 안내 (시안) — 보기만, 누르는 것 아님
@@ -35,14 +37,14 @@ function BackLink() {
   )
 }
 
-// 성과 등록·수정 페이지 틀 (spec/03 C-1, P221–P222). 입력칸·저장은 C-2의 AchievementForm.
-// 판단 순서: ① 관리 모드가 아니면 목록으로 ② 수정이면 고칠 성과 찾기, 없으면 "찾을 수 없어요" ③ 틀 그리기
+// 성과 등록·수정 페이지 (spec/03 C-1 P221–P222 틀, C-2a P224–P225 폼 연결). 입력칸·검사는 AchievementForm.
+// 판단 순서: ① 관리 모드가 아니면 목록으로 ② 수정이면 고칠 성과 찾기, 없으면 "찾을 수 없어요" ③ 틀 + 폼 (C-2a)
 export default function AchievementFormPage() {
   // /achievements/new 이면 id가 없고, /achievements/8/edit 이면 '8'
   const { id } = useParams()
   const isEdit = id !== undefined
   const { isAdmin } = useAdminMode()
-  const { achievements } = useAchievements()
+  const { achievements, addAchievement, updateAchievement } = useAchievements()
   // 버튼을 눌렀을 때 다른 주소로 보내는 라우터 기능 — 훅이라 아래에서 일찍 돌려보내기 전에 부른다
   const navigate = useNavigate()
 
@@ -74,6 +76,14 @@ export default function AchievementFormPage() {
     )
   }
 
+  // 저장 (C-2a): 등록은 add, 수정은 update — 둘 다 "저장 먼저, 성공하면 반영"이라 성공 여부를 돌려줌 (2-5).
+  // 성공하면 목록으로 ("저장했어요" 안내는 C-2b). 폼이 memo가 아니라 useCallback으로 고정해도 얻는 게 없어 그냥 함수
+  function handleSubmit(input: AchievementInput): boolean {
+    const ok = target ? updateAchievement(target.id, input) : addAchievement(input)
+    if (ok) navigate('/achievements')
+    return ok
+  }
+
   // ③ 틀 — 시안 배치: 왼쪽 안내(제목·설명·단계) / 오른쪽 흰 폼 상자
   return (
     <section>
@@ -99,16 +109,13 @@ export default function AchievementFormPage() {
           </ol>
         </div>
 
-        {/* 흰 폼 상자 — 입력칸과 "저장"은 C-2에서 AchievementForm으로 만들고, 이 상자·"취소"도 그리로 옮긴다 */}
-        <div className="form-page__box">
-          <p className="placeholder-note form-page__placeholder">입력칸은 다음 단계(C-2)에서 만들어요.</p>
-          <div className="form-page__actions">
-            {/* 취소: 저장한 게 없으니 목록으로 가기만 (TC-38) */}
-            <Link to="/achievements" className="btn btn--secondary">
-              취소
-            </Link>
-          </div>
-        </div>
+        {/* 흰 폼 상자 = AchievementForm (C-2a). key: 뒤로·앞으로 가기로 등록 ↔ 수정(또는 3번 ↔ 5번)을 오가면
+            React가 같은 자리의 같은 컴포넌트를 다시 써서 앞 화면 값이 남을 수 있음 → key가 바뀌면 폼을 새로 만들어 처음 값부터 */}
+        <AchievementForm
+          key={target ? `edit-${target.id}` : 'new'}
+          initialValues={target ? toInput(target) : EMPTY_INPUT}
+          onSubmit={handleSubmit}
+        />
       </div>
     </section>
   )

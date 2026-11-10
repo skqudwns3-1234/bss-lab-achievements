@@ -39,6 +39,9 @@ export type Achievement = {
 // (id는 저장할 때 정하고, isSample은 사용자가 고치는 값이 아님)
 export type AchievementInput = Omit<Achievement, 'id' | 'isSample'>
 
+// 폼 검사 결과 — 칸 이름: 오류 문장. 문제없는 칸은 없음 (spec/03 C-2a, design 2절)
+export type AchievementErrors = Partial<Record<keyof AchievementInput, string>>
+
 // 성과 목록 검색 조건 (spec/02 2-3a) — 성과 페이지의 검색칸·유형·연도
 export type AchievementFilter = {
   query: string // 검색어 — 제목·저자·지도교수에서 찾음 (P157)

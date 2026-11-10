@@ -8,8 +8,12 @@ import {
   filterAchievements,
   getNewestSummary,
   nextId,
+  normalizeInput,
   padCount,
   parseAchievementId,
+  toInput,
+  validateAchievement,
+  EMPTY_INPUT,
   sortByLatest,
 } from './achievements.ts'
 
@@ -266,5 +270,42 @@ describe('parseAchievementId — 주소의 성과 번호 (EX-06, spec/03 C-1)', 
     for (const text of ['abc', '0', '1.5', '01', '-1', '1e2', ' 8', '']) {
       expect(parseAchievementId(text)).toBeNull()
     }
+  })
+})
+
+describe('validateAchievement — 폼 검사 (EX-01, BR-04, EX-30, spec/03 C-2a)', () => {
+  const ok: AchievementInput = { ...EMPTY_INPUT, title: '제목', achievedOn: '2026-03-01' }
+
+  test('UT-66 제목·실제 날짜·http(s) 링크만 통과, 문장은 시안 그대로', () => {
+    expect(validateAchievement(ok)).toEqual({})
+    expect(validateAchievement({ ...ok, link: 'https://example.com/a' })).toEqual({}) // 링크는 비어도, https도 통과
+    expect(validateAchievement({ ...ok, title: '' }).title).toBe('제목을 입력해 주세요.')
+    expect(validateAchievement({ ...ok, title: '   ' }).title).toBe('제목을 입력해 주세요.') // 공백만
+    for (const achievedOn of ['', '2026-02-30', '20260-01-01']) {
+      expect(validateAchievement({ ...ok, achievedOn }).achievedOn).toBe('날짜를 골라 주세요.')
+    }
+    for (const link of ['javascript:alert(1)', 'ftp://a.b', 'abc']) {
+      expect(validateAchievement({ ...ok, link }).link).toBe('http:// 또는 https://로 시작하는 주소만 넣을 수 있어요.')
+    }
+    // 여러 칸이 한꺼번에 틀리면 모두 알려 줌
+    expect(Object.keys(validateAchievement({ ...EMPTY_INPUT, link: 'abc' }))).toEqual(['title', 'achievedOn', 'link'])
+  })
+})
+
+describe('normalizeInput · toInput — 저장 직전 값 (BR-03)', () => {
+  test('UT-67 글자 칸 앞뒤 공백만 지우고 가운데 공백은 그대로', () => {
+    const input = normalizeInput({ ...EMPTY_INPUT, title: '  딥 러닝  ', authors: ' 홍길동, 김철수 ', venue: '   ', link: ' https://a.b ' })
+    expect(input.title).toBe('딥 러닝')
+    expect(input.authors).toBe('홍길동, 김철수')
+    expect(input.venue).toBe('') // 공백만이면 빈 값
+    expect(input.link).toBe('https://a.b')
+  })
+
+  test('UT-68 toInput은 번호와 예시 여부만 뺀다', () => {
+    const achievement = make(3, 'AWARD', '2026-05-01', { title: '상', isSample: true })
+    const input = toInput(achievement)
+    expect(input).not.toHaveProperty('id')
+    expect(input).not.toHaveProperty('isSample')
+    expect(input).toEqual({ ...EMPTY_INPUT, type: 'AWARD', title: '상', achievedOn: '2026-05-01' })
   })
 })
