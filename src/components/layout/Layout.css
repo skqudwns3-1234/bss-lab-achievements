@@ -267,13 +267,17 @@
   color: var(--color-muted);
 }
 
-/* ── 모바일(760px 이하): 메뉴를 버튼으로 접고 펼친다 ── */
+/* ── 모바일(760px 이하): 로고 부제 숨기기 (메뉴 접기는 아래 880px) ── */
 @media (max-width: 760px) {
   /* 좁은 화면에서는 부제를 숨겨 로고와 메뉴 버튼을 한 줄에 둔다 */
   .header__logo-sub {
     display: none;
   }
+}
 
+/* 메뉴를 "메뉴" 버튼으로 접는 폭은 헤더만 880px까지 — B-4에서 관리 모드 스위치가 들어가며
+   761~830px에서 메뉴가 한 줄에 안 들어가 헤더가 두 줄이 됐다 (spec/02 점검 ④, P216–P217). 태블릿 세로(768px)도 메뉴 버튼 */
+@media (max-width: 880px) {
   .header__menu-button {
     display: inline-flex;
     align-items: center;

@@ -42,6 +42,13 @@ export default function AchievementsPage() {
     setFilter({ ...filter, year: 'ALL' })
   }
 
+  // ★ 목록이 0건이 되면 검색 조건을 처음으로 (spec/02 점검 ③, P216–P217).
+  //   0건 화면에는 검색 줄이 없어 조건이 안 보이는데 남아 있으면 제목이 "0 / 0"이 되고,
+  //   나중에 성과가 다시 생겨도 보이지 않던 조건이 걸린 채로 시작함. 처음 값과 같은 객체가 되면 더 바꾸지 않음
+  if (achievements.length === 0 && filter !== INITIAL_FILTER) {
+    setFilter(INITIAL_FILTER)
+  }
+
   // 걸러진 목록 — 검색어·유형·연도를 모두 만족(AND, BR-11). 조건이나 목록이 바뀔 때만 계산.
   // 줄(AchievementRow)은 memo라서, 다시 걸러도 성과가 그대로인 줄은 다시 그리지 않는다 (design R5)
   const filtered = useMemo(() => filterAchievements(sorted, filter), [sorted, filter])

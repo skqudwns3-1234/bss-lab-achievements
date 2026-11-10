@@ -94,7 +94,12 @@ function AchievementRow({
           ref={titleButtonRef}
           type="button"
           className="achievement-row__open"
-          onClick={() => onOpen(achievement)}
+          onClick={(event) => {
+            // 더블클릭의 두 번째 클릭은 무시 — 위 줄의 확인 칸 취소·삭제를 더블클릭하면 칸이 닫혀 줄이 줄어들고
+            // 두 번째 클릭이 이 줄에 닿아 엉뚱한 팝업이 열렸다 (spec/02 점검 ②, P216–P217). 키보드(Enter)는 detail 0이라 그대로
+            if (event.detail > 1) return
+            onOpen(achievement)
+          }}
         >
           {titleHead}
           {/* 마지막 글자 + ↗를 줄바꿈 없는 묶음으로 — 제목이 줄 끝에 딱 맞을 때 ↗만 다음 줄로 떨어지지 않게
@@ -120,7 +125,14 @@ function AchievementRow({
           화면에는 "수정"·"삭제"만 보이고, 낭독기는 숨은 제목까지 읽어 줄마다 무엇을 고치고 지우는지 구분됨 */}
       {isAdmin && (
         <div className="achievement-row__admin">
-          <Link to={`/achievements/${id}/edit`} className="achievement-row__admin-button">
+          <Link
+            to={`/achievements/${id}/edit`}
+            className="achievement-row__admin-button"
+            onClick={(event) => {
+              // 같은 이유로 두 번째 클릭이 "수정"에 닿아 폼으로 넘어가지 않게 (점검 ②)
+              if (event.detail > 1) event.preventDefault()
+            }}
+          >
             수정<span className="visually-hidden"> — {title}</span>
           </Link>
           {/* aria-expanded: 확인 칸이 열렸는지 낭독기에 알림 */}
@@ -130,7 +142,10 @@ function AchievementRow({
             className="achievement-row__admin-button"
             aria-expanded={isConfirming}
             aria-controls={isConfirming ? confirmId : undefined}
-            onClick={() => onDelete(achievement)}
+            onClick={(event) => {
+              if (event.detail > 1) return // 두 번째 클릭이 아래 줄 "삭제"에 닿아 확인 칸이 열리지 않게 (점검 ②)
+              onDelete(achievement)
+            }}
           >
             삭제<span className="visually-hidden"> — {title}</span>
           </button>

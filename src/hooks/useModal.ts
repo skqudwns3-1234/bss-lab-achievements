@@ -76,6 +76,9 @@ export function useModal(onClose: () => void) {
       pressedOnBackdrop.current = event.target === event.currentTarget
     },
     onClick: (event: MouseEvent<HTMLElement>) => {
+      // 더블클릭의 두 번째 클릭(event.detail = 연달아 누른 횟수 2 이상)은 무시 — 카드·줄을 더블클릭하면
+      // 첫 클릭에 팝업이 열리고 두 번째 클릭이 바로 이 바깥에 닿아 닫혀 버렸다 (spec/02 점검 ①, P216–P217)
+      if (event.detail > 1) return
       if (pressedOnBackdrop.current && event.target === event.currentTarget) onCloseRef.current()
       pressedOnBackdrop.current = false
     },
