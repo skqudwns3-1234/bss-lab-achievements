@@ -1,0 +1,100 @@
+/* DOI로 자동 채우기 (spec/03 C-4) — 시안 AchievementForm.dc.html 값: 회색 상자, 둥근 20px */
+.doi-lookup {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px;
+  border-radius: 20px;
+  background: var(--color-bg);
+}
+
+/* DOI 칸 + 불러오기 — 좁으면 버튼이 아래 줄로 */
+.doi-lookup__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.doi-lookup__input {
+  flex: 1 1 260px;
+  min-width: 0;
+  height: 52px;
+  padding: 0 18px;
+  font-size: 15px;
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.doi-lookup__button {
+  height: 52px;
+  padding: 0 24px;
+  border: 0;
+}
+
+/* 불러오는 중 — 눌러도 무시되는 상태 (disabled 대신 aria-disabled, 포커스 유지) */
+.doi-lookup__button[aria-disabled='true'] {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+/* 상태 문장 — 대기·불러오는 중은 회색, 성공은 검정, 오류는 빨강 (시안) */
+.doi-lookup__status {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--color-muted);
+}
+
+.doi-lookup__status svg {
+  flex: none;
+}
+
+.doi-lookup__status--success {
+  color: var(--color-text);
+}
+
+.doi-lookup__status--error {
+  color: var(--color-danger);
+}
+
+/* 같은 DOI 경고 (Q-C7) — 막지는 않으니 빨강 대신 진한 글자 + 왼쪽 선 */
+.doi-lookup__duplicate {
+  margin: 0;
+  padding-left: 10px;
+  border-left: 2px solid var(--color-text);
+  font-size: 13px;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+
+/* 불러오는 중 도는 원 — 움직임을 줄이도록 설정한 사람에겐 멈춤 */
+.doi-lookup__spinner {
+  animation: doi-lookup-spin 0.9s linear infinite;
+}
+
+@keyframes doi-lookup-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .doi-lookup__spinner {
+    animation: none;
+  }
+}
+
+/* 작은 휴대폰(480px 이하) — 폼 상자 안의 회색 상자라 안쪽 여백이 겹쳐 DOI 칸이 좁아짐(320px에서 155px, 번호가 잘림).
+   여백을 줄이고, 아래 줄로 내려간 버튼은 가로 전체로 (C-4 확인 중 발견, P236) */
+@media (max-width: 480px) {
+  .doi-lookup {
+    padding: 16px;
+  }
+
+  .doi-lookup__button {
+    flex: 1 1 auto;
+    justify-content: center;
+  }
+}

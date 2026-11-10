@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import { Link } from 'react-router'
+import type { CrossrefWork } from '../../api/crossref.ts'
 import type { AchievementInput } from '../../types.ts'
 import { todayYmd } from '../../utils/date.ts'
 import {
@@ -10,12 +11,14 @@ import {
   normalizeInput,
   validateAchievement,
 } from '../../utils/achievements.ts'
+import DoiLookup from './DoiLookup.tsx'
 import './AchievementForm.css'
 
 type AchievementFormProps = {
   initialValues: AchievementInput // 처음 값 — 등록은 빈 값 + 논문, 수정은 그 성과 값. 처음 그릴 때만 씀
   onSubmit: (input: AchievementInput) => boolean // 저장 — 성공했는지 돌려받음 (성공하면 페이지가 목록으로 보냄)
   isDeleted: boolean // 수정하는 동안 다른 탭에서 이 성과가 지워졌는지 — 참이면 안내 + 저장 막기 (C-2b, Q-C8)
+  editingId: number | null // 수정 중인 성과 번호(등록은 null) — DOI 상자의 같은 DOI 경고에서 자기 자신을 뺌 (C-4)
 }
 
 // 글자 칸 하나의 이름 (values의 칸 이름 중 유형을 뺀 것)
@@ -25,13 +28,16 @@ type TextField = Exclude<keyof AchievementInput, 'type'>
 // 상태: values(폼 값) / submitted(저장을 한 번 눌렀는지) / saveFailed(저장 실패 문장).
 // 오류(errors)는 상태로 두지 않고 그릴 때마다 values로 계산한다 — 상태로 따로 두면 칸을 고칠 때마다
 // 두 곳을 맞춰야 하고, 어긋나면 고쳤는데도 빨간 문장이 남아서 (사용자 결정 ③)
-export default function AchievementForm({ initialValues, onSubmit, isDeleted }: AchievementFormProps) {
+export default function AchievementForm({ initialValues, onSubmit, isDeleted, editingId }: AchievementFormProps) {
   // 처음 값은 처음 그릴 때만 — 다른 탭에서 같은 성과를 고쳐도 쓰던 값은 그대로 (EX-25)
   const [values, setValues] = useState(initialValues)
   const [submitted, setSubmitted] = useState(false)
   const [saveFailed, setSaveFailed] = useState(false)
+  // DOI로 채운 칸들 — 칸 이름 옆 "자동 입력" 표시. 그 칸을 고치면 빠짐 (C-4 ③)
+  const [autoFilled, setAutoFilled] = useState<ReadonlySet<TextField>>(() => new Set())
 
   // 첫 오류 칸·실패 문장으로 포커스를 옮기려고 실제 칸(DOM)을 가리킴
+  const doiRef = useRef<HTMLInputElement>(null) // DOI 칸은 DoiLookup 안에 있어서 prop으로 넘김 (C-4)
   const titleRef = useRef<HTMLInputElement>(null)
   const dateRef = useRef<HTMLInputElement>(null)
   const linkRef = useRef<HTMLInputElement>(null)
@@ -55,6 +61,36 @@ export default function AchievementForm({ initialValues, onSubmit, isDeleted }: 
   // 글자 칸 바꾸기 — 그 칸만 새 값으로 (제어 입력)
   function handleChange(field: TextField, value: string) {
     setValues((prev) => ({ ...prev, [field]: value }))
+    // 고친 칸은 더 이상 Crossref 값이 아니라 "자동 입력" 표시를 뺀다 (C-4 ③)
+    if (autoFilled.has(field)) {
+      setAutoFilled((prev) => {
+        const next = new Set(prev)
+        next.delete(field)
+        return next
+      })
+    }
+  }
+
+  // 유형 바꾸기 — 논문이 아니게 되면 넣어 둔 DOI를 지운다 (Q-C6, BR-05 논문만 DOI). 다시 논문으로 바꾸면 빈칸
+  function handleTypeChange(type: AchievementInput['type']) {
+    setValues((prev) => ({ ...prev, type, doi: type === 'PAPER' ? prev.doi : '' }))
+  }
+
+  // DOI로 불러온 값 채우기 (C-4) — 사용자가 직접 누른 것이라 덮어쓰되, 받은 값이 빈 칸은 원래 값을 남긴다
+  // (② — 수정 화면에서 다시 불러올 때 직접 써 둔 학술지 등이 지워지지 않게). 덮어쓴 칸에 "자동 입력" 표시
+  function handleFill(work: CrossrefWork) {
+    const filled = (Object.keys(work) as (keyof CrossrefWork)[]).filter((field) => work[field] !== '')
+    setValues((prev) => {
+      const next = { ...prev }
+      for (const field of filled) next[field] = work[field]
+      return next
+    })
+    setAutoFilled(new Set(filled))
+  }
+
+  // 칸 이름 옆 "자동 입력" 작은 알약 (시안)
+  function autoTag(field: TextField) {
+    return autoFilled.has(field) ? <span className="achievement-form__auto">자동 입력</span> : null
   }
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -67,12 +103,13 @@ export default function AchievementForm({ initialValues, onSubmit, isDeleted }: 
 
     // 오류가 있으면 저장하지 않고 화면 순서대로 첫 오류 칸으로 포커스
     const found = validateAchievement(values)
+    if (found.doi) return doiRef.current?.focus() // DOI 상자가 유형 바로 아래라 맨 먼저 (C-4)
     if (found.title) return titleRef.current?.focus()
     if (found.achievedOn) return dateRef.current?.focus()
     if (found.link) return linkRef.current?.focus()
 
     savingRef.current = true
-    const ok = onSubmit(normalizeInput(values)) // 앞뒤 공백을 지운 값으로 저장 (BR-03)
+    const ok = onSubmit(normalizeInput(values)) // 앞뒤 공백을 지우고 DOI는 정리한 번호로 저장 (BR-03, C-4 ⑥)
     if (!ok) {
       savingRef.current = false // 다시 시도할 수 있게
       setSaveFailed(true) // 입력값은 그대로 (EX-12)
@@ -134,7 +171,7 @@ export default function AchievementForm({ initialValues, onSubmit, isDeleted }: 
                 name="type"
                 value={type}
                 checked={values.type === type}
-                onChange={() => setValues((prev) => ({ ...prev, type }))}
+                onChange={() => handleTypeChange(type)}
                 className="achievement-form__type-input"
               />
               <span className="achievement-form__type-pill">{TYPE_LABELS[type]}</span>
@@ -143,9 +180,22 @@ export default function AchievementForm({ initialValues, onSubmit, isDeleted }: 
         </div>
       </fieldset>
 
+      {/* DOI로 자동 채우기 — 논문일 때만 (BR-05, C-4). 유형을 바꿔 사라지면 진행 중인 요청은 DoiLookup이 취소 */}
+      {values.type === 'PAPER' && (
+        <DoiLookup
+          doi={values.doi}
+          onDoiChange={(doi) => handleChange('doi', doi)}
+          onFill={handleFill}
+          error={errors.doi}
+          editingId={editingId}
+          inputRef={doiRef}
+        />
+      )}
+
       <div className="achievement-form__field">
         <label htmlFor="form-title" className="achievement-form__label">
           제목 <span className="achievement-form__required" aria-hidden="true">*</span>
+          {autoTag('title')}
         </label>
         {/* required: 낭독기가 "필수"라고 읽음 (검사는 noValidate라 우리 함수가 함) */}
         <input
@@ -165,6 +215,7 @@ export default function AchievementForm({ initialValues, onSubmit, isDeleted }: 
         <div className="achievement-form__field">
           <label htmlFor="form-achievedOn" className="achievement-form__label">
             {labels.achievedOn} <span className="achievement-form__required" aria-hidden="true">*</span>
+            {autoTag('achievedOn')}
           </label>
           <input
             ref={dateRef}
@@ -183,6 +234,7 @@ export default function AchievementForm({ initialValues, onSubmit, isDeleted }: 
         <div className="achievement-form__field">
           <label htmlFor="form-venue" className="achievement-form__label">
             {labels.venue}
+            {autoTag('venue')}
           </label>
           <input
             id="form-venue"
@@ -197,6 +249,7 @@ export default function AchievementForm({ initialValues, onSubmit, isDeleted }: 
       <div className="achievement-form__field">
         <label htmlFor="form-authors" className="achievement-form__label">
           {labels.authors}
+          {autoTag('authors')}
         </label>
         <input
           id="form-authors"
@@ -226,6 +279,7 @@ export default function AchievementForm({ initialValues, onSubmit, isDeleted }: 
       <div className="achievement-form__field">
         <label htmlFor="form-link" className="achievement-form__label">
           링크
+          {autoTag('link')}
         </label>
         {/* inputMode="url": 휴대폰에서 주소 자판 */}
         <input

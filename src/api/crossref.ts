@@ -95,7 +95,11 @@ function decodeEntities(text: string): string {
   })
 }
 
-// 저자 목록: 사람은 "given family"(given이 없으면 family만), 단체는 name → ", "로 이음 (Q-C5). 수십 명이어도 모두 (EX-24)
+// 저자는 처음 3명까지만 넣고 나머지는 " 외 N명" (C-4 사용자 결정 P235) — 진짜 Crossref 확인에서
+// 저자 1012명 논문(중력파 관측)이 나와 모두 넣으면 저자 칸·목록 줄·팝업에 수천 글자가 들어가서 (EX-24)
+const MAX_AUTHORS = 3
+
+// 저자 목록: 사람은 "given family"(given이 없으면 family만), 단체는 name → ", "로 이음 (Q-C5)
 function joinAuthors(value: unknown): string {
   if (!Array.isArray(value)) return ''
   const names = value.map((author: unknown) => {
@@ -106,7 +110,9 @@ function joinAuthors(value: unknown): string {
     if (person !== '') return person
     return typeof author.name === 'string' ? author.name.replace(/\s+/g, ' ').trim() : ''
   })
-  return names.filter((name) => name !== '').join(', ')
+  const valid = names.filter((name) => name !== '')
+  if (valid.length <= MAX_AUTHORS) return valid.join(', ')
+  return `${valid.slice(0, MAX_AUTHORS).join(', ')} 외 ${valid.length - MAX_AUTHORS}명`
 }
 
 // 날짜: issued.date-parts[0] = [연, 월?, 일?] → 'YYYY-MM-DD', 빠진 월·일은 01 (EX-05, 사용자 결정 ⑤ — issued만).

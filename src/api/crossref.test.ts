@@ -88,7 +88,7 @@ describe('fetchCrossrefWork — DOI로 논문 정보 (FR-13)', () => {
     expect(fake).not.toHaveBeenCalled()
   })
 
-  test('UT-75 빠진 칸은 빈칸 — 저자 없음·단체·성만, 날짜는 issued만(빠진 월·일 01, 없는 날짜는 빈칸)', async () => {
+  test('UT-75 빠진 칸은 빈칸 — 저자 없음·단체·성만·처음 3명 + 외 N명, 날짜는 issued만(빠진 월·일 01, 없는 날짜는 빈칸)', async () => {
     const run = async (message: unknown) => {
       stubFetch(okWith(message))
       const result = await fetchCrossrefWork(DOI)
@@ -101,8 +101,11 @@ describe('fetchCrossrefWork — DOI로 논문 정보 (FR-13)', () => {
     expect((await run({ author: [{ name: 'ImageNet Consortium' }, { family: 'Kim' }, { given: ' ', family: ' ' }, 'abc'] })).authors).toBe(
       'ImageNet Consortium, Kim',
     )
-    const many = Array.from({ length: 30 }, (_, i) => ({ given: 'A', family: `B${i}` }))
-    expect((await run({ author: many })).authors.split(', ')).toHaveLength(30) // 수십 명도 모두
+    // 저자는 처음 3명 + " 외 N명" (C-4 결정 P235) — 3명은 그대로, 4명부터 줄임, 빈 이름은 세지 않음
+    const people = (n: number) => Array.from({ length: n }, (_, i) => ({ given: 'A', family: `B${i}` }))
+    expect((await run({ author: people(3) })).authors).toBe('A B0, A B1, A B2')
+    expect((await run({ author: people(4) })).authors).toBe('A B0, A B1, A B2 외 1명')
+    expect((await run({ author: [...people(1012), { given: '', family: '' }] })).authors).toBe('A B0, A B1, A B2 외 1009명')
 
     // 날짜
     expect((await run({ issued: { 'date-parts': [[2015]] } })).achievedOn).toBe('2015-01-01')

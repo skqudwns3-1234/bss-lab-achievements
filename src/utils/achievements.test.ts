@@ -288,6 +288,10 @@ describe('validateAchievement — 폼 검사 (EX-01, BR-04, EX-30, spec/03 C-2a)
     for (const link of ['javascript:alert(1)', 'ftp://a.b', 'abc']) {
       expect(validateAchievement({ ...ok, link }).link).toBe('http:// 또는 https://로 시작하는 주소만 넣을 수 있어요.')
     }
+    // DOI(C-4): 논문인데 모양이 아니면 오류, 주소째는 통과, 다른 유형이면 검사 안 함
+    expect(validateAchievement({ ...ok, doi: 'abc' }).doi).toBe('DOI 형식이 아니에요. 예: 10.1038/nature14539')
+    expect(validateAchievement({ ...ok, doi: 'https://doi.org/10.1038/nature14539' })).toEqual({})
+    expect(validateAchievement({ ...ok, type: 'AWARD', doi: 'abc' })).toEqual({})
     // 여러 칸이 한꺼번에 틀리면 모두 알려 줌
     expect(Object.keys(validateAchievement({ ...EMPTY_INPUT, link: 'abc' }))).toEqual(['title', 'achievedOn', 'link'])
   })
@@ -300,6 +304,9 @@ describe('normalizeInput · toInput — 저장 직전 값 (BR-03)', () => {
     expect(input.authors).toBe('홍길동, 김철수')
     expect(input.venue).toBe('') // 공백만이면 빈 값
     expect(input.link).toBe('https://a.b')
+    // DOI(C-4): 논문이면 정리한 번호, 다른 유형이면 빈칸
+    expect(normalizeInput({ ...EMPTY_INPUT, doi: ' https://doi.org/10.1038/nature14539 ' }).doi).toBe('10.1038/nature14539')
+    expect(normalizeInput({ ...EMPTY_INPUT, type: 'AWARD', doi: '10.1038/nature14539' }).doi).toBe('')
   })
 
   test('UT-68 toInput은 번호와 예시 여부만 뺀다', () => {

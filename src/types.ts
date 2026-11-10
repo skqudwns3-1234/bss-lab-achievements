@@ -42,10 +42,11 @@ export type AchievementInput = Omit<Achievement, 'id' | 'isSample'>
 // 폼 검사 결과 — 칸 이름: 오류 문장. 문제없는 칸은 없음 (spec/03 C-2a, design 2절)
 export type AchievementErrors = Partial<Record<keyof AchievementInput, string>>
 
-// 저장하고 목록으로 갈 때 실어 보내는 짐 — 목록 위 "등록했어요/수정했어요" 안내와 "보기" 버튼 (spec/03 C-2b, Q-C1)
+// 목록 위 안내 — 저장하고 목록으로 갈 때 실어 보내는 짐(등록·수정, spec/03 C-2b Q-C1)과
+// 목록에서 지웠을 때 목록 페이지가 직접 띄우는 안내(삭제, P233). 삭제는 짐으로 오지 않는다
 export type SavedNotice = {
-  kind: 'add' | 'edit' // 등록인지 수정인지
-  id: number // 저장된 성과 번호 — "보기"로 팝업을 열 때
+  kind: 'add' | 'edit' | 'delete' // 등록·수정·삭제
+  id: number // 그 성과 번호 — "보기"로 팝업을 열 때 (지운 성과는 목록에 없어 "보기"가 안 나옴)
   title: string // 저장된 제목 — 안내 문장에
 }
 

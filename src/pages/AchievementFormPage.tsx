@@ -140,6 +140,7 @@ export default function AchievementFormPage() {
           key={isEdit ? `edit-${id}` : 'new'}
           initialValues={shown ? toInput(shown) : EMPTY_INPUT}
           isDeleted={isDeleted}
+          editingId={isEdit ? editId : null}
           onSubmit={handleSubmit}
         />
       </div>

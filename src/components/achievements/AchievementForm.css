@@ -130,6 +130,24 @@
   font-weight: 500;
 }
 
+/* 칸 이름 + "자동 입력" 표시를 한 줄에 (C-4) */
+.achievement-form__label {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+}
+
+/* "자동 입력" 작은 회색 알약 (시안) — DOI로 채운 칸 */
+.achievement-form__auto {
+  padding: 1px 8px;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-strong);
+  color: var(--color-muted);
+  font-size: 11px;
+  font-weight: 500;
+}
+
 .achievement-form__required {
   color: var(--color-danger);
 }

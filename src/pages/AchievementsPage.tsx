@@ -7,12 +7,15 @@ import ArrowIcon from '../components/common/ArrowIcon.tsx'
 import EmptyState from '../components/common/EmptyState.tsx'
 import { useAchievements } from '../context/useAchievements.ts'
 import { useAdminMode } from '../context/useAdminMode.ts'
-import type { Achievement, AchievementFilter } from '../types.ts'
+import type { Achievement, AchievementFilter, SavedNotice } from '../types.ts'
 import { countByType, filterAchievements, getYears, readSavedNotice, sortByLatest } from '../utils/achievements.ts'
 import './AchievementsPage.css'
 
 // 처음 검색 조건 — "조건 초기화"도 이 값으로 되돌린다
 const INITIAL_FILTER: AchievementFilter = { query: '', type: 'ALL', year: 'ALL' }
+
+// 위쪽 안내 띠 문장 "‘제목’ 성과를 ○○했어요." (C-2b, 삭제는 P233)
+const NOTICE_VERBS: Record<SavedNotice['kind'], string> = { add: '등록', edit: '수정', delete: '삭제' }
 
 // 성과 페이지 (spec/02 B). B-1: 꾸밈 글씨·제목·개수 + 최신순 줄 목록 + 0건 안내 (P192–P193).
 // B-2: 검색·유형 칩·연도로 걸러 보기 + 결과 없음 안내 (P194–P195).
@@ -152,6 +155,8 @@ export default function AchievementsPage() {
       }
       setConfirmingId(null)
       setDeleteFailed(false)
+      // 위쪽 안내 띠에 "삭제했어요" (P233 사용자 요청) — 저장 안내와 같은 띠·같은 6초. 지운 성과라 "보기"는 안 나옴
+      setSavedNotice({ kind: 'delete', id: achievement.id, title: achievement.title })
       if (next) {
         setFocusId(next.id)
       } else {
@@ -209,7 +214,7 @@ export default function AchievementsPage() {
             onBlur={() => setIsSavedFocused(false)}
           >
             <p className="achievements-page__saved-text">
-              ‘{savedNotice.title}’ 성과를 {savedNotice.kind === 'add' ? '등록' : '수정'}했어요.
+              ‘{savedNotice.title}’ 성과를 {NOTICE_VERBS[savedNotice.kind]}했어요.
             </p>
             {canViewSaved && (
               // 그 성과 팝업 열기 — ↗는 홈 카드·목록 줄과 같은 "팝업 열기" 표시

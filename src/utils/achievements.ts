@@ -9,6 +9,7 @@ import type {
   SavedNotice,
 } from '../types.ts'
 import { isValidYmd } from './date.ts'
+import { isValidDoi, normalizeDoi } from './doi.ts'
 import { safeLink } from './links.ts'
 
 // 화면에 보여 줄 값을 계산하는 함수들 (design.md 9절, spec/02 2-3a).
@@ -167,6 +168,10 @@ export function validateAchievement(values: AchievementInput): AchievementErrors
   if (values.link.trim() !== '' && safeLink(values.link) === null) {
     errors.link = 'http:// 또는 https://로 시작하는 주소만 넣을 수 있어요.'
   }
+  // DOI는 논문일 때만 검사 — 다른 유형은 저장할 때 DOI를 지우므로(BR-05) 보이지 않는 칸의 오류로 막히지 않게 (C-4, P235)
+  if (values.type === 'PAPER' && values.doi.trim() !== '' && !isValidDoi(normalizeDoi(values.doi))) {
+    errors.doi = 'DOI 형식이 아니에요. 예: 10.1038/nature14539' // EX-02와 같은 문장
+  }
   return errors
 }
 
@@ -179,13 +184,15 @@ export function normalizeInput(values: AchievementInput): AchievementInput {
     authors: values.authors.trim(),
     advisors: values.advisors.trim(),
     venue: values.venue.trim(),
-    doi: values.doi.trim(),
+    // 논문이면 정리한 번호만(주소째 붙여 넣어도 — 같은 DOI 비교가 어긋나지 않게), 다른 유형이면 빈칸 (BR-05, Q-C6, C-4)
+    doi: values.type === 'PAPER' ? normalizeDoi(values.doi) : '',
     link: values.link.trim(),
   }
 }
 
 // 목록 페이지가 받은 이동 짐(location.state)에서 저장 안내를 꺼낸다 (spec/03 C-2b, Q-C1).
-// 짐은 브라우저 방문 기록에 남는 값이라 모양을 믿을 수 없어서(unknown) 하나씩 확인하고, 아니면 null → 안내 없음
+// 짐은 브라우저 방문 기록에 남는 값이라 모양을 믿을 수 없어서(unknown) 하나씩 확인하고, 아니면 null → 안내 없음.
+// 짐으로는 등록·수정만 온다 — 삭제 안내는 목록 페이지가 직접 띄움(P233)
 export function readSavedNotice(state: unknown): SavedNotice | null {
   if (typeof state !== 'object' || state === null || !('saved' in state)) return null
   const saved = state.saved
