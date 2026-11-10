@@ -1,13 +1,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Link } from 'react-router'
+import { Link, useLocation, useNavigate } from 'react-router'
 import AchievementList from '../components/achievements/AchievementList.tsx'
 import AchievementModal from '../components/achievements/AchievementModal.tsx'
 import SearchFilterBar from '../components/achievements/SearchFilterBar.tsx'
+import ArrowIcon from '../components/common/ArrowIcon.tsx'
 import EmptyState from '../components/common/EmptyState.tsx'
 import { useAchievements } from '../context/useAchievements.ts'
 import { useAdminMode } from '../context/useAdminMode.ts'
 import type { Achievement, AchievementFilter } from '../types.ts'
-import { countByType, filterAchievements, getYears, sortByLatest } from '../utils/achievements.ts'
+import { countByType, filterAchievements, getYears, readSavedNotice, sortByLatest } from '../utils/achievements.ts'
 import './AchievementsPage.css'
 
 // 처음 검색 조건 — "조건 초기화"도 이 값으로 되돌린다
@@ -18,6 +19,7 @@ const INITIAL_FILTER: AchievementFilter = { query: '', type: 'ALL', year: 'ALL' 
 // B-3: 줄을 누르면 홈과 같은 성과 팝업 (P199).
 // B-4: 관리 모드면 제목 줄에 "성과 등록", 줄마다 "수정" — 둘 다 주소로 이동만 (폼은 spec/03, P209).
 // B-5: 줄의 "삭제" → 그 줄 아래 확인 칸 → 삭제 (P214–P215)
+// spec/03 C-2b: 폼에서 저장하고 오면 제목 줄 아래 "등록했어요/수정했어요" 안내 + "보기" (P227–P228)
 export default function AchievementsPage() {
   // 성과 목록 상자(2-5)에서 꺼내 쓴다 — 예시 성과도 모두 보임("예시" 배지로 구분, BR-19).
   // 다른 탭에서 바뀌어도 자동으로 다시 그려짐 (EX-25)
@@ -98,6 +100,33 @@ export default function AchievementsPage() {
     latestFiltered.current = filtered
   }, [filtered])
 
+  // ── 저장 안내 (spec/03 C-2b, Q-C1, P227–P228) ──
+  // 폼이 목록으로 보내며 실어 온 짐(location.state)을 처음 그릴 때만 꺼내 상태로 옮긴다
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [savedNotice, setSavedNotice] = useState(() => readSavedNotice(location.state))
+
+  // 방문 기록에 남은 짐은 바로 비운다(같은 주소로 바꿔치기) — 안 비우면 새로고침이나 뒤로·앞으로 왔을 때
+  // 브라우저가 짐을 다시 줘서 안내가 또 뜬다. 안내는 위 상태에 옮겨 뒀으니 화면에는 남음
+  useEffect(() => {
+    if (location.state !== null) navigate(location.pathname, { replace: true, state: null })
+  }, [location.state, location.pathname, navigate])
+
+  // 6초 뒤 저절로 사라짐 (사용자 결정 ②). 두 경우엔 멈춘다 — ① 팝업이 열린 동안("보기"로 연 팝업을 닫을 때
+  // 포커스가 돌아올 "보기" 버튼이 사라지지 않게) ② 포커스가 안내 띠 안("보기")에 있는 동안 — 확인 때 띠가 사라지자
+  // 포커스가 페이지 맨 처음으로 떨어져 키보드 사용자가 자리를 잃는 것을 발견해서 보탬(P228). 둘 다 끝나면 다시 6초.
+  // 그 전에 페이지를 떠나거나 값이 바뀌면 정리 함수가 타이머를 취소 — 없어진 화면의 상태를 바꾸지 않게
+  const isModalOpen = selectedId !== null
+  const [isSavedFocused, setIsSavedFocused] = useState(false)
+  useEffect(() => {
+    if (savedNotice === null || isModalOpen || isSavedFocused) return
+    const timer = setTimeout(() => setSavedNotice(null), 6000)
+    return () => clearTimeout(timer)
+  }, [savedNotice, isModalOpen, isSavedFocused])
+
+  // "보기"는 저장된 성과가 아직 목록에 있을 때만 (안내가 떠 있는 동안 다른 탭에서 지울 수 있어서)
+  const canViewSaved = savedNotice !== null && achievements.some((achievement) => achievement.id === savedNotice.id)
+
   // 줄에 넘기는 함수들은 모두 useCallback으로 고정 — 줄이 memo라서 (B-3과 같은 이유)
   const requestDelete = useCallback((achievement: Achievement) => {
     setConfirmingId(achievement.id) // 다른 줄이 열려 있었으면 그 칸은 저절로 닫힘 (③)
@@ -167,6 +196,29 @@ export default function AchievementsPage() {
             </svg>
             성과 등록
           </Link>
+        )}
+      </div>
+
+      {/* 저장 안내 (C-2b) — role="status" 칸은 늘 그려 두고 안의 글만 넣었다 뺐다 한다.
+          글이 든 채로 갑자기 나타난 칸은 화면 낭독기가 못 읽는 경우가 있어서. 빈 칸은 자리를 차지하지 않음 */}
+      <div role="status">
+        {savedNotice && (
+          <div
+            className="achievements-page__saved"
+            onFocus={() => setIsSavedFocused(true)}
+            onBlur={() => setIsSavedFocused(false)}
+          >
+            <p className="achievements-page__saved-text">
+              ‘{savedNotice.title}’ 성과를 {savedNotice.kind === 'add' ? '등록' : '수정'}했어요.
+            </p>
+            {canViewSaved && (
+              // 그 성과 팝업 열기 — ↗는 홈 카드·목록 줄과 같은 "팝업 열기" 표시
+              <button type="button" className="achievements-page__saved-view" onClick={() => setSelectedId(savedNotice.id)}>
+                보기
+                <ArrowIcon />
+              </button>
+            )}
+          </div>
         )}
       </div>
 

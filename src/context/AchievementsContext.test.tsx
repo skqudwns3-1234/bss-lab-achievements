@@ -33,3 +33,35 @@ describe('AchievementsProvider · useAchievements', () => {
     expect(html).toContain('성과 8건')
   })
 })
+
+describe('addAchievement — 새 성과 번호 돌려주기 (spec/03 C-2b)', () => {
+  test('UT-70 저장에 성공하면 새 번호(가장 큰 번호 + 1), 저장에 실패하면 null', () => {
+    // 상자에서 꺼낸 함수를 바깥 변수에 잡아 두고, 그린 뒤에 직접 불러 본다
+    let api: ReturnType<typeof useAchievements> | null = null
+    function ApiProbe() {
+      api = useAchievements()
+      return null
+    }
+    const saved: string[] = []
+    let failSave = false
+    vi.stubGlobal('localStorage', {
+      getItem: () => null,
+      setItem: (_key: string, value: string) => {
+        if (failSave) throw new Error('저장 실패 흉내')
+        saved.push(value)
+      },
+      removeItem: () => {},
+    })
+    vi.spyOn(console, 'warn').mockImplementation(() => {})
+    renderToString(
+      <AchievementsProvider>
+        <ApiProbe />
+      </AchievementsProvider>,
+    )
+    const input = { type: 'AWARD' as const, title: '새 수상', achievedOn: '2026-05-01', authors: '', advisors: '', venue: '', doi: '', link: '' }
+    expect(api!.addAchievement(input)).toBe(9) // 처음 데이터 8건 → 9번
+    expect(api!.addAchievement(input)).toBe(10) // 연달아 등록해도 최신 목록 기준
+    failSave = true
+    expect(api!.addAchievement(input)).toBeNull()
+  })
+})

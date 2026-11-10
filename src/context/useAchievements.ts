@@ -8,7 +8,7 @@ import type { Achievement, AchievementInput } from '../types.ts'
 export type AchievementsContextValue = {
   achievements: Achievement[] // 지금 성과 목록 — 홈·목록·폼이 모두 이것을 본다
   notices: string[] // 처음 불러올 때 고친 내용 — 관리 모드 화면 띠에서 보여 줄 예정 (P174)
-  addAchievement: (input: AchievementInput) => boolean // 저장에 성공하면 true
+  addAchievement: (input: AchievementInput) => number | null // 저장에 성공하면 새 성과 번호, 실패면 null (C-2b — 목록 안내의 "보기"가 그 성과를 열려고)
   updateAchievement: (id: number, input: AchievementInput) => boolean // 없는 번호·저장 실패면 false
   deleteAchievement: (id: number) => boolean // 없는 번호·저장 실패면 false
 }

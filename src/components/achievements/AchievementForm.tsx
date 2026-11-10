@@ -15,6 +15,7 @@ import './AchievementForm.css'
 type AchievementFormProps = {
   initialValues: AchievementInput // 처음 값 — 등록은 빈 값 + 논문, 수정은 그 성과 값. 처음 그릴 때만 씀
   onSubmit: (input: AchievementInput) => boolean // 저장 — 성공했는지 돌려받음 (성공하면 페이지가 목록으로 보냄)
+  isDeleted: boolean // 수정하는 동안 다른 탭에서 이 성과가 지워졌는지 — 참이면 안내 + 저장 막기 (C-2b, Q-C8)
 }
 
 // 글자 칸 하나의 이름 (values의 칸 이름 중 유형을 뺀 것)
@@ -24,7 +25,7 @@ type TextField = Exclude<keyof AchievementInput, 'type'>
 // 상태: values(폼 값) / submitted(저장을 한 번 눌렀는지) / saveFailed(저장 실패 문장).
 // 오류(errors)는 상태로 두지 않고 그릴 때마다 values로 계산한다 — 상태로 따로 두면 칸을 고칠 때마다
 // 두 곳을 맞춰야 하고, 어긋나면 고쳤는데도 빨간 문장이 남아서 (사용자 결정 ③)
-export default function AchievementForm({ initialValues, onSubmit }: AchievementFormProps) {
+export default function AchievementForm({ initialValues, onSubmit, isDeleted }: AchievementFormProps) {
   // 처음 값은 처음 그릴 때만 — 다른 탭에서 같은 성과를 고쳐도 쓰던 값은 그대로 (EX-25)
   const [values, setValues] = useState(initialValues)
   const [submitted, setSubmitted] = useState(false)
@@ -58,6 +59,8 @@ export default function AchievementForm({ initialValues, onSubmit }: Achievement
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault() // 브라우저 기본 동작(페이지 새로고침) 막기
+    // 지워진 성과는 저장하지 않음 — 저장 버튼을 숨겨도 칸에서 Enter를 누르면 폼이 제출돼서 여기서도 막는다 (Q-C8)
+    if (isDeleted) return
     if (savingRef.current) return // 두 번째 저장은 무시
     setSubmitted(true)
     setSaveFailed(false)
@@ -99,6 +102,17 @@ export default function AchievementForm({ initialValues, onSubmit }: Achievement
   return (
     // noValidate: 브라우저 기본 검사 말풍선(링크 칸 type="url" 등)을 끄고 우리 문장만 보여 줌
     <form className="achievement-form" noValidate onSubmit={handleSubmit}>
+      {/* 수정하는 동안 다른 탭에서 지워짐 (C-2b, Q-C8, P227). 쓰던 값은 그대로 두어 복사해 새로 등록할 수 있게.
+          role="alert": 나타나는 순간 낭독기가 읽음 — 포커스는 옮기지 않음(쓰던 칸에서 계속 복사할 수 있게) */}
+      {isDeleted && (
+        <div role="alert" className="achievement-form__deleted">
+          <p className="achievement-form__deleted-text">이 성과는 다른 곳에서 삭제됐어요.</p>
+          <Link to="/achievements" className="btn btn--secondary btn--small">
+            목록으로
+          </Link>
+        </div>
+      )}
+
       {saveFailed && (
         // role="alert": 나타나는 순간 낭독기가 읽음. tabIndex -1: 코드로만 포커스 (Tab 순서엔 안 들어감)
         <p ref={alertRef} role="alert" tabIndex={-1} className="achievement-form__alert">
@@ -232,9 +246,12 @@ export default function AchievementForm({ initialValues, onSubmit }: Achievement
         <Link to="/achievements" className="btn btn--secondary">
           취소
         </Link>
-        <button type="submit" className="btn btn--primary">
-          저장
-        </button>
+        {/* 지워진 성과면 저장 버튼을 숨김 — 막아 둔(disabled) 버튼은 "왜 안 눌리지?" 싶어서 (사용자 결정 P227) */}
+        {!isDeleted && (
+          <button type="submit" className="btn btn--primary">
+            저장
+          </button>
+        )}
       </div>
     </form>
   )

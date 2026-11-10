@@ -27,6 +27,25 @@
   outline: none; /* 누르는 곳이 아니라 읽을 곳이라 테두리는 빨간 선으로 충분 */
 }
 
+/* 수정하는 동안 지워짐 (C-2b, Q-C8) — 실패 문장과 같은 빨간 테두리 상자 + "목록으로" */
+.achievement-form__deleted {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px 14px 20px;
+  border: 1px solid var(--color-danger);
+  border-radius: 16px;
+}
+
+.achievement-form__deleted-text {
+  margin: 0;
+  color: var(--color-danger);
+  font-size: 14px;
+  font-weight: 500;
+}
+
 /* ── 유형 고르기: 숨긴 라디오 + 알약 ── */
 .achievement-form__types {
   margin: 0;

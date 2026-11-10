@@ -11,6 +11,7 @@ import {
   normalizeInput,
   padCount,
   parseAchievementId,
+  readSavedNotice,
   toInput,
   validateAchievement,
   EMPTY_INPUT,
@@ -307,5 +308,15 @@ describe('normalizeInput · toInput — 저장 직전 값 (BR-03)', () => {
     expect(input).not.toHaveProperty('id')
     expect(input).not.toHaveProperty('isSample')
     expect(input).toEqual({ ...EMPTY_INPUT, type: 'AWARD', title: '상', achievedOn: '2026-05-01' })
+  })
+})
+
+describe('readSavedNotice — 이동 짐에서 저장 안내 꺼내기 (Q-C1, spec/03 C-2b)', () => {
+  test('UT-69 모양이 맞을 때만 꺼내고, 아니면 null', () => {
+    expect(readSavedNotice({ saved: { kind: 'add', id: 9, title: '새 성과' } })).toEqual({ kind: 'add', id: 9, title: '새 성과' })
+    expect(readSavedNotice({ saved: { kind: 'edit', id: 3, title: '고친 성과' } })?.kind).toBe('edit')
+    for (const state of [null, undefined, 'abc', {}, { saved: 'abc' }, { saved: null }, { saved: { kind: 'delete', id: 1, title: 'a' } }, { saved: { kind: 'add', id: '9', title: 'a' } }, { saved: { kind: 'add', id: 9 } }]) {
+      expect(readSavedNotice(state)).toBeNull()
+    }
   })
 })

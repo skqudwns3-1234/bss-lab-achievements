@@ -68,7 +68,16 @@ export function AchievementsProvider({ children }: { children: ReactNode }) {
     dispatch(action)
     return true
   }, [])
-  const addAchievement = useCallback((input: AchievementInput) => commit({ type: 'add', input }), [commit])
+  // 등록은 새 번호를 돌려준다 (C-2b, P227–P228) — reducer가 새 성과를 목록 맨 끝에 붙이므로
+  // 저장에 성공한 최신 목록(latest)의 마지막 성과가 방금 등록한 것. 실패면 null
+  const addAchievement = useCallback(
+    (input: AchievementInput) => {
+      if (!commit({ type: 'add', input })) return null
+      const list = latest.current
+      return list[list.length - 1].id
+    },
+    [commit],
+  )
   const updateAchievement = useCallback(
     (id: number, input: AchievementInput) => commit({ type: 'update', id, input }),
     [commit],

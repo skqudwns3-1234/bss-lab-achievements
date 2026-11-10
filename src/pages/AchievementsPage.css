@@ -33,3 +33,53 @@
 .achievements-page__empty {
   margin-top: 32px;
 }
+
+/* 저장 안내 (spec/03 C-2b, Q-C1) — 시안의 검정 둥근 띠. 제목 줄 아래·검색 줄 위 */
+.achievements-page__saved {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 4px 12px;
+  margin-bottom: 24px;
+  padding: 8px 8px 8px 20px;
+  border-radius: 16px;
+  background: var(--color-text);
+  color: #ffffff;
+  font-size: 14px;
+}
+
+/* 긴 제목·영어 단어도 띠 안에서 줄바꿈 (320px 가로 넘침 방지) */
+.achievements-page__saved-text {
+  margin: 0;
+  padding: 4px 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* "보기 ↗" — 띠 안의 흰 글자 버튼, 누르는 높이 44px (NFR-08) */
+.achievements-page__saved-view {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 12px;
+  margin-left: -12px; /* 좁은 화면에서 아래 줄로 내려가면 글자 첫머리가 위 문장과 맞게 (안쪽 여백만큼 당김) */
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: #ffffff;
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.achievements-page__saved-view:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.achievements-page__saved-view:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: -2px;
+}

@@ -6,6 +6,7 @@ import type {
   AchievementType,
   AchievementsAction,
   NewestSummary,
+  SavedNotice,
 } from '../types.ts'
 import { isValidYmd } from './date.ts'
 import { safeLink } from './links.ts'
@@ -181,6 +182,18 @@ export function normalizeInput(values: AchievementInput): AchievementInput {
     doi: values.doi.trim(),
     link: values.link.trim(),
   }
+}
+
+// 목록 페이지가 받은 이동 짐(location.state)에서 저장 안내를 꺼낸다 (spec/03 C-2b, Q-C1).
+// 짐은 브라우저 방문 기록에 남는 값이라 모양을 믿을 수 없어서(unknown) 하나씩 확인하고, 아니면 null → 안내 없음
+export function readSavedNotice(state: unknown): SavedNotice | null {
+  if (typeof state !== 'object' || state === null || !('saved' in state)) return null
+  const saved = state.saved
+  if (typeof saved !== 'object' || saved === null) return null
+  if (!('kind' in saved) || !('id' in saved) || !('title' in saved)) return null
+  const { kind, id, title } = saved
+  if ((kind !== 'add' && kind !== 'edit') || typeof id !== 'number' || typeof title !== 'string') return null
+  return { kind, id, title }
 }
 
 // ── 성과 목록 바꾸기 (spec/02 2-5, P174–P175) ──
