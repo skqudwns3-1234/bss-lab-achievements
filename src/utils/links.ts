@@ -1,3 +1,5 @@
+import { normalizeDoi } from './doi.ts'
+
 // 성과의 링크·DOI를 화면에 걸기 전에 안전하게 만드는 함수 (spec/01 1-9, P182–P183, 체크리스트 4절).
 
 // 원문 링크: http:// 또는 https:// 주소일 때만 돌려주고, 아니면 null → "원문 보기" 버튼 숨김.
@@ -18,10 +20,8 @@ const DOI_PREFIX = 'https://doi.org/'
 // DOI 주소: 'https://doi.org/…'. 비어 있으면 null → DOI 줄 숨김.
 // 사람들이 "https://doi.org/10…", "doi:10…"처럼 붙여 넣는 경우도 있어 앞부분을 떼고, 이상한 글자는 encodeURI로 안전하게
 export function doiUrl(doi: string): string | null {
-  const value = doi
-    .trim()
-    .replace(/^https?:\/\/(dx\.)?doi\.org\//i, '')
-    .replace(/^doi:\s*/i, '')
+  // 앞의 주소·doi: 떼기는 DOI 불러오기와 같은 함수로 (C-3에서 합침, P231)
+  const value = normalizeDoi(doi)
   if (value === '') return null
   try {
     return `${DOI_PREFIX}${encodeURI(value)}`
