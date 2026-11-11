@@ -86,3 +86,58 @@
 .members-page__grid > li > .member-card {
   flex: 1 1 auto;
 }
+
+/* ── P262 A안: 구역 제목 + 부원 카드 한 줄 3장 고정 ── */
+
+/* 구역 (지도교수 / 학생 연구원) */
+.members-page__section {
+  margin-bottom: 56px;
+}
+
+.members-page__section .members-page__professors {
+  margin-bottom: 0;
+}
+
+/* 구역 제목 — 페이지 위 MEMBERS와 같은 꾸밈 글씨 (카드 안 "지도교수" 배지와 같은 말이 두 번 보이지 않게, P263) */
+.members-page__section-title {
+  margin: 0 0 16px;
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--color-muted);
+}
+
+/* 학생 구역 머리 — 왼쪽 구역 제목, 오른쪽 탭. 좁으면 탭이 아래로 */
+.members-page__section-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 24px;
+  margin-bottom: 20px;
+}
+
+.members-page__section-head .members-page__section-title,
+.members-page__section-head .members-page__tabs {
+  margin-bottom: 0;
+}
+
+/* 부원은 많아야 3~4명이라 칸 최소 폭(260px, 넓으면 4장)이 아니라 한 줄 장수를 정함 —
+   900px 이상 3장, 600~899px 2장, 그 아래 1장. 4명이면 3 + 1이고 마지막 카드도 같은 폭 */
+.members-page__grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+@media (max-width: 899px) {
+  .members-page__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 599px) {
+  .members-page__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

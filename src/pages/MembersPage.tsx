@@ -62,40 +62,51 @@ export default function MembersPage() {
         </h1>
       </div>
 
-      {/* 지도교수 — 탭과 상관없이 맨 위에 따로, 크게 (P240·P246). 데이터가 없으면 자리째 숨김 */}
+      {/* 지도교수 — 탭과 상관없이 맨 위에 따로, 크게 (P240·P246). 데이터가 없으면 자리째 숨김.
+          P262 A안: 구역 제목(PROFESSOR — 카드 배지의 "지도교수"와 같은 말이 겹치지 않게 꾸밈 글씨로)을 달고,
+          카드는 검정 대신 흰 카드 + 굵은 테두리로 부원 카드와 한 가족처럼 */}
       {PROFESSORS.length > 0 && (
-        <div className="members-page__professors">
-          {PROFESSORS.map((professor) => (
-            <ProfessorCard key={professor.name} professor={professor} />
-          ))}
-        </div>
+        <section className="members-page__section" aria-labelledby="members-professors-title">
+          <h2 id="members-professors-title" className="members-page__section-title">
+            PROFESSOR
+          </h2>
+          <div className="members-page__professors">
+            {PROFESSORS.map((professor) => (
+              <ProfessorCard key={professor.name} professor={professor} />
+            ))}
+          </div>
+        </section>
       )}
 
-      {/* 재학/졸업 탭 (시안, Q-D4 진짜 탭). 고른 탭만 Tab 키로 들어가고(tabIndex 0), 나머지는 화살표로 */}
-      <div className="members-page__tabs" role="tablist" aria-label="부원 구분">
-        {TABS.map((item, index) => {
-          const selected = item.status === tab
-          return (
-            <button
-              key={item.status}
-              ref={(element) => {
-                tabRefs.current[index] = element
-              }}
-              type="button"
-              role="tab"
-              id={`members-tab-${item.param}`}
-              className="members-page__tab"
-              aria-selected={selected}
-              aria-controls="members-panel"
-              tabIndex={selected ? 0 : -1}
-              onClick={() => selectTab(item.status)}
-              onKeyDown={(event) => handleTabKeyDown(event, index)}
-            >
-              {item.label}
-              <span className="members-page__tab-count">{counts[item.status]}</span>
-            </button>
-          )
-        })}
+      {/* 학생 구역 머리 — 왼쪽 구역 제목, 오른쪽 재학/졸업 탭 (P262 A안) */}
+      <div className="members-page__section-head">
+        <h2 className="members-page__section-title">STUDENTS</h2>
+        {/* 재학/졸업 탭 (시안, Q-D4 진짜 탭). 고른 탭만 Tab 키로 들어가고(tabIndex 0), 나머지는 화살표로 */}
+        <div className="members-page__tabs" role="tablist" aria-label="부원 구분">
+          {TABS.map((item, index) => {
+            const selected = item.status === tab
+            return (
+              <button
+                key={item.status}
+                ref={(element) => {
+                  tabRefs.current[index] = element
+                }}
+                type="button"
+                role="tab"
+                id={`members-tab-${item.param}`}
+                className="members-page__tab"
+                aria-selected={selected}
+                aria-controls="members-panel"
+                tabIndex={selected ? 0 : -1}
+                onClick={() => selectTab(item.status)}
+                onKeyDown={(event) => handleTabKeyDown(event, index)}
+              >
+                {item.label}
+                <span className="members-page__tab-count">{counts[item.status]}</span>
+              </button>
+            )
+          })}
+        </div>
       </div>
 
       {/* 고른 탭의 부원 카드 — 0명이면 빈 상태 문장 */}

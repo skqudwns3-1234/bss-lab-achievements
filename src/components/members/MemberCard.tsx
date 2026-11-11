@@ -34,7 +34,7 @@ export default function MemberCard({ member, activities }: MemberCardProps) {
           </span>
           <div className="member-card__who">
             <div className="member-card__name-row">
-              <h2 className="member-card__name">{name}</h2>
+              <h3 className="member-card__name">{name}</h3>
               {/* 지어낸 예시 부원 표시 (Q-D1) — 성과의 예시 배지와 같은 모양. 제목 밖에 둬서 제목은 이름만 읽힘 */}
               {isSample && <span className="badge badge--sample">예시</span>}
             </div>

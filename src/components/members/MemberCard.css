@@ -180,3 +180,51 @@
 .member-card__more:hover {
   border-color: var(--color-text);
 }
+
+/* ── P262 A안: 부원이 3~4명이라 카드를 크게 (사용자 "좀 안보여서 사이즈 키우는거 … 크게크게", P261) ──
+   위에 적힌 처음 값(시안)을 여기서 키운다: 여백 28→32, 동그라미 56→72, 이름 21→26, 직위 13→14,
+   연구 분야 14→15, 활동 13→14, 아래 줄 13→14px */
+.member-card {
+  gap: 22px;
+  padding: 32px;
+}
+
+.member-card__top {
+  gap: 18px;
+}
+
+.member-card__initial {
+  flex-basis: 72px;
+  width: 72px;
+  height: 72px;
+  font-size: 26px;
+}
+
+.member-card__name {
+  font-size: 26px;
+}
+
+.member-card__position {
+  font-size: 14px;
+}
+
+.member-card__field {
+  font-size: 15px;
+}
+
+.member-card__activities-title {
+  font-size: 13px;
+}
+
+.member-card__activity {
+  font-size: 14px;
+}
+
+.member-card__bottom,
+.member-card__email {
+  font-size: 14px;
+}
+
+.member-card__more {
+  font-size: 14px;
+}
