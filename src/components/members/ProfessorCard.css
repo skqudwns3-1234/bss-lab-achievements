@@ -1,0 +1,94 @@
+/* 지도교수 카드 (spec/04 D-2) — 검정 넓은 카드: 이 사이트의 강조색(관리 띠·주요 버튼·저장 안내)이라
+   부원 카드와 다른 자리로 한눈에 보임 (사용자 "중요한 사람처럼", P242·P246) */
+.professor-card {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  padding: clamp(24px, 4vw, 40px);
+  border-radius: var(--radius-card);
+  background: var(--color-text);
+  color: #ffffff;
+}
+
+.professor-card__initial {
+  flex: 0 0 80px;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: #ffffff;
+  color: var(--color-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 700;
+}
+
+.professor-card__body {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.professor-card__title-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+}
+
+/* 직함 (지도교수) — 이름 위 작은 글씨 */
+.professor-card__title {
+  font-size: 14px;
+  color: #d4d4d4;
+}
+
+/* 예시 교수일 때만 — 검정 바탕 위라 배지 선을 밝게 */
+.professor-card .badge--sample {
+  border-color: #8a8a8a;
+  color: #d4d4d4;
+}
+
+.professor-card__name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(28px, 3.4vw, 40px);
+  line-height: 1.2;
+  letter-spacing: -0.04em;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.professor-card__field {
+  margin: 4px 0 0;
+  font-size: 15px;
+  color: #d4d4d4;
+  overflow-wrap: anywhere;
+}
+
+.professor-card__email {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: #ffffff;
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  overflow-wrap: anywhere;
+}
+
+.professor-card__email:focus-visible {
+  outline-color: #ffffff;
+}
+
+/* 휴대폰 — 동그라미 위, 글자 아래 */
+@media (max-width: 560px) {
+  .professor-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+  }
+}

@@ -1,0 +1,78 @@
+/* 부원 페이지 (spec/04 D-2) — 시안 Members.dc.html 값 */
+
+.members-page__head {
+  margin-bottom: 40px;
+}
+
+.members-page__head .eyebrow {
+  margin: 0 0 12px;
+}
+
+.members-page__head .page-title {
+  margin: 0;
+}
+
+/* 지도교수 자리 — 탭 위, 교수가 여럿이면 세로로 쌓음 */
+.members-page__professors {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 56px;
+}
+
+/* 재학/졸업 탭 — 회색 알약 안에 흰 선택 (시안) */
+.members-page__tabs {
+  display: inline-flex;
+  gap: 4px;
+  margin-bottom: 24px;
+  padding: 4px;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-strong);
+}
+
+.members-page__tab {
+  min-height: 44px;
+  padding: 0 20px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.members-page__tab[aria-selected='true'] {
+  background: var(--color-surface);
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+.members-page__tab-count {
+  margin-left: 4px;
+  color: var(--color-muted);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 카드 목록 — 검정 줄 아래. grid라 마지막 줄 카드도 같은 폭 (시안의 flex는 마지막 카드가 늘어나서, AI 보충) */
+.members-page__panel {
+  border-top: 1px solid var(--color-text);
+  padding-top: 32px;
+}
+
+.members-page__grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+/* 아주 좁은 화면 — 칸 최소 폭 260px이 화면보다 넓어 가로로 넘치지 않게 */
+@media (max-width: 340px) {
+  .members-page__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

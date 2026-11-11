@@ -9,13 +9,13 @@ import type { Member, Professor } from '../types.ts'
 
 // 담당 교수 — 탭과 상관없이 페이지 맨 위에 따로, 크게 보인다 (P240·P242).
 // 이름은 사용자가 정한 실제 지도교수 (성과 데이터에도 지도교수 실명으로 있음 — 학교 내부망 운영이라 허용, P150).
-// 연구 분야·이메일은 빈칸 — 실제 인물의 정보를 지어내지 않는다. 비면 화면에서 그 줄을 숨김. 사용자가 확인 후 채움
+// 연구 분야·학교 이메일은 사용자가 교수님 이력에서 옮겨 줌 (P248). 처음엔 지어내지 않으려고 빈칸이었음(P243)
 export const PROFESSORS: Professor[] = [
   {
     name: '박정규',
     title: '지도교수',
-    researchField: '',
-    email: '',
+    researchField: '운영체제, 인공지능&지능형 시스템, 로보틱스',
+    email: 'jkpark@daejin.ac.kr',
     isSample: false,
   },
 ]
