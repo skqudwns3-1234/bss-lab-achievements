@@ -42,7 +42,7 @@
   /* 레이아웃 */
   --content-width: 1200px;
   --gutter: 24px;
-  --section-gap: 72px;
+  --section-gap: 56px; /* 구역 사이 — P267에 72에서 줄임 (사용자 "공백이 많은거 같아서") */
 
   font-family: var(--font-body);
   line-height: 1.6;
@@ -108,7 +108,7 @@ button {
 .eyebrow {
   font-family: var(--font-display);
   font-weight: 500;
-  font-size: 14px;
+  font-size: 16px;
   letter-spacing: 0.06em;
   color: var(--color-muted);
 }
@@ -123,7 +123,7 @@ button {
   border: 1px solid transparent;
   border-radius: var(--radius-pill);
   font: inherit;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
   text-decoration: none;
   cursor: pointer;
@@ -162,7 +162,7 @@ button {
 .badge {
   display: inline-block;
   padding: 4px 12px; /* 시안 값 (1-5에서 맞춤) */
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 500;
   line-height: 1.4;
   border: 1px solid var(--color-text);
@@ -222,4 +222,11 @@ button {
   overflow: hidden;
   clip: rect(0 0 0 0);
   white-space: nowrap;
+}
+
+/* P267 휴대폰: 화면이 좁아 빈 곳이 더 커 보여서 구역 사이를 한 번 더 줄임 */
+@media (max-width: 760px) {
+  :root {
+    --section-gap: 44px;
+  }
 }

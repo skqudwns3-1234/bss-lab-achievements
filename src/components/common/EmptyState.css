@@ -4,7 +4,7 @@
   flex-direction: column;
   align-items: center;
   gap: 16px;
-  padding: 48px 24px;
+  padding: 36px 24px; /* P267: 빈 곳이 많다는 사용자 의견으로 한 단계 줄임 */
   border: 1px dashed var(--color-border-input);
   border-radius: var(--radius-card);
   text-align: center;
@@ -12,13 +12,13 @@
 
 .empty-state__message {
   margin: 0;
-  font-size: 15px;
+  font-size: 17px;
   color: var(--color-muted);
 }
 
 /* 도움말 한 줄 (선택 — 성과 목록 "결과 없음", B-2) */
 .empty-state__hint {
   margin: -8px 0 0;
-  font-size: 14px;
+  font-size: 16px;
   color: var(--color-muted);
 }

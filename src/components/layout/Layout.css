@@ -9,7 +9,7 @@
   width: 100%;
   max-width: var(--content-width);
   margin: 0 auto;
-  padding: 48px var(--gutter) var(--section-gap);
+  padding: 36px var(--gutter) var(--section-gap); /* P267: 빈 곳이 많다는 사용자 의견으로 한 단계 줄임 */
 }
 
 /* ── 헤더 ── */
@@ -48,7 +48,7 @@
 }
 
 .header__logo-sub {
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 500;
   color: var(--color-muted);
 }
@@ -78,7 +78,7 @@
   border-radius: var(--radius-pill);
   background: var(--color-surface);
   color: var(--color-text);
-  font-size: 13px;
+  font-size: 15px;
   cursor: pointer;
 }
 
@@ -113,7 +113,7 @@
 .admin-bar {
   background: var(--color-text);
   color: #ffffff;
-  font-size: 13px;
+  font-size: 15px;
 }
 
 .admin-bar__inner {
@@ -145,7 +145,7 @@
   gap: 6px;
   min-height: 44px;
   padding: 10px 16px;
-  font-size: 14px;
+  font-size: 16px;
   color: var(--color-muted);
   text-decoration: none;
 }
@@ -178,13 +178,13 @@
   width: 100%;
   max-width: var(--content-width);
   margin: 0 auto;
-  padding: 0 var(--gutter) 48px;
+  padding: 0 var(--gutter) 40px; /* P267: 빈 곳이 많다는 사용자 의견으로 한 단계 줄임 */
 }
 
 /* 왼쪽 연구실 정보 / 오른쪽 메뉴·연락처 묶음 — 칸이 화면 폭을 나눠 갖지 않고 내용만큼만 (P143) */
 .footer__top {
   border-top: 1px solid var(--color-border-strong);
-  padding-top: 48px;
+  padding-top: 40px; /* P267: 빈 곳이 많다는 사용자 의견으로 한 단계 줄임 */
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
@@ -200,7 +200,7 @@
 
 .footer__intro {
   margin: 0;
-  font-size: 14px;
+  font-size: 16px;
   color: var(--color-text);
 }
 
@@ -212,7 +212,7 @@
 
 .footer__lab-name {
   font-family: var(--font-display);
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 700;
   letter-spacing: -0.03em;
 }
@@ -224,13 +224,13 @@
 
 .footer__heading {
   margin-bottom: 4px;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
 }
 
 .footer__text,
 .footer__group a {
-  font-size: 14px;
+  font-size: 16px;
   color: var(--color-muted);
   text-decoration: none;
 }
@@ -258,12 +258,12 @@
 }
 
 .footer__bottom {
-  margin-top: 48px;
+  margin-top: 36px; /* P267: 빈 곳이 많다는 사용자 의견으로 한 단계 줄임 */
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
   gap: 8px;
-  font-size: 13px;
+  font-size: 15px;
   color: var(--color-muted);
 }
 
@@ -306,5 +306,12 @@
   .header__nav {
     width: 100%;
     flex-direction: column;
+  }
+}
+
+/* P267 휴대폰: 헤더 아래 → 페이지 시작 여백도 조금 더 줄임 */
+@media (max-width: 760px) {
+  .layout__main {
+    padding-top: 28px;
   }
 }

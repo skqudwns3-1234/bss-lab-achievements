@@ -6,7 +6,7 @@
   align-items: center;
   gap: 6px;
   min-height: 44px;
-  font-size: 14px;
+  font-size: 16px;
   color: var(--color-muted);
   text-decoration: none;
 }
@@ -21,7 +21,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
-  gap: 48px;
+  gap: 36px; /* P267: 빈 곳이 많다는 사용자 의견으로 한 단계 줄임 */
 }
 
 .form-page__intro {
@@ -39,7 +39,7 @@
 .form-page__lead {
   margin: 0;
   max-width: 340px;
-  font-size: 15px;
+  font-size: 17px;
   color: var(--color-muted);
 }
 
@@ -53,12 +53,12 @@
 }
 
 .form-page__target-label {
-  font-size: 13px;
+  font-size: 15px;
   color: var(--color-muted);
 }
 
 .form-page__target-title {
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 600;
 }
 
@@ -76,7 +76,7 @@
   gap: 16px;
   padding: 14px 0;
   border-bottom: 1px solid var(--color-border-input);
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .form-page__step-number {
@@ -89,5 +89,5 @@
 
 /* "성과를 찾을 수 없어요" — 제목과 띄움 */
 .form-page__empty {
-  margin-top: 40px;
+  margin-top: 28px; /* P267: 빈 곳이 많다는 사용자 의견으로 한 단계 줄임 */
 }

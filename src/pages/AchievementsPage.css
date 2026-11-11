@@ -8,7 +8,7 @@
   justify-content: space-between;
   align-items: flex-end;
   gap: 24px;
-  margin-bottom: 40px;
+  margin-bottom: 28px; /* P267: 빈 곳이 많다는 사용자 의견으로 한 단계 줄임 */
 }
 
 .achievements-page__head .eyebrow {
@@ -46,7 +46,7 @@
   border-radius: 16px;
   background: var(--color-text);
   color: #ffffff;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 /* 긴 제목·영어 단어도 띠 안에서 줄바꿈 (320px 가로 넘침 방지) */

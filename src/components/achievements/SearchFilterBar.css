@@ -34,7 +34,7 @@
   background: var(--color-surface);
   color: var(--color-text);
   font: inherit;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 /* 유형 칩 — 누른 칩은 검정 */
@@ -55,7 +55,7 @@
   background: var(--color-surface);
   color: var(--color-text);
   font: inherit;
-  font-size: 14px;
+  font-size: 16px;
   cursor: pointer;
 }
 
@@ -66,7 +66,7 @@
 }
 
 .search-filter__chip-count {
-  font-size: 12px;
+  font-size: 13px;
   opacity: 0.7;
   font-variant-numeric: tabular-nums;
 }
@@ -77,7 +77,7 @@
   align-items: center;
   gap: 8px;
   margin-left: auto;
-  font-size: 13px;
+  font-size: 15px;
   color: var(--color-muted);
 }
 
@@ -89,7 +89,7 @@
   background: var(--color-surface);
   color: var(--color-text);
   font: inherit;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 /* 휴대폰: 검색칸은 가로 꽉 차게, 칩은 줄바꿈(Q-B5), 연도는 왼쪽부터 */

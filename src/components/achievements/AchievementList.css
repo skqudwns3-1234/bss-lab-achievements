@@ -54,7 +54,7 @@
   background: var(--color-surface);
   box-shadow: 0 0 0 1px var(--color-border-input);
   color: var(--color-text);
-  font-size: 13px;
+  font-size: 15px;
   text-decoration: none;
   white-space: nowrap;
   /* <button>(삭제)도 <a>(수정)와 똑같이 보이게 */
@@ -84,7 +84,7 @@
 
 .achievement-row__confirm-text {
   margin: 0;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 /* 저장 실패 안내 — 문장·버튼 줄 아래에 한 줄 전체 (B-5 ②) */
@@ -92,7 +92,7 @@
   flex: 1 1 100%;
   order: 1; /* 코드에선 문장 바로 뒤지만 화면에선 버튼 다음(맨 아래 줄)으로 */
   margin: 0;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 500;
   color: var(--color-danger);
 }
@@ -111,7 +111,7 @@
   background: var(--color-surface);
   color: var(--color-text);
   font: inherit;
-  font-size: 13px;
+  font-size: 15px;
   cursor: pointer;
 }
 
@@ -129,7 +129,7 @@
   grid-area: date;
   padding-top: 3px;
   font-family: var(--font-display);
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 500;
   color: var(--color-muted);
   font-variant-numeric: tabular-nums;
@@ -144,7 +144,7 @@
 }
 
 .achievement-row__venue {
-  font-size: 13px;
+  font-size: 15px;
   color: var(--color-muted);
 }
 
@@ -152,7 +152,7 @@
 .achievement-row__title {
   grid-area: title;
   margin: 8px 0 0;
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 500;
   line-height: 1.45;
   letter-spacing: -0.02em;
@@ -239,7 +239,7 @@
   flex-wrap: wrap;
   gap: 4px 12px;
   margin: 8px 0 0;
-  font-size: 14px;
+  font-size: 16px;
   color: var(--color-muted);
 }
 
@@ -251,7 +251,7 @@
 }
 
 .achievement-row__doi {
-  font-size: 13px;
+  font-size: 15px;
   color: #6b6b6b; /* 시안 값 — 저자보다 한 단계 옅게 */
 }
 
@@ -287,10 +287,10 @@
   .achievement-row__date {
     align-self: start;
     padding-top: 4px;
-    font-size: 13px;
+    font-size: 15px;
   }
 
   .achievement-row__title {
-    font-size: 17px;
+    font-size: 18px;
   }
 }

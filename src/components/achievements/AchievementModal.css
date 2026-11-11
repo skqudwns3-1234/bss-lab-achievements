@@ -51,7 +51,7 @@
 }
 
 .achievement-modal__date {
-  font-size: 13px;
+  font-size: 15px;
   color: var(--color-muted);
   font-variant-numeric: tabular-nums;
 }
@@ -64,14 +64,14 @@
   border-radius: var(--radius-pill);
   background: var(--color-surface);
   color: var(--color-text);
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
   cursor: pointer;
 }
 
 .achievement-modal__title {
   margin: 0;
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 500;
   line-height: 1.45;
   letter-spacing: -0.02em;
@@ -83,7 +83,7 @@
   flex-direction: column;
   gap: 10px;
   margin: 0;
-  font-size: 15px;
+  font-size: 17px;
 }
 
 .achievement-modal__row {
@@ -132,7 +132,7 @@
   }
 
   .achievement-modal__title {
-    font-size: 19px;
+    font-size: 21px;
   }
 
   .achievement-modal__row {

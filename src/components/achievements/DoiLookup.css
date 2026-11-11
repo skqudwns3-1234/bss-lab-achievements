@@ -20,7 +20,7 @@
   min-width: 0;
   height: 52px;
   padding: 0 18px;
-  font-size: 15px;
+  font-size: 17px;
   color: var(--color-text);
   font-variant-numeric: tabular-nums;
 }
@@ -43,7 +43,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 13px;
+  font-size: 15px;
   color: var(--color-muted);
 }
 
@@ -64,7 +64,7 @@
   margin: 0;
   padding-left: 10px;
   border-left: 2px solid var(--color-text);
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 500;
   overflow-wrap: anywhere;
 }
