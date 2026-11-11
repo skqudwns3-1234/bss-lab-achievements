@@ -70,6 +70,38 @@ export type StatItem = {
   count: number // 개수 — 화면에서는 padCount로 두 자리 (BR-13)
 }
 
+// ── 부원 (spec/04 D-1, P242–P243) ──
+
+// 재학 / 졸업 — 부원 페이지의 두 탭
+export type MemberStatus = 'ENROLLED' | 'GRADUATED'
+
+// 직위 — 가이드라인 셋 중에서 고르는 것을 권장하고, 다른 글자도 넣을 수 있다 (P242 "자유 글자 + 가이드라인").
+// (string & {}): "아무 글자나 되지만 편집기 자동 완성에는 세 값을 먼저 보여 줘"라는 TypeScript 표기.
+// 그냥 string이면 세 값이 string에 묻혀 자동 완성에 안 뜸. 정렬은 글자 안의 "박사·석사·학부(학사)"로 순위를 매김
+export type MemberPosition = '박사과정' | '석사과정' | '학부연구생' | (string & {})
+
+// 부원 1명 (design 2절, 요구사항 2.3 — 시안의 기간 추가 Q-D2)
+export type Member = {
+  id: number // 번호 — 목록 key. 겹치면 데이터 검사 테스트가 알려 줌
+  name: string // 이름
+  position: MemberPosition // 직위
+  researchField: string // 연구 분야 — 비면 카드에서 숨김
+  email: string // 학교 이메일 — 비면 숨김. 실제 값은 본인 동의 시에만 (NFR-10)
+  status: MemberStatus // 재학 / 졸업
+  startYear: number // 들어온 해 (시안 "2023 –")
+  endYear: number | null // 졸업한 해 — 재학이면 null
+  isSample: boolean // 지어낸 예시면 true → "예시" 배지 (Q-D1)
+}
+
+// 담당 교수 — 부원 목록과 따로 둔다: 탭·정렬·인원 수에 섞이지 않고 페이지 맨 위에 따로 보임 (Q-D1, P240)
+export type Professor = {
+  name: string
+  title: string // 직함 (예: 지도교수)
+  researchField: string // 비면 숨김
+  email: string // 비면 숨김
+  isSample: boolean
+}
+
 // 저장소에서 성과를 불러온 결과 (spec/02 2-4) — 목록 + 무엇이 잘못돼서 어떻게 고쳤는지 안내 문장
 export type LoadResult = {
   achievements: Achievement[]
