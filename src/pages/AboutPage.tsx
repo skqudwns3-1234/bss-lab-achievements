@@ -7,7 +7,7 @@ import { countText } from '../utils/lab.ts'
 import { countByStatus } from '../utils/members.ts'
 import './AboutPage.css'
 
-// 한눈에 보기 칸 하나 — to가 있으면 칸 전체가 링크
+// 연구실 정보 한 줄 — to가 있으면 줄 전체가 링크
 type GlanceItem = {
   label: string
   value: string
@@ -24,7 +24,7 @@ export default function AboutPage() {
   // 소개 문단 — 빈 줄은 빼고 (다 비면 풀 네임 줄만)
   const paragraphs = LAB.about.map((paragraph) => paragraph.trim()).filter((paragraph) => paragraph !== '')
 
-  // 한눈에 보기 — 값이 없는 칸은 빼고 그림 (E-1, P273)
+  // 연구실 정보 목록 — 값이 없는 줄은 빼고 그림 (E-1 P273, 모양은 P276 B안)
   const professorNames = PROFESSORS.map((professor) => professor.name.trim()).filter((name) => name !== '')
   const enrolledCount = countByStatus(MEMBERS).ENROLLED // 부원 페이지 "재학" 탭 숫자와 같은 함수
   const realCount = achievements.filter((achievement) => !achievement.isSample).length // 홈 통계와 같은 기준(예시 빼고, BR-20)
@@ -45,46 +45,53 @@ export default function AboutPage() {
         </h1>
       </div>
 
-      {/* 소개 — 첫 줄은 BSS 풀 네임(다른 곳은 "BSS 연구실"로 짧게 쓰므로 여기서 풀어 줌, P109·P122), 그 아래 lab.ts의 소개 문단 */}
-      <div className="about-page__intro">
-        <p className="about-page__lead">
-          {LAB.shortName}는 <strong>{LAB.fullName}</strong>({LAB.koreanName})의 줄임말입니다.
-        </p>
-        {paragraphs.map((paragraph, index) => (
-          // 같은 문장이 두 번 있어도 key가 겹치지 않게 순서를 붙임
-          <p key={`${index}-${paragraph}`} className="about-page__paragraph">
-            {paragraph}
+      {/* 소개 글 + 연구실 정보 목록을 한 묶음으로 (P276 B안 — "AT A GLANCE" 칸이 글과 따로 떠 보인다는 사용자 의견 P275).
+          900px 이상은 왼쪽 글 : 오른쪽 목록, 좁으면 글 아래 목록 */}
+      <div className="about-page__overview">
+        {/* 소개 — 첫 줄은 BSS 풀 네임(다른 곳은 "BSS 연구실"로 짧게 쓰므로 여기서 풀어 줌, P109·P122), 그 아래 lab.ts의 소개 문단 */}
+        <div className="about-page__intro">
+          <p className="about-page__lead">
+            {LAB.shortName}는 <strong>{LAB.fullName}</strong>({LAB.koreanName})의 줄임말입니다.
           </p>
-        ))}
-      </div>
-
-      {/* 한눈에 보기 — 작은 이름표 + 값 칸. 지도교수·재학 부원은 /members, 성과는 /achievements (E-1, P273) */}
-      <section className="about-page__section" aria-labelledby="about-glance-title">
-        <h2 id="about-glance-title" className="about-page__section-label">
-          AT A GLANCE<span className="visually-hidden"> 한눈에 보기</span>
-        </h2>
-        <ul className="about-glance">
-          {glance.map((item) => (
-            <li key={item.label} className="about-glance__item">
-              {item.to ? (
-                <Link to={item.to} className="about-glance__card about-glance__card--link">
-                  {/* 이름표와 값 사이 띄어쓰기 — 화면에선 줄이 바뀌어 안 보이지만 화면 낭독기가 "재학 부원3명"으로 붙여 읽지 않게 */}
-                  <span className="about-glance__label">{item.label}</span>{' '}
-                  <span className="about-glance__value">{item.value}</span>
-                  <span className="about-glance__arrow" aria-hidden="true">
-                    →
-                  </span>
-                </Link>
-              ) : (
-                <div className="about-glance__card">
-                  <span className="about-glance__label">{item.label}</span>{' '}
-                  <span className="about-glance__value">{item.value}</span>
-                </div>
-              )}
-            </li>
+          {paragraphs.map((paragraph, index) => (
+            // 같은 문장이 두 번 있어도 key가 겹치지 않게 순서를 붙임
+            <p key={`${index}-${paragraph}`} className="about-page__paragraph">
+              {paragraph}
+            </p>
           ))}
-        </ul>
-      </section>
+        </div>
+
+        {/* 연구실 정보 — 이름표 왼쪽, 값 오른쪽 줄 목록. 지도교수·재학 부원은 /members, 성과는 /achievements (E-1 P273).
+            보이는 제목은 없고(P276), 화면 낭독기로 구역을 찾을 수 있게 숨은 제목만 */}
+        <section className="about-facts" aria-labelledby="about-facts-title">
+          <h2 id="about-facts-title" className="visually-hidden">
+            연구실 정보
+          </h2>
+          <ul className="about-facts__list">
+            {glance.map((item) => (
+              <li key={item.label} className="about-facts__item">
+                {item.to ? (
+                  <Link to={item.to} className="about-facts__row about-facts__row--link">
+                    {/* 이름표와 값 사이 띄어쓰기 — 화면 낭독기가 "재학 부원3명"으로 붙여 읽지 않게 */}
+                    <span className="about-facts__label">{item.label}</span>{' '}
+                    <span className="about-facts__value">
+                      {item.value}
+                      <span className="about-facts__arrow" aria-hidden="true">
+                        →
+                      </span>
+                    </span>
+                  </Link>
+                ) : (
+                  <div className="about-facts__row">
+                    <span className="about-facts__label">{item.label}</span>{' '}
+                    <span className="about-facts__value">{item.value}</span>
+                  </div>
+                )}
+              </li>
+            ))}
+          </ul>
+        </section>
+      </div>
 
       {/* 연구 분야 — 홈과 같은 목록. 제목은 홈과 같은 "우리가 다루는 문제"(사용자: 아직 깊게 파는 분야가 없어서, P273). 0개면 구역째 숨김 (EX-23) */}
       {LAB.researchAreas.length > 0 && (

@@ -11,9 +11,16 @@
   margin: 0;
 }
 
-/* 소개 — 글 줄이 너무 길면 읽기 힘들어 폭을 제한 */
+/* 소개 글 + 연구실 정보 목록 한 묶음 (P276 B안) — 900px 이상은 왼쪽 글(1.6) : 오른쪽 목록(1), 좁으면 위아래 */
+.about-page__overview {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: 56px;
+  align-items: start;
+}
+
 .about-page__intro {
-  max-width: 760px;
+  max-width: 760px; /* 글 줄이 너무 길면 읽기 힘들어서 */
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -32,19 +39,66 @@
   color: var(--color-muted);
 }
 
+/* 연구실 정보 — 이름표 왼쪽, 값 오른쪽 줄 목록. 맨 위는 검정 선(연구 분야 칸 위 선과 같은 모양), 줄 사이·맨 아래는 회색 선 */
+.about-facts__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--color-text);
+}
+
+.about-facts__item {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.about-facts__row {
+  min-height: 48px; /* 누르는 줄 44px 이상 (NFR-08) */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 0;
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.about-facts__label {
+  flex: none; /* 값이 길어도 이름표는 안 밀림 */
+  font-size: 15px;
+  color: var(--color-muted);
+}
+
+.about-facts__value {
+  min-width: 0;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 17px;
+  font-weight: 600;
+  text-align: right;
+  overflow-wrap: anywhere; /* 긴 학과 이름도 줄 안에서 줄바꿈 (EX-24) */
+}
+
+.about-facts__arrow {
+  flex: none;
+  font-weight: 400;
+  color: var(--color-muted);
+}
+
+.about-facts__row--link:hover .about-facts__value,
+.about-facts__row--link:hover .about-facts__arrow {
+  color: var(--color-text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.about-facts__row--link:hover .about-facts__arrow {
+  text-decoration: none;
+}
+
 /* 구역 — 홈 구역 사이와 같은 간격 */
 .about-page__section {
   margin-top: var(--section-gap);
-}
-
-/* 작은 구역 이름 — 부원 페이지 PROFESSOR·STUDENTS와 같은 꾸밈 글씨 */
-.about-page__section-label {
-  margin: 0 0 16px;
-  font-family: var(--font-display);
-  font-size: 14px;
-  font-weight: 500;
-  letter-spacing: 0.06em;
-  color: var(--color-muted);
 }
 
 .about-page__section-head {
@@ -59,94 +113,16 @@
   margin: 0;
 }
 
-/* 한눈에 보기 — 넓은 화면 4칸, 899px 이하 2칸, 374px 이하 1칸. grid라 칸 수가 적어도 같은 폭 */
-.about-glance {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 12px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.about-glance__item {
-  display: flex; /* 칸 높이를 한 줄에서 가장 긴 칸에 맞춤 */
-}
-
-.about-glance__card {
-  position: relative;
-  flex: 1;
-  min-height: 44px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 20px 22px;
-  border: 1px solid var(--color-border);
-  border-radius: 20px;
-  background: var(--color-surface);
-  color: var(--color-text);
-  text-decoration: none;
-  overflow-wrap: anywhere; /* 긴 학과 이름도 칸 안에서 줄바꿈 (EX-24) */
-}
-
-.about-glance__card--link {
-  padding-right: 48px; /* 오른쪽 위 화살표 자리 */
-}
-
-.about-glance__card--link:hover {
-  border-color: var(--color-text);
-}
-
-.about-glance__label {
-  font-size: 15px;
-  color: var(--color-muted);
-}
-
-.about-glance__value {
-  font-size: 21px;
-  font-weight: 700;
-  line-height: 1.35;
-  letter-spacing: -0.02em;
-}
-
-.about-glance__arrow {
-  position: absolute;
-  top: 18px;
-  right: 20px;
-  font-size: 18px;
-  color: var(--color-muted);
-}
-
-.about-glance__card--link:hover .about-glance__arrow {
-  color: var(--color-text);
-}
-
+/* 899px 이하 — 글 아래 목록, 목록은 화면 폭 전체 */
 @media (max-width: 899px) {
-  .about-glance {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .about-page__overview {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
   }
 }
 
 @media (max-width: 760px) {
   .about-page__lead {
     font-size: 18px;
-  }
-
-  .about-glance__card {
-    padding: 16px 18px;
-  }
-
-  .about-glance__card--link {
-    padding-right: 40px;
-  }
-
-  .about-glance__value {
-    font-size: 18px;
-  }
-}
-
-@media (max-width: 374px) {
-  .about-glance {
-    grid-template-columns: minmax(0, 1fr);
   }
 }
