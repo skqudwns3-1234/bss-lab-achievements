@@ -9,7 +9,9 @@ import type { Member, Professor } from '../types.ts'
 
 // 담당 교수 — 탭과 상관없이 페이지 맨 위에 따로, 크게 보인다 (P240·P242).
 // 이름은 사용자가 정한 실제 지도교수 (성과 데이터에도 지도교수 실명으로 있음 — 학교 내부망 운영이라 허용, P150).
-// 연구 분야·학교 이메일은 사용자가 교수님 이력에서 옮겨 줌 (P248). 처음엔 지어내지 않으려고 빈칸이었음(P243)
+// 연구 분야·학교 이메일은 사용자가 교수님 이력에서 옮겨 줌 (P248). 처음엔 지어내지 않으려고 빈칸이었음(P243).
+// 사진·전화·전공·학회·학력·경력·논문·학술활동은 사용자가 준 이력 원문(spec/04_professor-profile.md)을 그대로 옮김 (D-3, P251–P252).
+// 논문을 더할 때는 date를 'YYYY.MM' 모양으로 — utils/members.test.ts 데이터 검사가 확인한다
 export const PROFESSORS: Professor[] = [
   {
     name: '박정규',
@@ -17,6 +19,51 @@ export const PROFESSORS: Professor[] = [
     researchField: '운영체제, 인공지능&지능형 시스템, 로보틱스',
     email: 'jkpark@daejin.ac.kr',
     isSample: false,
+    photoUrl: '/members/professor.jpg',
+    phone: '031-539-1969',
+    major: '[컴퓨터공학전공] 로보틱스',
+    societies: ['한국정보처리학회', '한국컴퓨터정보학회', '한국혁신산업학회', 'IEEE Consumer Technology Society'],
+    education: ['박사 · 홍익대학교 컴퓨터시스템 전공 · 2013'],
+    careers: [
+      { place: '창신대학교', position: '부교수', period: '2018.03~2024.08' },
+      { place: '서울여자대학교', position: '초빙강의교수', period: '2017.03~2018.02' },
+      { place: '울산과학기술원', position: '연구원', period: '2015.10~2017.02' },
+      { place: '단국대학교', position: '조교수', period: '2014.01~2016.02' },
+    ],
+    papers: [
+      {
+        title:
+          'Temporal Variability and Compositional Shifts in Natural Disaster Impacts in South Korea: An Analysis of Economic Damage and Recovery Costs (2015–2024)',
+        venue: 'Sustainability',
+        grade: 'SCIE',
+        role: '교신저자',
+        date: '2026.03',
+      },
+      { title: '텍스트 마이닝을 활용한 외국인 근로자 안전사고 언론 보도 방식 비교 연구', venue: '차세대융합기술학회논문지', grade: '', role: '교신저자', date: '2026.02' },
+      { title: 'MARS Memory-Aware Metadata Management for Scalable Hadoop Systems', venue: 'WSEAS Transactions on Computer Research', grade: 'SCOPUS', role: '교신저자', date: '2026.02' },
+      { title: 'ALEX: Adaptive Log-Embedded Extent Layer for Low-Amplification SQLite Writes on Flash Storage', venue: 'Applied Sciences', grade: 'SCIE', role: '교신저자', date: '2026.01' },
+      { title: '대규모 시계열 데이터 마이그레이션을 위한 MongoDB와 InfluxDB 성능 비교 연구', venue: '사물인터넷융복합논문지', grade: '', role: '교신저자', date: '2025.12' },
+      { title: 'NVMe 기반 리눅스 파일시스템(ext4, XFS, Btrfs)의 성능 비교 분석 연구', venue: '차세대융합기술학회논문지', grade: '', role: '제1저자', date: '2025.12' },
+      { title: '모델 컨텍스트 프로토콜(MCP) 환경에서 퍼징 기반 보안 취약점 검출 방법', venue: '사물인터넷융복합논문지', grade: '', role: '제1저자', date: '2025.10' },
+      { title: '텍스트 마이닝 기반의 2021-2025년 조선일보 안전·재난 보도의 키워드 및 네트워크 구조 분석', venue: '차세대융합기술학회논문지', grade: '', role: '교신저자', date: '2025.09' },
+      { title: 'Reducing Network Congestion in SAN Environments through Dedicated FC-Based Backup Architecture', venue: 'Tehnički glasnik', grade: 'SCOPUS', role: '제1저자', date: '2025.09' },
+      { title: 'Implementation of a Hydroponic Cultivation Nutrient Supply System Using IoT', venue: 'WSEAS Transactions on Computer Research', grade: 'SCOPUS', role: '교신저자', date: '2025.08' },
+      { title: '디지털전환시대의 민관군 통합 사이버보안시스템 구축 필요성 연구', venue: '융합과 통섭', grade: '', role: '교신저자', date: '2025.07' },
+      { title: 'Implementation of RPL Protocol Modifications to Improve IoT Communication Performance', venue: 'WSEAS Transactions on Systems', grade: 'SCOPUS', role: '교신저자', date: '2025.05' },
+      { title: 'Fast Path Generation Algorithm for Mobile Robot Navigation Using Hybrid Map', venue: 'Applied Sciences', grade: 'SCIE', role: '교신저자', date: '2025.02' },
+      { title: 'Real-Time Adaptive and Lightweight Anomaly Detection Based on a Chaotic System in Cyber–Physical Systems', venue: 'Electronics', grade: 'SCIE', role: '제1저자', date: '2025.02' },
+      { title: '홈 오토메이션을 위한 음성 인식 시스템 구현', venue: '국제차세대융합기술학회논문지', grade: '', role: '제1저자', date: '2024.12' },
+      { title: 'Performance Evaluation of Large-scale Storage Systems with iSCSI for Big Data', venue: '한국산업융합학회논문집', grade: '', role: '제1저자', date: '2024.12' },
+      { title: 'Implementation of NDAS-based Large-Scale Storage Systems for Big Data', venue: '차세대융합기술학회논문지', grade: '', role: '제1저자', date: '2024.12' },
+      { title: 'Implementation and Analysis of Automation using IoT Based on MQTT Protocol', venue: '차세대융합기술학회논문지', grade: '', role: '교신저자', date: '2024.10' },
+      { title: 'Defect Detection of Scroll Fixed Using AI Machine Vision Inspection', venue: 'International Journal of Precision Engineering and Manufacturing', grade: 'SCIE', role: '교신저자', date: '2024.10' },
+      { title: 'Thermal phenomena and size effects of Mg powder in combustion process', venue: 'PLOS ONE', grade: 'SCI', role: '교신저자', date: '2024.09' },
+      { title: 'Implementation of surveillance system through face recognition using HOG algorithm', venue: 'Library Progress International', grade: 'SCOPUS', role: '제1저자', date: '2024.07' },
+    ],
+    activities: [
+      // 원문 "공동(제1)" → 논문과 같은 표기 '제1저자'로 맞춤
+      { title: 'Implementation of an Improved SAN Framework to Improve Backup Storage Performance', venue: 'AIT2025-Proceeding', grade: '', role: '제1저자', date: '2025.01' },
+    ],
   },
 ]
 

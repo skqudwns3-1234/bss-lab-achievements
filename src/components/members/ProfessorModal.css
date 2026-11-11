@@ -1,0 +1,105 @@
+/* 지도교수 전체 이력 팝업 (spec/04 D-3) — 바탕·상자·닫기·정보 줄은 성과 팝업 모양(AchievementModal.css)을 그대로 쓰고,
+   여기에는 이력에만 있는 것(넓은 상자, 숫자 요약, 묶음 제목, 논문 목록)만 둔다 */
+
+/* 논문 제목이 길어 성과 팝업(560px)보다 조금 넓게 */
+.professor-modal__panel {
+  max-width: 720px;
+  color: var(--color-text); /* 어디에 그려져도 글자색은 검정 (검정 카드 안에서 흰 글자를 물려받았던 문제, P252) */
+}
+
+.professor-modal__name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 30px;
+  line-height: 1.2;
+  letter-spacing: -0.04em;
+  font-weight: 700;
+}
+
+/* "논문 21편 · SCIE 5 · SCOPUS 5 · SCI 1" */
+.professor-modal__counts {
+  margin: -8px 0 0;
+  font-size: 14px;
+  color: var(--color-muted);
+}
+
+/* 학력·경력·논문·학술활동 묶음 */
+.professor-modal__section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 20px;
+  border-top: 1px solid var(--color-border);
+}
+
+.professor-modal__section-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.professor-modal__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 15px;
+}
+
+/* 경력 한 줄 — 기간은 회색 */
+.professor-modal__muted {
+  color: var(--color-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* 논문 연도 제목 (2026 / 2025 / 2024) */
+.professor-modal__year {
+  margin: 8px 0 0;
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.professor-modal__paper {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.professor-modal__paper-title {
+  font-weight: 500;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+/* 학술지 · 날짜 + 등급·역할 배지 */
+.professor-modal__paper-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  font-size: 13px;
+  color: var(--color-muted);
+  overflow-wrap: anywhere;
+}
+
+.professor-modal__paper-meta .badge {
+  padding: 1px 8px;
+  font-size: 11px;
+  color: var(--color-text);
+}
+
+/* 역할(교신저자·제1저자) 배지 — 등급 배지(테두리)와 구분되게 회색 바탕 알약 (점선 배지는 "예시" 뜻이라 쓰지 않음) */
+.professor-modal__role {
+  padding: 1px 8px;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-strong);
+  color: var(--color-text);
+  font-size: 11px;
+  font-weight: 500;
+}

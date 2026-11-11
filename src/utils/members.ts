@@ -1,4 +1,4 @@
-import type { Member, MemberStatus } from '../types.ts'
+import type { Member, MemberStatus, ProfessorPaper } from '../types.ts'
 
 // 부원 페이지 계산 함수 (spec/04 D-1, P242–P243). 화면(React)과 상관없는 순수 함수만 —
 // 같은 값을 넣으면 늘 같은 결과, 받은 목록은 바꾸지 않는다 (utils/achievements.ts와 같은 방식)
@@ -58,4 +58,43 @@ export function positionLabel(member: Member): string {
   const rank = positionRank(position)
   if (rank < GRADUATE_LABELS.length) return GRADUATE_LABELS[rank]
   return position === '' ? '졸업' : `${position} 졸업` // 가이드 밖 글자 — '연구원 졸업'
+}
+
+// ── 지도교수 이력 (spec/04 D-3, P251–P252) ──
+
+// 최근 논문 n편 — 날짜 'YYYY.MM'은 글자 순서가 곧 날짜 순서라 글자 비교로 최신순.
+// 같은 달이면 적힌 순서 그대로(sort는 같은 값끼리 순서를 지킴). 카드 요약에 3편
+export function recentPapers(papers: ProfessorPaper[], count: number): ProfessorPaper[] {
+  return [...papers].sort((a, b) => b.date.localeCompare(a.date)).slice(0, count)
+}
+
+// 연도별 묶기 — 팝업에서 2026 → 2025 → 2024 제목 아래 논문 (사용자 결정 ③). 묶음 안도 최신순
+export function papersByYear(papers: ProfessorPaper[]): { year: string; papers: ProfessorPaper[] }[] {
+  const groups: { year: string; papers: ProfessorPaper[] }[] = []
+  for (const paper of recentPapers(papers, papers.length)) {
+    const year = paper.date.slice(0, 4)
+    const last = groups[groups.length - 1]
+    if (last && last.year === year) last.papers.push(paper)
+    else groups.push({ year, papers: [paper] })
+  }
+  return groups
+}
+
+// 등급별 편수 — 팝업 위 "논문 21편 · SCIE 5 · SCOPUS 5 · SCI 1". 등급 없는 논문(국내 학술지)은 세지 않음.
+// 처음 나온 순서대로 담아 표시 순서가 데이터를 따름
+export function countByGrade(papers: ProfessorPaper[]): { grade: string; count: number }[] {
+  const counts: { grade: string; count: number }[] = []
+  for (const { grade } of papers) {
+    const name = grade.trim()
+    if (name === '') continue
+    const found = counts.find((item) => item.grade === name)
+    if (found) found.count += 1
+    else counts.push({ grade: name, count: 1 })
+  }
+  return counts
+}
+
+// 전화번호 → tel: 주소 — 숫자·+만 남김 (휴대폰에서 누르면 전화, 카드·팝업이 같이 씀, D-3 P251)
+export function telHref(phone: string): string {
+  return `tel:${phone.replace(/[^0-9+]/g, '')}`
 }

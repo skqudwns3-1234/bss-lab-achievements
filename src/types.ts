@@ -93,13 +93,38 @@ export type Member = {
   isSample: boolean // 지어낸 예시면 true → "예시" 배지 (Q-D1)
 }
 
-// 담당 교수 — 부원 목록과 따로 둔다: 탭·정렬·인원 수에 섞이지 않고 페이지 맨 위에 따로 보임 (Q-D1, P240)
+// 교수 논문·학술활동 한 건 (spec/04 D-3, P251) — 칸을 나눠서 최신순·연도 묶기·등급 배지가 된다
+export type ProfessorPaper = {
+  title: string // 「」 안의 제목
+  venue: string // 학술지·학회 (예: Applied Sciences)
+  grade: string // SCIE · SCOPUS · SCI, 없으면 '' (국내 학술지 등)
+  role: string // 교신저자 · 제1저자
+  date: string // 'YYYY.MM' (예: 2026.03) — 글자 순서가 곧 날짜 순서
+}
+
+// 교수 경력 한 줄 (예: 창신대학교 · 부교수 · 2018.03~2024.08)
+export type ProfessorCareer = {
+  place: string
+  position: string
+  period: string
+}
+
+// 담당 교수 — 부원 목록과 따로 둔다: 탭·정렬·인원 수에 섞이지 않고 페이지 맨 위에 따로 보임 (Q-D1, P240).
+// D-3(P251): 사진·전화·이력 칸은 모두 없어도 됨(?) — 정보가 적은 교수도 오류 없이 지금 카드 모양으로 보임
 export type Professor = {
   name: string
   title: string // 직함 (예: 지도교수)
   researchField: string // 비면 숨김
   email: string // 비면 숨김
   isSample: boolean
+  photoUrl?: string // public/ 아래 사진 주소 (예: /members/professor.jpg) — 못 불러오면 첫 글자 동그라미
+  phone?: string // 학교 연구실 번호 — 카드·팝업에 tel: 링크 (P251)
+  major?: string // 전공
+  societies?: string[] // 소속학회
+  education?: string[] // 학력 — 첫 줄이 카드 요약
+  careers?: ProfessorCareer[] // 경력
+  papers?: ProfessorPaper[] // 논문 — 최근 3편이 카드 요약, 전체는 팝업. 성과 페이지에는 섞지 않음 (P251 ⑥)
+  activities?: ProfessorPaper[] // 학술활동 (학회 발표 등)
 }
 
 // 저장소에서 성과를 불러온 결과 (spec/02 2-4) — 목록 + 무엇이 잘못돼서 어떻게 고쳤는지 안내 문장

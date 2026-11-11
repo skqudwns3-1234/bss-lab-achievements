@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest'
 import { MEMBERS, PROFESSORS } from '../data/members.ts'
-import type { Member, MemberStatus } from '../types.ts'
-import { countByStatus, memberInitial, periodLabel, positionLabel, sortedMembers } from './members.ts'
+import type { Member, MemberStatus, ProfessorPaper } from '../types.ts'
+import { countByGrade, countByStatus, memberInitial, papersByYear, periodLabel, positionLabel, recentPapers, sortedMembers } from './members.ts'
 
 // 부원 계산 함수·데이터 검사 테스트 (spec/04 D-1, test-cases UT-78~83). 실행: npm test
 
@@ -90,6 +90,48 @@ describe('data/members.ts 검사', () => {
     for (const professor of PROFESSORS) {
       expect(professor.name.trim()).not.toBe('')
       if (professor.email !== '') expect(professor.email).toMatch(EMAIL_SHAPE)
+      // D-3: 논문·학술활동은 제목이 있고 날짜가 'YYYY.MM' 모양 (정렬·연도 묶기가 이 모양에 기대서)
+      for (const paper of [...(professor.papers ?? []), ...(professor.activities ?? [])]) {
+        const where = `${professor.name} 논문 「${paper.title.slice(0, 20)}」`
+        expect(paper.title.trim(), where).not.toBe('')
+        expect(paper.date, `${where}: 날짜는 YYYY.MM`).toMatch(/^\d{4}\.(0[1-9]|1[0-2])$/)
+      }
     }
+  })
+})
+
+describe('recentPapers · papersByYear · countByGrade — 지도교수 이력 (spec/04 D-3)', () => {
+  const paper = (title: string, date: string, grade = ''): ProfessorPaper => ({ title, venue: '학술지', grade, role: '교신저자', date })
+  const papers = [paper('가', '2024.07', 'SCOPUS'), paper('나', '2026.02', 'SCIE'), paper('다', '2026.02'), paper('라', '2025.12', 'SCIE'), paper('마', '2026.03', 'SCI')]
+
+  test('UT-84 최근 논문 n편 — 최신순, 같은 달은 적힌 순서, 적으면 있는 만큼, 원본 그대로', () => {
+    expect(recentPapers(papers, 3).map((p) => p.title)).toEqual(['마', '나', '다'])
+    expect(recentPapers(papers.slice(0, 2), 3).map((p) => p.title)).toEqual(['나', '가'])
+    expect(recentPapers([], 3)).toEqual([])
+    expect(papers.map((p) => p.title)).toEqual(['가', '나', '다', '라', '마'])
+  })
+
+  test('UT-85 연도별 묶기 — 최신 해부터, 묶음 안도 최신순', () => {
+    expect(papersByYear(papers).map((g) => [g.year, g.papers.map((p) => p.title).join('')])).toEqual([
+      ['2026', '마나다'],
+      ['2025', '라'],
+      ['2024', '가'],
+    ])
+    expect(papersByYear([])).toEqual([])
+  })
+
+  test('UT-86 등급별 편수 — 등급 없는 논문은 세지 않음, 실제 데이터는 21편 · SCIE 5 · SCOPUS 5 · SCI 1', () => {
+    expect(countByGrade(papers)).toEqual([
+      { grade: 'SCOPUS', count: 1 },
+      { grade: 'SCIE', count: 2 },
+      { grade: 'SCI', count: 1 },
+    ])
+    const real = PROFESSORS[0].papers ?? []
+    expect(real).toHaveLength(21)
+    expect(countByGrade(real)).toEqual([
+      { grade: 'SCIE', count: 5 },
+      { grade: 'SCOPUS', count: 5 },
+      { grade: 'SCI', count: 1 },
+    ])
   })
 })

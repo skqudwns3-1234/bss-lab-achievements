@@ -1,8 +1,8 @@
 /* 지도교수 카드 (spec/04 D-2) — 검정 넓은 카드: 이 사이트의 강조색(관리 띠·주요 버튼·저장 안내)이라
-   부원 카드와 다른 자리로 한눈에 보임 (사용자 "중요한 사람처럼", P242·P246) */
+   부원 카드와 다른 자리로 한눈에 보임 (사용자 "중요한 사람처럼", P242·P246). D-3: 사진·요약·연락처·전체 이력 버튼 */
 .professor-card {
   display: flex;
-  align-items: center;
+  align-items: flex-start; /* D-3: 요약이 길어져 위쪽 맞춤 */
   gap: 28px;
   padding: clamp(24px, 4vw, 40px);
   border-radius: var(--radius-card);
@@ -10,6 +10,7 @@
   color: #ffffff;
 }
 
+/* 사진이 없거나 못 불러왔을 때의 첫 글자 동그라미 */
 .professor-card__initial {
   flex: 0 0 80px;
   width: 80px;
@@ -25,7 +26,18 @@
   font-weight: 700;
 }
 
+/* 증명사진 — 4:5 둥근 네모 (사진 314×395, 사용자 결정 ⑤), 넓은 화면 128×160 */
+.professor-card__photo {
+  flex: 0 0 128px;
+  width: 128px;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 16px;
+  background: #2a2a2a; /* 불러오는 동안 빈 자리 */
+}
+
 .professor-card__body {
+  flex: 1 1 auto;
   min-width: 0;
   display: flex;
   flex-direction: column;
@@ -68,11 +80,73 @@
   overflow-wrap: anywhere;
 }
 
-.professor-card__email {
-  align-self: flex-start;
+/* 학력 한 줄 (요약) */
+.professor-card__education {
+  margin: 0;
+  font-size: 14px;
+  color: #d4d4d4;
+}
+
+/* 최근 논문 3편 (요약) */
+.professor-card__recent {
+  margin-top: 8px;
+  padding-top: 12px;
+  border-top: 1px solid #3a3a3a;
+}
+
+.professor-card__recent-title {
+  margin: 0 0 6px;
+  font-size: 13px;
+  color: #a3a3a3;
+}
+
+.professor-card__papers {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.professor-card__paper {
+  display: flex;
+  gap: 12px;
+  min-width: 0;
+  font-size: 14px;
+}
+
+/* 제목은 두 줄까지 — 넘치면 말줄임 (전체 제목은 팝업) */
+.professor-card__paper-title {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+
+.professor-card__paper-date {
+  flex: none;
+  color: #a3a3a3;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 전화·이메일 — 누르는 높이 44px (NFR-08) */
+.professor-card__contacts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 20px;
+  margin-top: 4px;
+}
+
+.professor-card__link {
   display: inline-flex;
   align-items: center;
   min-height: 44px;
+  min-width: 0;
   color: #ffffff;
   font-weight: 500;
   text-decoration: underline;
@@ -80,15 +154,45 @@
   overflow-wrap: anywhere;
 }
 
-.professor-card__email:focus-visible {
+/* 전체 이력 보기 — 검정 위 흰 테두리 알약, 화살표는 사이트의 팝업 열기 표시 */
+.professor-card__more {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  margin-top: 4px;
+  padding: 0 18px;
+  border: 1px solid #ffffff;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: #ffffff;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.professor-card__more:hover {
+  background: #ffffff;
+  color: var(--color-text);
+}
+
+.professor-card__link:focus-visible,
+.professor-card__more:focus-visible {
   outline-color: #ffffff;
 }
 
-/* 휴대폰 — 동그라미 위, 글자 아래 */
+/* 휴대폰 — 사진(또는 동그라미) 위, 글자 아래. 사진 96×120 */
 @media (max-width: 560px) {
   .professor-card {
     flex-direction: column;
-    align-items: flex-start;
     gap: 20px;
+  }
+
+  .professor-card__photo {
+    flex-basis: auto;
+    width: 96px;
+    height: 120px;
   }
 }
