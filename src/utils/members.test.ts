@@ -23,13 +23,23 @@ function make(id: number, name: string, position: string, status: MemberStatus, 
 }
 
 describe('sortedMembers — 탭별 거르기·정렬 (AC-15-1, Q-D3)', () => {
-  test('UT-78 직위 순 → 재학은 시작 연도 빠른 순 → 이름 가나다 (예시 데이터)', () => {
-    expect(sortedMembers(MEMBERS, 'ENROLLED').map((m) => m.name)).toEqual(['김하늘', '박서준', '이도윤', '정민서'])
+  test('UT-78 직위 순 → 재학은 시작 연도 빠른 순 → 이름 가나다', () => {
+    // 실제 데이터 (P260): 셋 다 학부연구생·2026 → 이름 가나다. "학부연구생 · 랩장"도 학부연구생 자리
+    expect(sortedMembers(MEMBERS, 'ENROLLED').map((m) => m.name)).toEqual(['나병준', '윤승빈', '정수빈'])
+    // 규칙 확인용 가짜 부원 (예시 부원을 지운 뒤에도 규칙을 계속 확인 — 처음엔 예시 데이터로 확인했음)
+    const list = [
+      make(1, '정민서', '학부연구생', 'ENROLLED', 2025),
+      make(2, '이도윤', '석사과정', 'ENROLLED', 2024),
+      make(3, '박서준', '석사과정', 'ENROLLED', 2024), // 같은 직위·같은 해 → 이름순
+      make(4, '김하늘', '박사과정', 'ENROLLED', 2023),
+      make(5, '최유진', '석사과정', 'GRADUATED', 2022, 2026), // 다른 탭이라 빠짐
+    ]
+    expect(sortedMembers(list, 'ENROLLED').map((m) => m.name)).toEqual(['김하늘', '박서준', '이도윤', '정민서'])
   })
 
   test('UT-79 졸업은 직위 순 → 졸업 연도 최근 순 → 이름, 원본은 그대로', () => {
     const before = MEMBERS.map((m) => m.id)
-    expect(sortedMembers(MEMBERS, 'GRADUATED').map((m) => m.name)).toEqual(['오세린', '최유진', '한지우'])
+    expect(sortedMembers(MEMBERS, 'GRADUATED')).toEqual([]) // 실제 데이터엔 졸업생이 아직 없음 (P260)
     expect(MEMBERS.map((m) => m.id)).toEqual(before) // 데이터 파일 순서가 바뀌지 않음
 
     const list = [
@@ -38,6 +48,9 @@ describe('sortedMembers — 탭별 거르기·정렬 (AC-15-1, Q-D3)', () => {
       make(3, '다', '박사과정', 'GRADUATED', 2015, 2019), // 박사가 연도보다 먼저
     ]
     expect(sortedMembers(list, 'GRADUATED').map((m) => m.name)).toEqual(['다', '나', '가'])
+    // 같은 직위·같은 졸업 해 → 이름순 (처음 예시 데이터의 오세린·최유진 경우)
+    const same = [make(1, '최유진', '석사과정', 'GRADUATED', 2022, 2026), make(2, '오세린', '석사과정', 'GRADUATED', 2021, 2026)]
+    expect(sortedMembers(same, 'GRADUATED').map((m) => m.name)).toEqual(['오세린', '최유진'])
   })
 
   test('UT-80 직위는 자유 글자 — 글자 안의 박사·석사·학부(학사)로 순위, 그 밖은 맨 뒤', () => {
@@ -54,7 +67,7 @@ describe('sortedMembers — 탭별 거르기·정렬 (AC-15-1, Q-D3)', () => {
 
 describe('countByStatus · memberInitial · periodLabel · positionLabel', () => {
   test('UT-81 인원 수 (빈 목록은 0), 첫 글자 (공백·영어 대문자·빈 이름 ?)', () => {
-    expect(countByStatus(MEMBERS)).toEqual({ ENROLLED: 4, GRADUATED: 3 })
+    expect(countByStatus(MEMBERS)).toEqual({ ENROLLED: 3, GRADUATED: 0 }) // 실제 데이터 (P260)
     expect(countByStatus([])).toEqual({ ENROLLED: 0, GRADUATED: 0 })
     expect(memberInitial(' 김하늘 ')).toBe('김')
     expect(memberInitial('alex kim')).toBe('A')
