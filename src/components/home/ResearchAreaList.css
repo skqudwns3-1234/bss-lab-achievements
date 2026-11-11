@@ -1,0 +1,44 @@
+/* 연구 분야 칸들 — 홈 ②와 연구실 소개(/about)가 같이 씀.
+   E-1(P274)에 HomePage.css에서 옮김: 컴포넌트가 자기 모양을 직접 가져와야 어느 페이지에서 써도 안 깨져서.
+   grid: 한 칸을 최소 300px로 잡고, 한 줄에 들어가는 만큼 같은 폭으로 나눈다.
+   넓은 화면은 3칸 한 줄, 좁으면 2칸·1칸으로 자동으로 줄어든다.
+   flex와 달리 마지막 줄에 칸이 하나 남아도 줄 전체로 늘어나지 않는다 (P125) */
+.research-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+  gap: 24px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.research-list__item {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 24px;
+  border-top: 1px solid var(--color-text);
+}
+
+.research-list__number {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 48px;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.research-list__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 1.35;
+  letter-spacing: -0.03em;
+}
+
+.research-list__desc {
+  margin: 0;
+  font-size: 17px;
+  color: var(--color-muted);
+}

@@ -209,11 +209,6 @@ button {
   border-color: var(--color-danger);
 }
 
-/* 아직 구현 전인 페이지에 붙이는 안내 문구 */
-.placeholder-note {
-  color: var(--color-muted);
-}
-
 /* 화면에는 안 보이고 화면 낭독기만 읽는 글자 — 검색칸 라벨처럼 시안에서 숨긴 라벨에 (B-2) */
 .visually-hidden {
   position: absolute;

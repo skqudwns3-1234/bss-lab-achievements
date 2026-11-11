@@ -1,5 +1,6 @@
 import type { ResearchArea } from '../../types.ts'
 import { padCount } from '../../utils/achievements.ts'
+import './ResearchAreaList.css'
 
 type ResearchAreaListProps = {
   areas: ResearchArea[] // 보여 줄 연구 분야들 (lab.ts의 researchAreas)
