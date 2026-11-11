@@ -112,7 +112,16 @@ describe('data/members.ts 검사', () => {
     }
 
     expect(PROFESSORS.length).toBeGreaterThan(0)
+    // 점검 P269: 교수 이름 겹침 — 화면 key는 순서로 막았지만 같은 사람을 두 번 넣은 실수일 가능성이 커서 알려 줌
+    const names = PROFESSORS.map((p) => p.name.trim())
+    const repeatedNames = names.filter((name, index) => names.indexOf(name) !== index)
+    expect(repeatedNames, `교수 이름이 겹침: ${repeatedNames.join(', ')}`).toEqual([])
     for (const professor of PROFESSORS) {
+      // 점검 P269: 사진 폴더가 페이지 주소(App.tsx의 about·members·achievements)와 같은 이름이면 배포 후 그 페이지 새로고침이 403
+      if (professor.photoUrl) {
+        const folder = professor.photoUrl.split('/')[1]
+        expect(['about', 'members', 'achievements'], `${professor.name} 사진 폴더 "${folder}"가 페이지 주소와 겹침`).not.toContain(folder)
+      }
       expect(professor.name.trim()).not.toBe('')
       if (professor.email !== '') expect(professor.email).toMatch(EMAIL_SHAPE)
       // D-3: 논문·학술활동은 제목이 있고 날짜가 'YYYY.MM' 모양 (정렬·연도 묶기가 이 모양에 기대서)
@@ -168,6 +177,13 @@ describe('splitNames · achievementsOf — 부원 활동 자동 모으기 (spec/
     expect(splitNames('홍길동 외 2명')).toEqual(['홍길동'])
     expect(splitNames('나병준외3명')).toEqual(['나병준'])
     expect(splitNames('')).toEqual([])
+  })
+
+  test('UT-89 괄호 붙은 저자도 이름만 — "(제1저자)"·전각 괄호·괄호 안 쉼표 (점검 P269)', () => {
+    expect(splitNames('나병준(제1저자)·윤승빈 (교신)')).toEqual(['나병준', '윤승빈'])
+    expect(splitNames('정수빈（공동）, 나병준')).toEqual(['정수빈', '나병준'])
+    expect(splitNames('나병준(제1저자, 교신), 윤승빈')).toEqual(['나병준', '윤승빈'])
+    expect(splitNames('(공동)')).toEqual([])
   })
 
   test('UT-88 이름이 정확히 같은 실제 성과만 최신순 — 비슷한 이름·예시 성과·빈 이름은 안 셈', () => {

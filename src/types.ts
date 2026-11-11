@@ -117,7 +117,7 @@ export type Professor = {
   researchField: string // 비면 숨김
   email: string // 비면 숨김
   isSample: boolean
-  photoUrl?: string // public/ 아래 사진 주소 (예: /members/professor.jpg) — 못 불러오면 첫 글자 동그라미
+  photoUrl?: string // public/ 아래 사진 주소 (예: /images/professor.jpg — 페이지 주소와 같은 이름의 폴더는 쓰지 않음) — 못 불러오면 첫 글자 동그라미
   phone?: string // 학교 연구실 번호 — 카드·팝업에 tel: 링크 (P251)
   major?: string // 전공
   societies?: string[] // 소속학회

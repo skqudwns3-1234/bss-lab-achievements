@@ -71,8 +71,9 @@ export default function MembersPage() {
             PROFESSOR
           </h2>
           <div className="members-page__professors">
-            {PROFESSORS.map((professor) => (
-              <ProfessorCard key={professor.name} professor={professor} />
+            {/* key는 순서+이름 — 이름만 쓰면 같은 이름 교수가 둘일 때 겹침 (점검 P269). 교수 목록은 바뀌지 않는 고정 데이터라 순서를 써도 됨 */}
+            {PROFESSORS.map((professor, index) => (
+              <ProfessorCard key={`${index}-${professor.name}`} professor={professor} />
             ))}
           </div>
         </section>
@@ -98,6 +99,8 @@ export default function MembersPage() {
                 aria-selected={selected}
                 aria-controls="members-panel"
                 tabIndex={selected ? 0 : -1}
+                // 화면 낭독기용 이름 — 글자와 숫자 칸이 붙어 "재학3"으로 읽혀서 (점검 P269). 화면 모양은 그대로
+                aria-label={`${item.label} ${counts[item.status]}명`}
                 onClick={() => selectTab(item.status)}
                 onKeyDown={(event) => handleTabKeyDown(event, index)}
               >

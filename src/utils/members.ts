@@ -106,6 +106,8 @@ export function telHref(phone: string): string {
 // '심유승·나병준 ' → ['심유승', '나병준'], '홍길동 외 2명' → ['홍길동']
 export function splitNames(text: string): string[] {
   return text
+    // 괄호 부분 먼저 떼기 — "나병준(제1저자)"·"윤승빈 (교신)"도 이름으로 찾게. 나누기 전에 떼야 "(제1저자, 교신)" 안의 쉼표에 안 잘림 (점검 P269)
+    .replace(/[(（][^)）]*[)）]/g, '')
     .split(/[·,、/;]/)
     .map((part) => part.trim().replace(/\s*외\s*\d+\s*명$/, '').trim())
     .filter((part) => part !== '')

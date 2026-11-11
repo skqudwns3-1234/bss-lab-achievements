@@ -19,7 +19,9 @@ export const PROFESSORS: Professor[] = [
     researchField: '운영체제, 인공지능&지능형 시스템, 로보틱스',
     email: 'jkpark@daejin.ac.kr',
     isSample: false,
-    photoUrl: '/members/professor.jpg',
+    // public/images/ 아래 — public/members/에 두면 빌드 후 dist/members 폴더가 생겨 /members 주소와 겹치고,
+    // 흔한 서버 설정에서 /members 새로고침이 403이 됨 (spec/04 점검 P268–P269)
+    photoUrl: '/images/professor.jpg',
     phone: '031-539-1969',
     major: '[컴퓨터공학전공] 로보틱스',
     societies: ['한국정보처리학회', '한국컴퓨터정보학회', '한국혁신산업학회', 'IEEE Consumer Technology Society'],
