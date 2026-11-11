@@ -90,8 +90,10 @@ export default function AchievementFormPage() {
   // 저장 (C-2a): 등록은 add(새 번호, 실패면 null), 수정은 update(성공 여부) — 둘 다 "저장 먼저, 성공하면 반영" (2-5).
   // 폼이 memo가 아니라 useCallback으로 고정해도 얻는 게 없어 그냥 함수
   function handleSubmit(input: AchievementInput): boolean {
-    if (target) {
-      if (!updateAchievement(target.id, input)) return false
+    if (isEdit) {
+      // 수정인데 성과가 없으면(지워짐) 실패 — 등록 쪽으로 넘어가 지워진 성과가 새 성과로 다시 생기지 않게.
+      // 폼도 "삭제됨"이면 저장을 막지만, 막는 곳을 한 군데에만 두지 않는다 (spec/03 점검 ③, P238)
+      if (!target || !updateAchievement(target.id, input)) return false
       goToList({ kind: 'edit', id: target.id, title: input.title })
       return true
     }

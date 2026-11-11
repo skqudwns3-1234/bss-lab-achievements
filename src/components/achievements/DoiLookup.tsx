@@ -99,7 +99,8 @@ export default function DoiLookup({ doi, onDoiChange, onFill, error, editingId, 
   }
 
   // 낭독기가 DOI 칸에서 함께 읽을 문장들 (상태·저장 오류·같은 DOI 경고)
-  const describedBy = ['form-doi-status', error ? 'form-doi-error' : '', duplicate ? 'form-doi-duplicate' : '']
+  const showError = error !== undefined && error !== lookup.message
+  const describedBy = ['form-doi-status', showError ? 'form-doi-error' : '', duplicate ? 'form-doi-duplicate' : '']
     .filter((id) => id !== '')
     .join(' ')
 
@@ -140,7 +141,8 @@ export default function DoiLookup({ doi, onDoiChange, onFill, error, editingId, 
         <StatusIcon status={lookup.status} />
         <span>{lookup.message}</span>
       </p>
-      {error && (
+      {/* 저장 검사 문장 — 상태 문장이 이미 같은 말(불러오기에서 난 형식 오류)이면 두 줄로 겹치지 않게 뺌 (spec/03 점검 ①, P238) */}
+      {showError && (
         <p id="form-doi-error" className="achievement-form__error">
           {error}
         </p>

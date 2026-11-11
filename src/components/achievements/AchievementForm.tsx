@@ -77,12 +77,17 @@ export default function AchievementForm({ initialValues, onSubmit, isDeleted, ed
   }
 
   // DOI로 불러온 값 채우기 (C-4) — 사용자가 직접 누른 것이라 덮어쓰되, 받은 값이 빈 칸은 원래 값을 남긴다
-  // (② — 수정 화면에서 다시 불러올 때 직접 써 둔 학술지 등이 지워지지 않게). 덮어쓴 칸에 "자동 입력" 표시
+  // (② — 수정 화면에서 다시 불러올 때 직접 써 둔 학술지 등이 지워지지 않게). 덮어쓴 칸에 "자동 입력" 표시.
+  // 단, 앞서 불러온 다른 논문의 값("자동 입력" 표시가 남은 칸)은 새 응답에 없으면 비운다 — 안 그러면 두 논문의
+  // 학술지·날짜가 섞인 채 표시만 빠져 알아채기 어려움 (spec/03 점검 ②, P238). 사용자가 쓰거나 고친 칸은 표시가 없어 그대로
   function handleFill(work: CrossrefWork) {
-    const filled = (Object.keys(work) as (keyof CrossrefWork)[]).filter((field) => work[field] !== '')
+    const fields = Object.keys(work) as (keyof CrossrefWork)[]
+    const filled = fields.filter((field) => work[field] !== '')
+    const staleAuto = fields.filter((field) => work[field] === '' && autoFilled.has(field))
     setValues((prev) => {
       const next = { ...prev }
       for (const field of filled) next[field] = work[field]
+      for (const field of staleAuto) next[field] = ''
       return next
     })
     setAutoFilled(new Set(filled))
