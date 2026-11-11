@@ -228,3 +228,48 @@
 .member-card__more {
   font-size: 14px;
 }
+
+/* ── P264: 여백 줄이고 글자 한 번 더 키움 (사용자 "여백이 좀 많은거 같은데 전반적인 텍스트 사이즈 좀 키워줄 수 있을까?")
+   여백 32→26, 간격 22→16, 이름 26→30, 직위 14→16, 연구 분야 15→17, 활동 14→16, 아래 줄 14→16px ── */
+.member-card {
+  gap: 16px;
+  padding: 26px;
+}
+
+.member-card__initial {
+  flex-basis: 76px;
+  width: 76px;
+  height: 76px;
+  font-size: 28px;
+}
+
+.member-card__name {
+  font-size: 30px;
+}
+
+.member-card__position {
+  font-size: 16px;
+}
+
+.member-card__field {
+  font-size: 17px;
+}
+
+.member-card__activities-title {
+  font-size: 14px;
+}
+
+.member-card__activity {
+  font-size: 16px;
+}
+
+.member-card__bottom,
+.member-card__email,
+.member-card__period,
+.member-card__more {
+  font-size: 16px;
+}
+
+.member-card__bottom {
+  padding-top: 12px;
+}

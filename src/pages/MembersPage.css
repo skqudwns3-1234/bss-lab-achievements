@@ -141,3 +141,33 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* ── P264: 구역 사이 여백 줄이고 구역 제목·탭 글자 키움 ── */
+.members-page__head {
+  margin-bottom: 28px;
+}
+
+.members-page__section {
+  margin-bottom: 40px;
+}
+
+.members-page__section-title {
+  margin-bottom: 12px;
+  font-size: 16px;
+}
+
+.members-page__tab {
+  font-size: 16px;
+}
+
+.members-page__tab-count {
+  font-size: 14px;
+}
+
+.members-page__panel {
+  padding-top: 24px;
+}
+
+.members-page__grid {
+  gap: 16px;
+}
