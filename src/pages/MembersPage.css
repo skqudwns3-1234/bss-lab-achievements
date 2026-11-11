@@ -76,3 +76,13 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* 한 줄의 카드 높이를 맞춤 — 활동이 있는 카드만 길어져 아래 줄(기간·이메일)이 들쭉날쭉했음 (D-4 확인 중 발견).
+   칸(li)을 flex로 만들어 카드가 칸 높이를 꽉 채우고, 카드 안 아래 줄은 margin-top: auto로 맨 아래에 붙음 */
+.members-page__grid > li {
+  display: flex;
+}
+
+.members-page__grid > li > .member-card {
+  flex: 1 1 auto;
+}

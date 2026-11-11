@@ -1,7 +1,19 @@
 import { describe, expect, test } from 'vitest'
 import { MEMBERS, PROFESSORS } from '../data/members.ts'
-import type { Member, MemberStatus, ProfessorPaper } from '../types.ts'
-import { countByGrade, countByStatus, memberInitial, papersByYear, periodLabel, positionLabel, recentPapers, sortedMembers } from './members.ts'
+import { SAMPLE_ACHIEVEMENTS } from '../data/sampleAchievements.ts'
+import type { Achievement, Member, MemberStatus, ProfessorPaper } from '../types.ts'
+import {
+  achievementsOf,
+  countByGrade,
+  countByStatus,
+  memberInitial,
+  papersByYear,
+  periodLabel,
+  positionLabel,
+  recentPapers,
+  sortedMembers,
+  splitNames,
+} from './members.ts'
 
 // 부원 계산 함수·데이터 검사 테스트 (spec/04 D-1, test-cases UT-78~83). 실행: npm test
 
@@ -133,5 +145,37 @@ describe('recentPapers · papersByYear · countByGrade — 지도교수 이력 (
       { grade: 'SCOPUS', count: 5 },
       { grade: 'SCI', count: 1 },
     ])
+  })
+})
+
+describe('splitNames · achievementsOf — 부원 활동 자동 모으기 (spec/04 D-4)', () => {
+  test('UT-87 저자 칸 나누기 — ·,、/; 다섯 가지, 앞뒤 공백, " 외 N명" 떼기', () => {
+    expect(splitNames('나병준·윤승빈, 정수빈、심유승/홍길동;김철수')).toEqual(['나병준', '윤승빈', '정수빈', '심유승', '홍길동', '김철수'])
+    expect(splitNames(' 나병준 · ')).toEqual(['나병준'])
+    expect(splitNames('홍길동 외 2명')).toEqual(['홍길동'])
+    expect(splitNames('나병준외3명')).toEqual(['나병준'])
+    expect(splitNames('')).toEqual([])
+  })
+
+  test('UT-88 이름이 정확히 같은 실제 성과만 최신순 — 비슷한 이름·예시 성과·빈 이름은 안 셈', () => {
+    const make = (id: number, authors: string, achievedOn: string, isSample = false): Achievement => ({
+      id, type: 'PAPER', title: `성과 ${id}`, achievedOn, authors, advisors: '', venue: '', doi: '', link: '', isSample,
+    })
+    const list = [
+      make(1, '나병준·윤승빈', '2025-01-01'),
+      make(2, '나병준 외 2명', '2026-03-01'),
+      make(3, '나병준희', '2026-04-01'), // 비슷한 이름
+      make(4, '나병', '2026-04-01'),
+      make(5, '나병준', '2026-05-01', true), // 예시 성과
+    ]
+    expect(achievementsOf('나병준', list).map((a) => a.id)).toEqual([2, 1])
+    expect(achievementsOf(' 나병준 ', list).map((a) => a.id)).toEqual([2, 1]) // 부원 이름 앞뒤 공백
+    expect(achievementsOf('', list)).toEqual([])
+    expect(achievementsOf('없는사람', list)).toEqual([])
+
+    // 실제 처음 데이터: 나병준 4건, 심유승 2건, 예시 성과의 홍길동은 0건
+    expect(achievementsOf('나병준', SAMPLE_ACHIEVEMENTS)).toHaveLength(4)
+    expect(achievementsOf('심유승', SAMPLE_ACHIEVEMENTS)).toHaveLength(2)
+    expect(achievementsOf('홍길동', SAMPLE_ACHIEVEMENTS)).toHaveLength(0)
   })
 })

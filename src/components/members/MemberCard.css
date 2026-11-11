@@ -61,9 +61,9 @@
   color: var(--color-muted);
 }
 
-/* 연구 분야 — 아래 줄을 카드 맨 아래로 밀어 카드끼리 아래 줄 높이가 맞게 */
+/* 연구 분야 — 늘어나지 않음(D-4: 늘어나면 최근 활동이 카드 아래로 밀렸음). 아래 줄은 .member-card__bottom의 margin-top: auto가 맨 아래로 붙임 */
 .member-card__field {
-  flex: 1 1 auto;
+  flex: none;
   margin: 0;
   font-size: 14px;
   color: var(--color-muted);
@@ -109,4 +109,74 @@
 .member-card__email:hover {
   text-decoration: underline;
   text-underline-offset: 3px;
+}
+
+/* ── 최근 활동 (spec/04 D-4) — 성과에서 자동으로 모은 것 ── */
+.member-card__activities {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.member-card__activities-title {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-muted);
+}
+
+.member-card__activity-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* 유형 배지 + 제목(두 줄까지 말줄임 — 전체 제목은 팝업) */
+.member-card__activity {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  min-width: 0;
+  font-size: 13px;
+}
+
+.member-card__activity .badge {
+  flex: none;
+  padding: 1px 8px;
+  font-size: 11px;
+}
+
+.member-card__activity-title {
+  min-width: 0;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+
+/* 활동 N건 모두 보기 — 흰 카드 위 테두리 알약, 화살표는 사이트의 팝업 열기 표시 */
+.member-card__more {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--color-border-input);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.member-card__more:hover {
+  border-color: var(--color-text);
 }

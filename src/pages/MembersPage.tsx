@@ -4,9 +4,10 @@ import { useSearchParams } from 'react-router'
 import MemberCard from '../components/members/MemberCard.tsx'
 import ProfessorCard from '../components/members/ProfessorCard.tsx'
 import EmptyState from '../components/common/EmptyState.tsx'
+import { useAchievements } from '../context/useAchievements.ts'
 import { MEMBERS, PROFESSORS } from '../data/members.ts'
 import type { MemberStatus } from '../types.ts'
-import { countByStatus, sortedMembers } from '../utils/members.ts'
+import { achievementsOf, countByStatus, sortedMembers } from '../utils/members.ts'
 import './MembersPage.css'
 
 // 두 탭 — 주소 값(param)·탭 이름·0명일 때 문장
@@ -24,6 +25,8 @@ export default function MembersPage() {
   const tab: MemberStatus = searchParams.get('tab')?.toLowerCase() === 'graduated' ? 'GRADUATED' : 'ENROLLED'
   const current = TABS.find((item) => item.status === tab) ?? TABS[0]
 
+  // 성과 목록 (성과 페이지와 같은 상자) — 부원 활동을 여기서 계산해서, 성과를 등록·수정·삭제하거나 다른 탭에서 바꾸면 바로 반영 (D-4)
+  const { achievements } = useAchievements()
   const counts = countByStatus(MEMBERS) // 탭 옆 숫자 (교수는 안 셈)
   const members = sortedMembers(MEMBERS, tab) // 직위 → 연도 → 이름 (Q-D3)
 
@@ -108,7 +111,8 @@ export default function MembersPage() {
           <ul className="members-page__grid">
             {members.map((member) => (
               <li key={member.id}>
-                <MemberCard member={member} />
+                {/* 활동은 그릴 때 계산 — 부원·성과가 수십 개라 가벼워 useMemo는 안 씀 (Q-D6과 같은 판단) */}
+                <MemberCard member={member} activities={achievementsOf(member.name, achievements)} />
               </li>
             ))}
           </ul>
