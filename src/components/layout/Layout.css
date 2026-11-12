@@ -270,9 +270,24 @@
 /* ── PC(881px 이상, 헤더 메뉴가 펼쳐지는 폭과 같게) 푸터 (P285–P286 A안) ──
    휴대폰·태블릿 세로(880px 이하)는 위의 세로 목록 그대로 */
 @media (min-width: 881px) {
+  /* 메뉴·연락처 묶음을 아래로 내려 마지막 줄끼리 한 줄로 — "대진대학교 컴퓨터공학과"와 "연락처" 줄의 글자 밑선을 맞춤
+     (P290 2안 → P291). last baseline을 모르는 브라우저는 앞 줄의 flex-end(아래끝 맞춤)로 */
+  .footer__top {
+    align-items: flex-end;
+    align-items: last baseline;
+  }
+
   /* lab.ts 소개 문구의 \n을 줄바꿈으로 — "연구하고," 뒤에서 끊김. 880px 이하는 띄어쓰기로 보임 */
   .footer__intro {
     white-space: pre-line;
+  }
+
+  /* 메뉴 줄 ↔ 연락처 줄 간격 = 왼쪽 "그 기록을 이곳에 모읍니다." ↔ "대진대학교 컴퓨터공학과" 간격 (P291)
+     = 글자 줄 높이(1.6em) + 왼쪽 묶음 간격 8px = 33.6px. 그래서 PC에서는 이 줄 높이가 44px보다 낮음 —
+     마우스로 누르는 폭이라 받아들임(WCAG AA 최소 24px 이상), 휴대폰·태블릿 세로(880px 이하)는 44px 그대로 */
+  .footer__group a,
+  .footer__group .footer__text {
+    min-height: calc(1.6em + 8px);
   }
 
   /* 메뉴 줄 위, 연락처 줄 아래 */
