@@ -96,6 +96,29 @@
   text-decoration: none;
 }
 
+/* 값 아래 작은 줄 (위치 줄의 도로명 주소, E-2 P279) — 값과 함께 오른쪽 맞춤 */
+.about-facts__value-wrap {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  text-align: right;
+}
+
+.about-facts__sub {
+  font-size: 14px;
+  color: var(--color-muted);
+  overflow-wrap: anywhere;
+}
+
+/* 지원서 작성 — 모집 중일 때만, 목록 아래 (E-2 P279). 넓은 화면은 오른쪽 목록 칸 폭, 좁으면 가로 전체 */
+.about-facts__apply {
+  margin-top: 20px;
+  width: 100%;
+  justify-content: center;
+}
+
 /* 구역 — 홈 구역 사이와 같은 간격 */
 .about-page__section {
   margin-top: var(--section-gap);

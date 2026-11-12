@@ -1,17 +1,23 @@
 import { Link } from 'react-router'
+import ArrowIcon from '../components/common/ArrowIcon.tsx'
 import ResearchAreaList from '../components/home/ResearchAreaList.tsx'
 import { useAchievements } from '../context/useAchievements.ts'
 import { LAB } from '../data/lab.ts'
 import { MEMBERS, PROFESSORS } from '../data/members.ts'
-import { countText } from '../utils/lab.ts'
+import { todayYmd } from '../utils/date.ts'
+import { countText, mapSearchUrl } from '../utils/lab.ts'
 import { countByStatus } from '../utils/members.ts'
+import { getRecruitStatus } from '../utils/recruitment.ts'
 import './AboutPage.css'
 
-// 연구실 정보 한 줄 — to가 있으면 줄 전체가 링크
+// 연구실 정보 한 줄 — to(앱 안 주소)나 href(바깥 주소·mailto)가 있으면 줄 전체가 링크
 type GlanceItem = {
   label: string
   value: string
-  to?: string
+  sub?: string // 값 아래 작은 줄 (위치 줄의 도로명 주소, E-2)
+  to?: string // 앱 안 이동 (/members 등) — Link
+  href?: string // 바깥 주소·mailto — <a>
+  external?: boolean // href를 새 탭으로 (카카오맵)
 }
 
 // 연구실 소개 (spec/05, FR-16). 시안이 없어 지금 사이트 모양(꾸밈 글씨 + 큰 제목, 흰 칸)을 따름.
@@ -35,6 +41,27 @@ export default function AboutPage() {
   }
   glance.push({ label: '재학 부원', value: countText(enrolledCount, '명'), to: '/members' })
   glance.push({ label: '등록된 성과', value: countText(realCount, '건'), to: '/achievements' })
+
+  // 위치·메일 (E-2, P279) — 위치는 건물·호실 굵게 + 아래 도로명 주소, 줄 전체가 카카오맵 검색(새 탭).
+  // 건물·호실이 비면 주소를 굵은 값으로 올리고, 둘 다 비면 줄째 숨김. 검색어가 비면 링크 없이 글자만
+  const location = LAB.location.trim()
+  const address = LAB.address.trim()
+  if (location !== '' || address !== '') {
+    const mapUrl = mapSearchUrl(LAB.mapQuery)
+    glance.push({
+      label: '위치',
+      value: location !== '' ? location : address,
+      sub: location !== '' && address !== '' ? address : undefined,
+      href: mapUrl ?? undefined,
+      external: true,
+    })
+  }
+  const email = LAB.contactEmail.trim()
+  if (email !== '') glance.push({ label: '메일', value: email, href: `mailto:${email}` })
+
+  // 지원서 작성 — 푸터·홈과 같은 판단: 모집 스위치가 켜져 있고, 마감 전이고, 올바른 응답용 링크일 때만 (EX-14·15·21)
+  const { applyUrl } = getRecruitStatus(LAB.recruitment, todayYmd())
+  const showApply = LAB.recruitment.isOpen && applyUrl !== null
 
   return (
     <section className="about-page" aria-labelledby="about-title">
@@ -68,28 +95,69 @@ export default function AboutPage() {
             연구실 정보
           </h2>
           <ul className="about-facts__list">
-            {glance.map((item) => (
-              <li key={item.label} className="about-facts__item">
-                {item.to ? (
-                  <Link to={item.to} className="about-facts__row about-facts__row--link">
-                    {/* 이름표와 값 사이 띄어쓰기 — 화면 낭독기가 "재학 부원3명"으로 붙여 읽지 않게 */}
-                    <span className="about-facts__label">{item.label}</span>{' '}
+            {glance.map((item) => {
+              const isLink = item.to !== undefined || item.href !== undefined
+              // 줄 안 글자 — 링크든 아니든 같은 모양. 이름표·값·작은 줄 사이 띄어쓰기({' '})는 화면에선 안 보이지만
+              // 화면 낭독기가 "재학 부원3명"·"…A9-401경기도…"처럼 붙여 읽지 않게
+              const content = (
+                <>
+                  <span className="about-facts__label">{item.label}</span>{' '}
+                  <span className="about-facts__value-wrap">
                     <span className="about-facts__value">
                       {item.value}
-                      <span className="about-facts__arrow" aria-hidden="true">
-                        →
-                      </span>
+                      {isLink && (
+                        // 앱 안 이동은 →, 이 사이트를 벗어나는 링크(지도·메일)는 ↗ (푸터 "지원서 작성"과 같은 표시)
+                        <span className="about-facts__arrow" aria-hidden="true">
+                          {item.to ? '→' : <ArrowIcon size={14} />}
+                        </span>
+                      )}
                     </span>
-                  </Link>
-                ) : (
-                  <div className="about-facts__row">
-                    <span className="about-facts__label">{item.label}</span>{' '}
-                    <span className="about-facts__value">{item.value}</span>
-                  </div>
-                )}
-              </li>
-            ))}
+                    {item.sub && (
+                      <>
+                        {' '}
+                        <span className="about-facts__sub">{item.sub}</span>
+                      </>
+                    )}
+                  </span>
+                  {item.external && item.href && <span className="visually-hidden"> (새 탭)</span>}
+                </>
+              )
+              return (
+                <li key={item.label} className="about-facts__item">
+                  {item.to ? (
+                    <Link to={item.to} className="about-facts__row about-facts__row--link">
+                      {content}
+                    </Link>
+                  ) : item.href ? (
+                    <a
+                      href={item.href}
+                      className="about-facts__row about-facts__row--link"
+                      // 카카오맵은 새 탭 + 열린 페이지가 이 사이트를 건드리지 못하게 rel (EX-21). 메일은 같은 탭(메일 앱이 열림)
+                      {...(item.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                    >
+                      {content}
+                    </a>
+                  ) : (
+                    <div className="about-facts__row">{content}</div>
+                  )}
+                </li>
+              )
+            })}
           </ul>
+
+          {/* 지원서 작성 — 모집 중일 때만 목록 아래 (E-2 P279). 새 탭 */}
+          {showApply && applyUrl && (
+            <a
+              className="btn btn--primary about-facts__apply"
+              href={applyUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              지원서 작성
+              <ArrowIcon size={16} />
+              <span className="visually-hidden"> (새 탭)</span>
+            </a>
+          )}
         </section>
       </div>
 
