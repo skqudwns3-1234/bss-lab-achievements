@@ -73,6 +73,7 @@ export const PROFESSORS: Professor[] = [
 // 순서는 상관없다 — 화면은 utils/members.ts의 sortedMembers가 직위 → 연도 → 이름 순으로 정렬해 보여 준다.
 // 이름은 성과의 저자 칸과 똑같이 쓰기를 권장 — P306에 부원 카드의 참여 성과는 뺐지만, 기말에 achievementsOf로 다시 붙일 때 맞아야 해서.
 // 졸업생이 생기면 status: 'GRADUATED', endYear: 졸업한 해 로 바꾼다 (UT-83이 검사)
+// 카드 그림(P307–P308): 사용자가 고른 그림을 public/images/avatars/에 두고 photoUrl로. 둘레 여백이 많은 그림은 photoScale로 키움
 export const MEMBERS: Member[] = [
   {
     id: 1,
@@ -84,6 +85,8 @@ export const MEMBERS: Member[] = [
     startYear: 2026,
     endYear: null,
     isSample: false,
+    photoUrl: '/images/avatars/member-1.webp',
+    photoScale: 1.25,
   },
   {
     id: 2,
@@ -95,6 +98,8 @@ export const MEMBERS: Member[] = [
     startYear: 2026,
     endYear: null,
     isSample: false,
+    photoUrl: '/images/avatars/member-2.jpg',
+    photoScale: 1.7,
   },
   {
     id: 3,
@@ -106,5 +111,7 @@ export const MEMBERS: Member[] = [
     startYear: 2026,
     endYear: null,
     isSample: false,
+    photoUrl: '/images/avatars/member-3.png',
+    photoScale: 1.12,
   },
 ]

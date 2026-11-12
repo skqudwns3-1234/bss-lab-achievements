@@ -32,6 +32,19 @@
   font-weight: 700;
 }
 
+/* 그림이 들어간 동그라미 (P307–P308) — 둘레 밖으로 키운 부분은 잘라 내고, 흰 바탕 그림이 카드와 이어지게 흰색 */
+.member-card__initial--photo {
+  overflow: hidden;
+  background: var(--color-surface);
+}
+
+.member-card__photo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* 가로로 긴 그림(1200×675)도 비율을 지키며 동그라미를 채움 */
+}
+
 .member-card__who {
   display: flex;
   flex-direction: column;

@@ -132,6 +132,23 @@ describe('data/members.ts 검사', () => {
       }
     }
   })
+
+  test('UT-93 부원 카드 그림 — /images/ 아래, 페이지 주소와 같은 폴더 아님, 배율 1~3 (P307–P308)', () => {
+    for (const member of MEMBERS) {
+      const where = `부원 ${member.id} ${member.name}`
+      if (member.photoUrl !== undefined && member.photoUrl !== '') {
+        // public/ 아래 그림 주소는 "/"로 시작 — 교수 사진과 같은 /images/ 폴더에 (페이지 주소 폴더는 403, 점검 P269)
+        expect(member.photoUrl, `${where}: 그림은 /images/ 아래에`).toMatch(/^\/images\//)
+        const folder = member.photoUrl.split('/')[1]
+        expect(['about', 'members', 'achievements'], `${where}: 그림 폴더 "${folder}"가 페이지 주소와 겹침`).not.toContain(folder)
+      }
+      if (member.photoScale !== undefined) {
+        // 1보다 작으면 동그라미에 빈 곳이 생기고, 너무 크면 그림이 알아볼 수 없게 잘림
+        expect(member.photoScale, `${where}: 배율은 1~3`).toBeGreaterThanOrEqual(1)
+        expect(member.photoScale, `${where}: 배율은 1~3`).toBeLessThanOrEqual(3)
+      }
+    }
+  })
 })
 
 describe('recentPapers · papersByYear · countByGrade — 지도교수 이력 (spec/04 D-3)', () => {
