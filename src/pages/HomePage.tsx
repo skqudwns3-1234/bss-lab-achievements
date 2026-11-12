@@ -6,7 +6,6 @@ import EmptyState from '../components/common/EmptyState.tsx'
 import HeroArt from '../components/home/HeroArt.tsx'
 import RecentAchievementCard from '../components/home/RecentAchievementCard.tsx'
 import RecruitBox from '../components/home/RecruitBox.tsx'
-import ResearchAreaList from '../components/home/ResearchAreaList.tsx'
 import StatList from '../components/home/StatList.tsx'
 import { useAchievements } from '../context/useAchievements.ts'
 import { LAB } from '../data/lab.ts'
@@ -23,6 +22,7 @@ import { todayYmd } from '../utils/date.ts'
 import './HomePage.css'
 
 // 홈 (spec/01_home.md). 1-1 뼈대, 1-2 첫 화면, 1-3 연구 분야, 1-4 지원 안내, 1-8 물방울 배경, 1-5 최근 성과, 1-9 팝업, 1-6 통계, 1-7 NEW 알약까지 — 홈 완성.
+// 1-3 연구 분야는 P288에 홈에서 빼고 연구실 소개에만 남김
 export default function HomePage() {
   // 성과 목록 상자(2-5)에서 꺼내 쓴다 — 다른 탭에서 바뀌어도 자동으로 다시 그려짐
   const { achievements } = useAchievements()
@@ -97,19 +97,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ② 연구 분야: RESEARCH AREAS, 분야 칸들 (1-3) — 분야 목록은 lab.ts의 researchAreas */}
-      {/* 연구 분야가 0개면 제목만 남은 빈 구역이 되므로 구역째 숨김 (EX-23, P170) */}
-      {LAB.researchAreas.length > 0 && (
-        <section className="home__section" aria-labelledby="home-research-title">
-          <div className="home-section__head">
-            <p className="eyebrow">RESEARCH AREAS</p>
-            <h2 id="home-research-title" className="section-title">
-              우리가 다루는 문제
-            </h2>
-          </div>
-          <ResearchAreaList areas={LAB.researchAreas} />
-        </section>
-      )}
+      {/* ② 연구 분야 구역은 지움 (P288) — 연구실 소개(/about)에 같은 목록이 있고, 홈은 성과 중심으로 (사용자 결정, P287–P288) */}
 
       {/* ③ 최근 성과: RECENT ACHIEVEMENTS, 카드 4장 (1-5). 카드를 누르면 성과 팝업 (1-9) */}
       <section className="home__section" aria-labelledby="home-recent-title">

@@ -458,13 +458,15 @@
   white-space: nowrap;
 }
 
-/* 제목 최대 4줄, 저자·학회 각 1줄 — 넘치면 … (P062) */
+/* 제목 최대 4줄, 저자·학회 각 1줄 — 넘치면 … (P062).
+   제목이 짧아도 칸 높이는 4줄로 고정 — 제목이 3줄·4줄로 섞이면 아래 저자·학회 줄이 카드마다 어긋나서 (P287–P288) */
 .recent-card__title {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 4;
   line-clamp: 4;
   overflow: hidden;
+  min-height: calc(1.4em * 4); /* 줄 높이(1.4) × 4줄 */
   font-size: 22px;
   font-weight: 500;
   line-height: 1.4;
@@ -507,6 +509,7 @@
   .recent-card__title {
     -webkit-line-clamp: 3;
     line-clamp: 3;
+    min-height: 0; /* 휴대폰은 저자·학회를 숨겨 어긋날 줄이 없음 — 지금 모양 그대로 */
     font-size: 16px;
   }
 
