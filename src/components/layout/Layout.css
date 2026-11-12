@@ -225,7 +225,7 @@
 .footer__heading {
   margin-bottom: 4px;
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 700; /* P286: 사용자 요청으로 500 → 700, 메뉴·연락처 제목이 항목과 더 또렷이 나뉘게 */
 }
 
 .footer__text,
@@ -265,6 +265,36 @@
   gap: 8px;
   font-size: 15px;
   color: var(--color-muted);
+}
+
+/* ── PC(881px 이상, 헤더 메뉴가 펼쳐지는 폭과 같게) 푸터 (P285–P286 A안) ──
+   휴대폰·태블릿 세로(880px 이하)는 위의 세로 목록 그대로 */
+@media (min-width: 881px) {
+  /* lab.ts 소개 문구의 \n을 줄바꿈으로 — "연구하고," 뒤에서 끊김. 880px 이하는 띄어쓰기로 보임 */
+  .footer__intro {
+    white-space: pre-line;
+  }
+
+  /* 메뉴 줄 위, 연락처 줄 아래 */
+  .footer__links {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  /* 한 묶음 = "제목 | 항목 가로" 한 줄. 항목이 많아 넘치면 다음 줄로 */
+  .footer__group {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: 24px;
+  }
+
+  /* 제목 칸 폭을 같게 해 두 줄의 첫 항목(홈·이공학관)이 세로로 나란히 */
+  .footer__heading {
+    flex: none;
+    width: 56px;
+    margin-bottom: 0;
+  }
 }
 
 /* ── 모바일(760px 이하): 로고 부제 숨기기 (메뉴 접기는 아래 880px) ── */
