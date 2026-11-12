@@ -57,7 +57,9 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 14px 0;
+  /* 좌우 8px 여백 + 같은 만큼 바깥으로 — 글자 줄은 위아래 선과 맞춘 채, 키보드 포커스 테두리가 글자에 붙지 않게 (05 점검 P283) */
+  margin: 0 -8px;
+  padding: 14px 8px;
   color: var(--color-text);
   text-decoration: none;
 }
@@ -85,15 +87,15 @@
   color: var(--color-muted);
 }
 
-.about-facts__row--link:hover .about-facts__value,
-.about-facts__row--link:hover .about-facts__arrow {
-  color: var(--color-text);
+/* 마우스를 올리면 값 글자만 밑줄 + 화살표는 진하게.
+   밑줄을 값 묶음(화살표 포함)에 주면 안쪽 화살표에서 끌 수 없어 화살표까지 그어짐 → 값 글자 span에만 (05 점검 P283) */
+.about-facts__row--link:hover .about-facts__text {
   text-decoration: underline;
   text-underline-offset: 3px;
 }
 
 .about-facts__row--link:hover .about-facts__arrow {
-  text-decoration: none;
+  color: var(--color-text);
 }
 
 /* 값 아래 작은 줄 (위치 줄의 도로명 주소, E-2 P279) — 값과 함께 오른쪽 맞춤 */

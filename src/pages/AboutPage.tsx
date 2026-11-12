@@ -11,7 +11,7 @@ import { getRecruitStatus } from '../utils/recruitment.ts'
 import './AboutPage.css'
 
 // 연구실 정보 한 줄 — to(앱 안 주소)나 href(바깥 주소·mailto)가 있으면 줄 전체가 링크
-type GlanceItem = {
+type FactItem = {
   label: string
   value: string
   sub?: string // 값 아래 작은 줄 (위치 줄의 도로명 주소, E-2)
@@ -34,13 +34,13 @@ export default function AboutPage() {
   const professorNames = PROFESSORS.map((professor) => professor.name.trim()).filter((name) => name !== '')
   const enrolledCount = countByStatus(MEMBERS).ENROLLED // 부원 페이지 "재학" 탭 숫자와 같은 함수
   const realCount = achievements.filter((achievement) => !achievement.isSample).length // 홈 통계와 같은 기준(예시 빼고, BR-20)
-  const glance: GlanceItem[] = []
-  if (LAB.department.trim() !== '') glance.push({ label: '소속', value: LAB.department.trim() })
+  const facts: FactItem[] = []
+  if (LAB.department.trim() !== '') facts.push({ label: '소속', value: LAB.department.trim() })
   if (professorNames.length > 0) {
-    glance.push({ label: '지도교수', value: professorNames.map((name) => `${name} 교수`).join(' · '), to: '/members' })
+    facts.push({ label: '지도교수', value: professorNames.map((name) => `${name} 교수`).join(' · '), to: '/members' })
   }
-  glance.push({ label: '재학 부원', value: countText(enrolledCount, '명'), to: '/members' })
-  glance.push({ label: '등록된 성과', value: countText(realCount, '건'), to: '/achievements' })
+  facts.push({ label: '재학 부원', value: countText(enrolledCount, '명'), to: '/members' })
+  facts.push({ label: '등록된 성과', value: countText(realCount, '건'), to: '/achievements' })
 
   // 위치·메일 (E-2, P279) — 위치는 건물·호실 굵게 + 아래 도로명 주소, 줄 전체가 카카오맵 검색(새 탭).
   // 건물·호실이 비면 주소를 굵은 값으로 올리고, 둘 다 비면 줄째 숨김. 검색어가 비면 링크 없이 글자만
@@ -48,7 +48,7 @@ export default function AboutPage() {
   const address = LAB.address.trim()
   if (location !== '' || address !== '') {
     const mapUrl = mapSearchUrl(LAB.mapQuery)
-    glance.push({
+    facts.push({
       label: '위치',
       value: location !== '' ? location : address,
       sub: location !== '' && address !== '' ? address : undefined,
@@ -57,7 +57,7 @@ export default function AboutPage() {
     })
   }
   const email = LAB.contactEmail.trim()
-  if (email !== '') glance.push({ label: '메일', value: email, href: `mailto:${email}` })
+  if (email !== '') facts.push({ label: '메일', value: email, href: `mailto:${email}` })
 
   // 지원서 작성 — 푸터·홈과 같은 판단: 모집 스위치가 켜져 있고, 마감 전이고, 올바른 응답용 링크일 때만 (EX-14·15·21)
   const { applyUrl } = getRecruitStatus(LAB.recruitment, todayYmd())
@@ -95,7 +95,7 @@ export default function AboutPage() {
             연구실 정보
           </h2>
           <ul className="about-facts__list">
-            {glance.map((item) => {
+            {facts.map((item) => {
               const isLink = item.to !== undefined || item.href !== undefined
               // 줄 안 글자 — 링크든 아니든 같은 모양. 이름표·값·작은 줄 사이 띄어쓰기({' '})는 화면에선 안 보이지만
               // 화면 낭독기가 "재학 부원3명"·"…A9-401경기도…"처럼 붙여 읽지 않게
@@ -104,7 +104,8 @@ export default function AboutPage() {
                   <span className="about-facts__label">{item.label}</span>{' '}
                   <span className="about-facts__value-wrap">
                     <span className="about-facts__value">
-                      {item.value}
+                      {/* 값 글자만 따로 — 마우스를 올렸을 때 밑줄을 화살표 빼고 여기에만 (05 점검 P283) */}
+                      <span className="about-facts__text">{item.value}</span>
                       {isLink && (
                         // 앱 안 이동은 →, 이 사이트를 벗어나는 링크(지도·메일)는 ↗ (푸터 "지원서 작성"과 같은 표시)
                         <span className="about-facts__arrow" aria-hidden="true">

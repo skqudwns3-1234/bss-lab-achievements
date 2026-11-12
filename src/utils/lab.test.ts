@@ -24,6 +24,16 @@ describe('countText — 연구실 소개 한눈에 보기 숫자 (spec/05 E-1)',
     expect(decodeURIComponent((tricky ?? '').split('/link/search/')[1])).toBe('A동/401호 #2 & ?')
   })
 
+  test('UT-92 lab.ts 연구실 연락처 — 메일 모양, 위치가 있으면 지도 검색어도 (05 점검 P283)', () => {
+    // 소개·푸터에서 mailto:로 쓰는 메일 — 부원·교수 메일(UT-83)과 같은 규칙: 빈칸 또는 이름@도메인.끝
+    const email = LAB.contactEmail.trim()
+    if (email !== '') expect(email, `연구실 메일 "${email}" 모양이 이상함`).toMatch(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)
+    // 위치 줄이 보이는데 검색어가 비면 링크 없는 줄이 됨 — 일부러 비울 수도 있지만 실수일 가능성이 커서 알려 줌
+    if (LAB.location.trim() !== '' || LAB.address.trim() !== '') {
+      expect(mapSearchUrl(LAB.mapQuery), '위치가 있는데 지도 검색어(mapQuery)가 비어 있음').not.toBeNull()
+    }
+  })
+
   test('UT-90b lab.ts 소개 문단 — 빈 줄 없음 (빈 줄은 화면에서 빼지만 데이터 실수일 가능성이 커서 알려 줌)', () => {
     LAB.about.forEach((paragraph, index) => {
       expect(paragraph.trim(), `소개 문단 ${index + 1}번째 줄이 비어 있음`).not.toBe('')
