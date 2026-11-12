@@ -1,14 +1,11 @@
-import { Link, useLocation } from 'react-router'
 import { LAB } from '../../data/lab.ts'
 import ArrowIcon from '../common/ArrowIcon.tsx'
 import { todayYmd } from '../../utils/date.ts'
 import { getRecruitStatus } from '../../utils/recruitment.ts'
-import { NAV_ITEMS } from './navItems.ts'
-import { scrollToTopIfCurrent } from './scrollToTop.ts'
 
-// 푸터 (P143 정돈): 왼쪽 연구실 정보 / 오른쪽 메뉴·연락처를 한 묶음으로
+// 푸터 (P297): 3줄 — ① 연구실 이름 + 학과 ② 소개 문구 ③ 연락처, 그 아래 저작권 줄.
+// 메뉴 묶음은 지움 — 헤더가 스크롤해도 늘 위에 붙어 있어(P297) 맨 아래에서도 헤더 메뉴로 바로 이동 (예전 메뉴는 P116)
 export default function Footer() {
-  const { pathname } = useLocation()
   // 모집 중이고, 마감 전이고, 올바른 응답용 링크일 때만 "지원서 작성" (홈 ④와 같은 판단, P170)
   const { isOpen } = LAB.recruitment
   const { applyUrl } = getRecruitStatus(LAB.recruitment, todayYmd())
@@ -17,23 +14,15 @@ export default function Footer() {
     <footer className="footer">
       <div className="footer__top">
         <div className="footer__lab">
-          <span className="footer__lab-name">{LAB.shortName} 연구실</span>
-          <p className="footer__intro">{LAB.intro}</p>
-          <span className="footer__text">{LAB.department}</span>
-        </div>
-
-        {/* 오른쪽 묶음: 메뉴 + 연락처 */}
-        <div className="footer__links">
-          <div className="footer__group">
-            <span className="footer__heading">메뉴</span>
-            {/* 헤더 메뉴와 같은 목록 — 시안은 "홈"을 뺐지만, 맨 아래에서 바로 홈으로 갈 수 있게 넣음 (P116) */}
-            {NAV_ITEMS.map((item) => (
-              <Link key={item.path} to={item.path} onClick={() => scrollToTopIfCurrent(item.path, pathname)}>
-                {item.label}
-              </Link>
-            ))}
+          {/* ① 연구실 이름 옆에 학과 — 좁은 화면에서 한 줄에 안 들어가면 학과가 다음 줄로 */}
+          <div className="footer__title-row">
+            <span className="footer__lab-name">{LAB.shortName} 연구실</span>
+            <span className="footer__text">{LAB.department}</span>
           </div>
+          {/* ② 소개 문구 — PC는 한 줄, 휴대폰은 화면 폭에 맞춰 자동 줄바꿈 */}
+          <p className="footer__intro">{LAB.intro}</p>
 
+          {/* ③ 연락처 — PC는 한 줄로 이어서, 880px 이하는 누르기 쉬운 세로 목록 */}
           <div className="footer__group">
             <span className="footer__heading">연락처</span>
             <span className="footer__text">{LAB.location} (방문)</span>

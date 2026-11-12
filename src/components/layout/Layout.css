@@ -13,10 +13,22 @@
 }
 
 /* ── 헤더 ── */
+/* 스크롤해도 화면 맨 위에 붙어 있는 헤더 (P297 — 푸터 메뉴를 지워서 어디서든 메뉴로 바로 가게).
+   sticky는 자기 자리를 지키다가 화면 위끝에 닿으면 거기 멈춘다. z-index 2: 홈 물방울(0)·글(1) 위, 팝업(100) 아래.
+   배경색: 그동안은 투명이었는데, 붙어 있는 동안 밑으로 지나가는 글·물방울이 비쳐 보여서 바탕색으로 덮음 */
 .header {
-  position: relative; /* D4에서 홈 물방울 배경 위에 헤더가 오도록 */
+  position: sticky;
+  top: 0;
   z-index: 2;
+  background: var(--color-bg);
   border-bottom: 1px solid var(--color-border);
+}
+
+/* 세로가 아주 짧은 화면(휴대폰을 가로로 눕힘, 크게 확대)에서는 헤더가 화면을 너무 많이 가려 고정을 푼다 (P297 사용자 결정) */
+@media (max-height: 500px) {
+  .header {
+    position: relative;
+  }
 }
 
 .header__inner {
@@ -181,33 +193,30 @@
   padding: 0 var(--gutter) 40px; /* P267: 빈 곳이 많다는 사용자 의견으로 한 단계 줄임 */
 }
 
-/* 왼쪽 연구실 정보 / 오른쪽 메뉴·연락처 묶음 — 칸이 화면 폭을 나눠 갖지 않고 내용만큼만 (P143) */
+/* 연구실 이름·학과 / 소개 / 연락처 3줄 (P297) */
 .footer__top {
   border-top: 1px solid var(--color-border-strong);
   padding-top: 40px; /* P267: 빈 곳이 많다는 사용자 의견으로 한 단계 줄임 */
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 40px;
 }
 
 .footer__lab {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  max-width: 360px;
+}
+
+/* ① 이름 옆 학과 — 글자 밑선을 맞추고, 한 줄에 안 들어가면 학과가 다음 줄로 (320px) */
+.footer__title-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 12px;
 }
 
 .footer__intro {
   margin: 0;
   font-size: 16px;
   color: var(--color-text);
-}
-
-.footer__links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 40px 72px;
 }
 
 .footer__lab-name {
@@ -235,8 +244,8 @@
   text-decoration: none;
 }
 
-/* 메뉴·연락처 줄은 높이 44px — 링크를 손가락으로 누르기 쉽게 (NFR-08, 홈 점검 P187–P188).
-   글자만 있는 위치 줄도 같은 높이로 맞춰 두 칸의 줄이 나란히 놓이게 */
+/* 연락처 줄은 높이 44px — 링크를 손가락으로 누르기 쉽게 (NFR-08, 홈 점검 P187–P188).
+   글자만 있는 위치 줄도 같은 높이로 맞춰 줄 간격이 고르게 */
 .footer__group a,
 .footer__group .footer__text {
   display: inline-flex;
@@ -267,36 +276,10 @@
   color: var(--color-muted);
 }
 
-/* ── PC(881px 이상, 헤더 메뉴가 펼쳐지는 폭과 같게) 푸터 (P285–P286 A안) ──
-   휴대폰·태블릿 세로(880px 이하)는 위의 세로 목록 그대로 */
+/* ── PC(881px 이상, 헤더 메뉴가 펼쳐지는 폭과 같게) 푸터 (P285 → P297) ──
+   휴대폰·태블릿 세로(880px 이하)는 위의 연락처 세로 목록 그대로 */
 @media (min-width: 881px) {
-  /* 메뉴·연락처 묶음을 아래로 내려 마지막 줄끼리 한 줄로 — "대진대학교 컴퓨터공학과"와 "연락처" 줄의 글자 밑선을 맞춤
-     (P290 2안 → P291). last baseline을 모르는 브라우저는 앞 줄의 flex-end(아래끝 맞춤)로 */
-  .footer__top {
-    align-items: flex-end;
-    align-items: last baseline;
-  }
-
-  /* lab.ts 소개 문구의 \n을 줄바꿈으로 — "연구하고," 뒤에서 끊김. 880px 이하는 띄어쓰기로 보임 */
-  .footer__intro {
-    white-space: pre-line;
-  }
-
-  /* 메뉴 줄 ↔ 연락처 줄 간격 = 왼쪽 "그 기록을 이곳에 모읍니다." ↔ "대진대학교 컴퓨터공학과" 간격 (P291)
-     = 글자 줄 높이(1.6em) + 왼쪽 묶음 간격 8px = 33.6px. 그래서 PC에서는 이 줄 높이가 44px보다 낮음 —
-     마우스로 누르는 폭이라 받아들임(WCAG AA 최소 24px 이상), 휴대폰·태블릿 세로(880px 이하)는 44px 그대로 */
-  .footer__group a,
-  .footer__group .footer__text {
-    min-height: calc(1.6em + 8px);
-  }
-
-  /* 메뉴 줄 위, 연락처 줄 아래 */
-  .footer__links {
-    flex-direction: column;
-    gap: 0;
-  }
-
-  /* 한 묶음 = "제목 | 항목 가로" 한 줄. 항목이 많아 넘치면 다음 줄로 */
+  /* 연락처를 "제목 | 항목 가로" 한 줄로. 항목이 많아 넘치면 다음 줄로 */
   .footer__group {
     flex-direction: row;
     flex-wrap: wrap;
@@ -304,10 +287,16 @@
     column-gap: 24px;
   }
 
-  /* 제목 칸 폭을 같게 해 두 줄의 첫 항목(홈·이공학관)이 세로로 나란히 */
+  /* 소개 ↔ 연락처 줄 간격을 다른 줄과 같게(글자 줄 높이 + 묶음 간격 8px = 33.6px) — 44px 높이를 풀어서.
+     그래서 PC에서는 링크 높이가 글자 줄 높이(25.6px) — 마우스로 누르는 폭이라 받아들임(WCAG AA 최소 24px 이상),
+     휴대폰·태블릿 세로(880px 이하)는 44px 그대로 (NFR-08 예외, P291 → P297) */
+  .footer__group a,
+  .footer__group .footer__text {
+    min-height: 0;
+  }
+
   .footer__heading {
     flex: none;
-    width: 56px;
     margin-bottom: 0;
   }
 }

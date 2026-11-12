@@ -62,6 +62,15 @@
    (성과 검색에서 결과 ↔ "결과 없음"이 바뀔 때 화면이 좌우로 흔들린 문제, 사용자 발견 P196–P197) */
 html {
   scrollbar-gutter: stable;
+  /* 위에 붙은 헤더(약 85px, P297) 밑에 Tab으로 고른 칸이 숨지 않게 — 브라우저가 칸을 화면에 보이게 올릴 때 이만큼 덜 올림 */
+  scroll-padding-top: 100px;
+}
+
+/* 세로가 짧은 화면은 헤더 고정을 풀므로(Layout.css) 비워 둘 필요 없음 */
+@media (max-height: 500px) {
+  html {
+    scroll-padding-top: 0;
+  }
 }
 
 body {
