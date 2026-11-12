@@ -81,7 +81,7 @@ export default function Header() {
       </div>
 
       {/* 숨은 부원 팝업 — 닫으면 useModal이 로고로 포커스를 돌려놓음 */}
-      {hiddenOpen && <HiddenMemberModal member={HIDDEN_MEMBER} onClose={() => setHiddenOpen(false)} />}
+      {hiddenOpen && <HiddenMemberModal member={HIDDEN_MEMBER} title="함께했던 부원" onClose={() => setHiddenOpen(false)} />}
     </header>
   )
 }

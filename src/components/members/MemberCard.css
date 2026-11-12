@@ -124,6 +124,13 @@
   text-underline-offset: 3px;
 }
 
+/* 메일 대신 보이는 글자(예: "비밀", P313) — 링크가 아니라 밑줄 없이, 조금 옅게 */
+.member-card__note,
+.member-card__note:hover {
+  color: var(--color-muted);
+  text-decoration: none;
+}
+
 /* 참여 성과 버튼(D-4 → P289 한 줄)은 P306에 사용자 결정으로 카드에서 뺌 */
 
 /* ── P262 A안: 부원이 3~4명이라 카드를 크게 (사용자 "좀 안보여서 사이즈 키우는거 … 크게크게", P261) ──

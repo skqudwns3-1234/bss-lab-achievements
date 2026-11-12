@@ -228,6 +228,28 @@
   }
 }
 
+/* 이스터에그 2 (P313–P314) — 큰 물방울을 3번 누르면 "톡": 살짝 부풀었다가 커지며 사라짐.
+   출렁임처럼 scale 속성을 써서 밀려나는 움직임(transform)과 따로 논다. 출렁임 뒤에 둬서 둘이 겹치면 터짐이 이김.
+   끝나면(animationend) HeroArt가 명예 부원 팝업을 열고, 팝업을 닫으면 클래스가 빠져 물방울이 돌아옴 */
+.droplet--popped {
+  animation: droplet-pop 0.45s ease-out forwards;
+}
+
+@keyframes droplet-pop {
+  0% {
+    scale: 1;
+    opacity: 1;
+  }
+  35% {
+    scale: 1.12;
+    opacity: 1;
+  }
+  100% {
+    scale: 1.6;
+    opacity: 0;
+  }
+}
+
 /* "동작 줄이기"를 켠 사용자에게는 움직임 없음 (HeroArt.tsx에서도 감시를 시작하지 않음) */
 @media (prefers-reduced-motion: reduce) {
   .droplet,
@@ -237,6 +259,12 @@
 
   .droplet--wobble {
     animation: none;
+  }
+
+  /* 터질 때도 움직임 없이 바로 사라짐 — 팝업은 HeroArt가 바로 엶 */
+  .droplet--popped {
+    animation: none;
+    opacity: 0;
   }
 }
 

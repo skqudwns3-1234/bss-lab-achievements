@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { HIDDEN_MEMBER, MEMBERS, PROFESSORS } from '../data/members.ts'
+import { HIDDEN_MEMBER, HONORARY_MEMBER, MEMBERS, PROFESSORS } from '../data/members.ts'
 import { SAMPLE_ACHIEVEMENTS } from '../data/sampleAchievements.ts'
 import type { Achievement, Member, MemberStatus, ProfessorPaper } from '../types.ts'
 import {
@@ -162,6 +162,18 @@ describe('data/members.ts 검사', () => {
     // 졸업 이름표("학부연구생 졸업")로 바뀌지 않고 적힌 직위 그대로, 기간은 시작–끝
     expect(positionLabel(HIDDEN_MEMBER)).toBe('학부연구생 · 전 랩장')
     expect(periodLabel(HIDDEN_MEMBER)).toBe('2025 – 2026')
+  })
+
+  test('UT-97 명예 부원 — 지금 부원·숨은 부원과 번호·이름 안 겹침, 메일 대신 "비밀", 기간 "2025 –" (P313–P314)', () => {
+    expect(HONORARY_MEMBER.name.trim()).not.toBe('')
+    expect([...MEMBERS.map((m) => m.id), HIDDEN_MEMBER.id]).not.toContain(HONORARY_MEMBER.id)
+    expect([...MEMBERS.map((m) => m.name), HIDDEN_MEMBER.name]).not.toContain(HONORARY_MEMBER.name)
+    // 메일이 비었으니 대신 보일 글자가 있어야 카드 아래 줄이 비지 않음. 사진은 쓰지 않음(P313–P314 — 첫 글자 동그라미)
+    expect(HONORARY_MEMBER.email).toBe('')
+    expect(HONORARY_MEMBER.contactNote?.trim()).toBe('비밀')
+    expect(HONORARY_MEMBER.photoUrl).toBeUndefined()
+    expect(positionLabel(HONORARY_MEMBER)).toBe('명예 부원')
+    expect(periodLabel(HONORARY_MEMBER)).toBe('2025 –')
   })
 })
 

@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { EMPTY_TAP, registerTap, type TapState } from './secretTap.ts'
+import { DROPLET_TAP_COUNT, EMPTY_TAP, registerTap, type TapState } from './secretTap.ts'
 
 // 시각 목록대로 차례로 눌러 보고, 각 누름에서 열렸는지를 모은다
 function tapAt(times: number[], start: TapState = EMPTY_TAP): boolean[] {
@@ -26,5 +26,19 @@ describe('registerTap — 로고 2초 안 5번 (이스터에그 P310–P311)', (
     expect(tapAt([0, 100, 200, 300, 5000, 5100, 5200, 5300, 5400])).toEqual([
       false, false, false, false, false, false, false, false, true,
     ])
+  })
+
+  test('UT-96 횟수를 바꿔 쓰기 — 홈 물방울 3번 (P313–P314)', () => {
+    let state = EMPTY_TAP
+    const opened = [0, 400, 800, 1200, 1600, 2000].map((time) => {
+      const result = registerTap(state, time, DROPLET_TAP_COUNT)
+      state = result.state
+      return result.triggered
+    })
+    // 3번째와 6번째에서 열림 (열리면 처음부터 다시)
+    expect(opened).toEqual([false, false, true, false, false, true])
+    // 1초 간격이면 3번째가 2초째라 열림, 1.1초 간격이면 안 열림
+    expect(registerTap(registerTap(registerTap(EMPTY_TAP, 0, 3).state, 1000, 3).state, 2000, 3).triggered).toBe(true)
+    expect(registerTap(registerTap(registerTap(EMPTY_TAP, 0, 3).state, 1100, 3).state, 2200, 3).triggered).toBe(false)
   })
 })

@@ -93,6 +93,7 @@ export type Member = {
   isSample: boolean // 지어낸 예시면 true → "예시" 배지 (Q-D1)
   photoUrl?: string // 카드 동그라미에 넣을 그림 (P307) — public/images/ 아래 주소. 없거나 못 불러오면 첫 글자 동그라미
   photoScale?: number // 그림 확대 배율 (기본 1) — 둘레 여백이 많은 그림을 동그라미에 맞게 키움. 1~3 (데이터 검사 테스트)
+  contactNote?: string // 메일이 비었을 때 그 자리에 대신 보일 글자 (예: "비밀" — 명예 부원 P313). 링크 아님
 }
 
 // 교수 논문·학술활동 한 건 (spec/04 D-3, P251) — 칸을 나눠서 최신순·연도 묶기·등급 배지가 된다

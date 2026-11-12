@@ -12,7 +12,7 @@ type MemberCardProps = {
 // P306: "참여 성과 N건 보기"와 그 팝업을 뺌 (사용자 결정)
 // 상태: photoFailed(그림을 못 불러왔는지, P308) — 이 카드만 쓰는 값이라 카드 안에 둔다 (교수 카드와 같은 방식)
 export default function MemberCard({ member }: MemberCardProps) {
-  const { name, researchField, email, isSample, photoUrl, photoScale } = member
+  const { name, researchField, email, isSample, photoUrl, photoScale, contactNote } = member
   const position = positionLabel(member) // 졸업생은 "석사 졸업" 모양 (P242)
   const [photoFailed, setPhotoFailed] = useState(false)
   const showPhoto = photoUrl !== undefined && photoUrl.trim() !== '' && !photoFailed
@@ -50,11 +50,14 @@ export default function MemberCard({ member }: MemberCardProps) {
 
       <div className="member-card__bottom">
         <span className="member-card__period">{periodLabel(member)}</span>
-        {/* 학교 이메일 — 누르면 메일 쓰기 창 (AC-15-2). 비면 숨김 */}
-        {email.trim() !== '' && (
+        {/* 학교 이메일 — 누르면 메일 쓰기 창 (AC-15-2). 비었으면 대신 보일 글자(contactNote, 예: "비밀" P313), 그것도 없으면 숨김 */}
+        {email.trim() !== '' ? (
           <a className="member-card__email" href={`mailto:${email.trim()}`}>
             {email.trim()}
           </a>
+        ) : (
+          contactNote &&
+          contactNote.trim() !== '' && <span className="member-card__email member-card__note">{contactNote.trim()}</span>
         )}
       </div>
     </article>

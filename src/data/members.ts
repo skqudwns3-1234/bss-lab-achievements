@@ -131,3 +131,19 @@ export const HIDDEN_MEMBER: Member = {
   endYear: 2026,
   isSample: false,
 }
+
+// 명예 부원 (이스터에그 2, P313–P314) — 홈 첫 화면의 큰 물방울을 2초 안에 3번 누르면 물방울이 터지며 팝업으로 뜬다.
+// 사용자 친구(유명 정치인과 이름이 같은 동명이인). 사진은 쓰지 않고 첫 글자 동그라미 — 처음 받은 사진이 동명의 정치인 보도 사진이라
+// 실제 공인을 명예 부원처럼 보이게 하고 저작권·초상권도 걸려서 뺌 (P313–P314). 메일 대신 "비밀" 글자 (사용자 요청)
+export const HONORARY_MEMBER: Member = {
+  id: 102,
+  name: '홍준표',
+  position: '명예 부원',
+  researchField: '',
+  email: '',
+  status: 'ENROLLED',
+  startYear: 2025,
+  endYear: null,
+  isSample: false,
+  contactNote: '비밀',
+}
