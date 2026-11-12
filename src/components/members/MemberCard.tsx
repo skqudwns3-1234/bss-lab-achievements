@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import type { Achievement, Member } from '../../types.ts'
-import { TYPE_LABELS } from '../../utils/achievements.ts'
 import { memberInitial, periodLabel, positionLabel } from '../../utils/members.ts'
 import ArrowIcon from '../common/ArrowIcon.tsx'
 import MemberActivityModal from './MemberActivityModal.tsx'
@@ -11,17 +10,13 @@ type MemberCardProps = {
   activities: Achievement[] // 이 부원이 저자로 들어간 실제 성과, 최신순 — MembersPage가 성과 목록에서 계산해 넘김 (D-4)
 }
 
-// 카드에 보여 줄 최근 활동 수 — 이보다 많으면 "활동 N건 모두 보기" (사용자 P253 "3개 넘기면 팝업")
-const CARD_ACTIVITY_COUNT = 3
-
-// 부원 카드 (spec/04 D-2 P246–P247 → D-4 P255–P256, design 5.6).
-// 첫 글자 동그라미·이름·"예시" 배지·직위 이름표 / 연구 분야 / 최근 활동 / 기간·학교 이메일 — 비어 있는 칸은 숨긴다.
+// 부원 카드 (spec/04 D-2 P246–P247 → D-4 P255–P256 → P289, design 5.6).
+// 첫 글자 동그라미·이름·"예시" 배지·직위 이름표 / 연구 분야 / "참여 성과 N건 보기" / 기간·학교 이메일 — 비어 있는 칸은 숨긴다.
 // 상태: isOpen(활동 팝업이 열렸는지) — 이 카드만 쓰는 값이라 카드 안에 둔다
 export default function MemberCard({ member, activities }: MemberCardProps) {
   const { name, researchField, email, isSample } = member
   const position = positionLabel(member) // 졸업생은 "석사 졸업" 모양 (P242)
   const [isOpen, setIsOpen] = useState(false)
-  const recent = activities.slice(0, CARD_ACTIVITY_COUNT)
 
   return (
     // 팝업은 카드(article) 밖 형제로 — 카드 안에 두면 카드의 글자 모양을 물려받음 (D-3에서 겪은 문제)
@@ -44,25 +39,13 @@ export default function MemberCard({ member, activities }: MemberCardProps) {
 
         {researchField.trim() !== '' && <p className="member-card__field">{researchField}</p>}
 
-        {/* 최근 활동 (D-4) — 성과에서 자동으로 모은 것. 0건이면 묶음째 숨김 */}
-        {recent.length > 0 && (
-          <div className="member-card__activities">
-            <p className="member-card__activities-title">최근 활동</p>
-            <ul className="member-card__activity-list">
-              {recent.map((achievement) => (
-                <li key={achievement.id} className="member-card__activity">
-                  <span className="badge">{TYPE_LABELS[achievement.type]}</span>
-                  <span className="member-card__activity-title">{achievement.title}</span>
-                </li>
-              ))}
-            </ul>
-            {activities.length > CARD_ACTIVITY_COUNT && (
-              <button type="button" className="member-card__more" onClick={() => setIsOpen(true)}>
-                활동 {activities.length}건 모두 보기
-                <ArrowIcon />
-              </button>
-            )}
-          </div>
+        {/* 참여 성과 (D-4 → P289 B안) — 성과에서 자동으로 모은 것. 카드에는 목록 대신 한 줄만, 누르면 전체 팝업.
+            부원들이 같은 성과를 함께 해서 세 카드에 같은 목록이 반복되던 것을 없앰 (사용자 P288–P289). 0건이면 숨김 */}
+        {activities.length > 0 && (
+          <button type="button" className="member-card__more" onClick={() => setIsOpen(true)}>
+            참여 성과 {activities.length}건 보기
+            <ArrowIcon />
+          </button>
         )}
 
         <div className="member-card__bottom">
@@ -76,7 +59,7 @@ export default function MemberCard({ member, activities }: MemberCardProps) {
         </div>
       </article>
 
-      {/* 활동 전체 팝업 — 닫으면 useModal이 "활동 N건 모두 보기" 버튼으로 포커스를 돌려놓음 */}
+      {/* 참여 성과 전체 팝업 — 닫으면 useModal이 "참여 성과 N건 보기" 버튼으로 포커스를 돌려놓음 */}
       {isOpen && <MemberActivityModal member={member} activities={activities} onClose={() => setIsOpen(false)} />}
     </>
   )

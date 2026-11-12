@@ -11,7 +11,7 @@ type MemberActivityModalProps = {
   onClose: () => void // 닫아 달라 — 열고 닫는 상태는 MemberCard가 가짐
 }
 
-// 부원 활동 전체 팝업 (spec/04 D-4, P255–P256). 카드에는 최근 3개만, 4건 이상이면 여기서 전부.
+// 부원 활동 전체 팝업 (spec/04 D-4, P255–P256). P289부터 카드에는 "참여 성과 N건 보기" 한 줄만 — 1건 이상이면 이 팝업에서 전부.
 // 줄은 눌러도 아무 일 없는 목록 (사용자 결정 ② — 팝업 위 팝업은 닫기·포커스가 복잡해서).
 // Esc·바깥·닫기 버튼, 뒤 화면 스크롤 막기, 닫으면 여는 버튼으로 포커스는 useModal 훅이 맡는다
 export default function MemberActivityModal({ member, activities, onClose }: MemberActivityModalProps) {
@@ -37,7 +37,7 @@ export default function MemberActivityModal({ member, activities, onClose }: Mem
         <h2 id="member-activity-title" className="member-activity-modal__name">
           {member.name}
         </h2>
-        <p className="member-activity-modal__count">활동 {activities.length}건</p>
+        <p className="member-activity-modal__count">참여 성과 {activities.length}건</p>
 
         <ul className="member-activity-modal__list">
           {activities.map((achievement) => (

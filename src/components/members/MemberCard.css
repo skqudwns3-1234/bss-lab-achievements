@@ -61,7 +61,7 @@
   color: var(--color-muted);
 }
 
-/* 연구 분야 — 늘어나지 않음(D-4: 늘어나면 최근 활동이 카드 아래로 밀렸음). 아래 줄은 .member-card__bottom의 margin-top: auto가 맨 아래로 붙임 */
+/* 연구 분야 — 늘어나지 않음(D-4: 늘어나면 최근 활동이 카드 아래로 밀렸음 — 지금은 참여 성과 버튼). 아래 줄은 .member-card__bottom의 margin-top: auto가 맨 아래로 붙임 */
 .member-card__field {
   flex: none;
   margin: 0;
@@ -111,55 +111,8 @@
   text-underline-offset: 3px;
 }
 
-/* ── 최근 활동 (spec/04 D-4) — 성과에서 자동으로 모은 것 ── */
-.member-card__activities {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.member-card__activities-title {
-  margin: 0;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--color-muted);
-}
-
-.member-card__activity-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-/* 유형 배지 + 제목(두 줄까지 말줄임 — 전체 제목은 팝업) */
-.member-card__activity {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  min-width: 0;
-  font-size: 13px;
-}
-
-.member-card__activity .badge {
-  flex: none;
-  padding: 1px 8px;
-  font-size: 11px;
-}
-
-.member-card__activity-title {
-  min-width: 0;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  overflow: hidden;
-  overflow-wrap: anywhere;
-}
-
-/* 활동 N건 모두 보기 — 흰 카드 위 테두리 알약, 화살표는 사이트의 팝업 열기 표시 */
+/* ── 참여 성과 (spec/04 D-4 → P289 B안: 목록은 빼고 이 버튼 한 줄만) ── */
+/* 참여 성과 N건 보기 — 흰 카드 위 테두리 알약, 화살표는 사이트의 팝업 열기 표시 */
 .member-card__more {
   align-self: flex-start;
   display: inline-flex;
@@ -183,7 +136,7 @@
 
 /* ── P262 A안: 부원이 3~4명이라 카드를 크게 (사용자 "좀 안보여서 사이즈 키우는거 … 크게크게", P261) ──
    위에 적힌 처음 값(시안)을 여기서 키운다: 여백 28→32, 동그라미 56→72, 이름 21→26, 직위 13→14,
-   연구 분야 14→15, 활동 13→14, 아래 줄 13→14px */
+   연구 분야 14→15, 활동 13→14(P289에 활동 목록 뺌), 아래 줄 13→14px */
 .member-card {
   gap: 22px;
   padding: 32px;
@@ -212,14 +165,6 @@
   font-size: 15px;
 }
 
-.member-card__activities-title {
-  font-size: 13px;
-}
-
-.member-card__activity {
-  font-size: 14px;
-}
-
 .member-card__bottom,
 .member-card__email {
   font-size: 14px;
@@ -230,7 +175,7 @@
 }
 
 /* ── P264: 여백 줄이고 글자 한 번 더 키움 (사용자 "여백이 좀 많은거 같은데 전반적인 텍스트 사이즈 좀 키워줄 수 있을까?")
-   여백 32→26, 간격 22→16, 이름 26→30, 직위 14→16, 연구 분야 15→17, 활동 14→16, 아래 줄 14→16px ── */
+   여백 32→26, 간격 22→16, 이름 26→30, 직위 14→16, 연구 분야 15→17, 활동 14→16(P289에 활동 목록 뺌), 아래 줄 14→16px ── */
 .member-card {
   gap: 16px;
   padding: 26px;
@@ -253,14 +198,6 @@
 
 .member-card__field {
   font-size: 17px;
-}
-
-.member-card__activities-title {
-  font-size: 14px;
-}
-
-.member-card__activity {
-  font-size: 16px;
 }
 
 .member-card__bottom,
