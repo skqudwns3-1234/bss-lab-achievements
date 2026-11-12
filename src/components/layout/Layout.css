@@ -231,12 +231,6 @@
   flex-direction: column;
 }
 
-.footer__heading {
-  margin-bottom: 4px;
-  font-size: 16px;
-  font-weight: 700; /* P286: 사용자 요청으로 500 → 700, 메뉴·연락처 제목이 항목과 더 또렷이 나뉘게 */
-}
-
 .footer__text,
 .footer__group a {
   font-size: 16px;
@@ -279,7 +273,7 @@
 /* ── PC(881px 이상, 헤더 메뉴가 펼쳐지는 폭과 같게) 푸터 (P285 → P297) ──
    휴대폰·태블릿 세로(880px 이하)는 위의 연락처 세로 목록 그대로 */
 @media (min-width: 881px) {
-  /* 연락처를 "제목 | 항목 가로" 한 줄로. 항목이 많아 넘치면 다음 줄로 */
+  /* 연락처 항목을 가로 한 줄로. 항목이 많아 넘치면 다음 줄로 (제목은 P304부터 화면 낭독기에만) */
   .footer__group {
     flex-direction: row;
     flex-wrap: wrap;
@@ -293,11 +287,6 @@
   .footer__group a,
   .footer__group .footer__text {
     min-height: 0;
-  }
-
-  .footer__heading {
-    flex: none;
-    margin-bottom: 0;
   }
 }
 

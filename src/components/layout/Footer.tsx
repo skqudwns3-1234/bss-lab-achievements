@@ -22,9 +22,10 @@ export default function Footer() {
           {/* ② 소개 문구 — PC는 한 줄, 휴대폰은 화면 폭에 맞춰 자동 줄바꿈 */}
           <p className="footer__intro">{LAB.intro}</p>
 
-          {/* ③ 연락처 — PC는 한 줄로 이어서, 880px 이하는 누르기 쉬운 세로 목록 */}
+          {/* ③ 연락처 — PC는 한 줄로 이어서, 880px 이하는 누르기 쉬운 세로 목록.
+            "연락처" 제목은 화면에서 빼고(P304 사용자 결정 — 줄이 가벼워 보이게) 화면 낭독기에만 읽힘 */}
           <div className="footer__group">
-            <span className="footer__heading">연락처</span>
+            <span className="visually-hidden">연락처</span>
             <span className="footer__text">{LAB.location} (방문)</span>
             <a href={`mailto:${LAB.contactEmail}`}>{LAB.contactEmail}</a>
             {/* 모집 기간에만 — 어느 페이지에서든 바로 지원할 수 있게 (P142) */}
