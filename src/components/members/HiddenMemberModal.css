@@ -1,0 +1,18 @@
+/* 이스터에그 팝업 (P310–P311) — 바탕·상자·닫기 줄은 AchievementModal.css, 여기는 카드 하나만 담는 작은 상자로 바꾸는 것만 */
+
+/* 학생 카드 한 장 폭에 맞춘 작은 상자. 글자색은 검정 (어디에 그려져도 — 교수 팝업 P252와 같은 이유) */
+.hidden-member-modal__panel {
+  max-width: 440px;
+  color: var(--color-text);
+}
+
+/* 휴대폰: 다른 팝업은 거의 꽉 찬 화면이지만 카드 한 장이라 아래가 텅 비어서, 카드 높이만큼만 가운데에 */
+@media (max-width: 760px) {
+  .hidden-member-modal {
+    align-items: center;
+  }
+
+  .hidden-member-modal__panel {
+    height: auto;
+  }
+}

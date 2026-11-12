@@ -115,3 +115,19 @@ export const MEMBERS: Member[] = [
     photoScale: 1.12,
   },
 ]
+
+// 숨은 부원 (이스터에그, P310–P311) — 지금은 부원이 아닌 예전 랩장. 헤더 로고를 2초 안에 5번 누르면 팝업으로 뜬다.
+// MEMBERS 밖에 따로 둬서 재학/졸업 탭·인원 수·연구실 소개 재학 부원 수에 섞이지 않는다.
+// status는 'ENROLLED' — 졸업(GRADUATED)이면 카드 직위가 "학부연구생 졸업"으로 바뀌는데, 졸업이 아니라 그만둔 것이라 적힌 직위 그대로 보이게.
+// 기간은 endYear로 "2025 – 2026". 학교 메일은 사용자가 본인 동의를 받았다고 확인함 (P310)
+export const HIDDEN_MEMBER: Member = {
+  id: 101,
+  name: '심유승',
+  position: '학부연구생 · 전 랩장',
+  researchField: '',
+  email: '20231293@daejin.ac.kr',
+  status: 'ENROLLED',
+  startYear: 2025,
+  endYear: 2026,
+  isSample: false,
+}

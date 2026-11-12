@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { MEMBERS, PROFESSORS } from '../data/members.ts'
+import { HIDDEN_MEMBER, MEMBERS, PROFESSORS } from '../data/members.ts'
 import { SAMPLE_ACHIEVEMENTS } from '../data/sampleAchievements.ts'
 import type { Achievement, Member, MemberStatus, ProfessorPaper } from '../types.ts'
 import {
@@ -148,6 +148,20 @@ describe('data/members.ts 검사', () => {
         expect(member.photoScale, `${where}: 배율은 1~3`).toBeLessThanOrEqual(3)
       }
     }
+  })
+
+  test('UT-95 숨은 부원 — 이름·메일 모양·기간(시작 ≤ 끝), 지금 부원과 번호·이름 안 겹침, 카드 글자 (P310–P311)', () => {
+    expect(HIDDEN_MEMBER.name.trim()).not.toBe('')
+    if (HIDDEN_MEMBER.email !== '') expect(HIDDEN_MEMBER.email).toMatch(EMAIL_SHAPE)
+    expect(isYear(HIDDEN_MEMBER.startYear)).toBe(true)
+    expect(HIDDEN_MEMBER.endYear, '예전 부원이라 끝난 해가 있어야 "2025 – 2026"').not.toBeNull()
+    expect(HIDDEN_MEMBER.endYear ?? 0).toBeGreaterThanOrEqual(HIDDEN_MEMBER.startYear)
+    // 지금 부원 목록과 섞이면 탭·인원 수에 들어가 숨은 의미가 없어짐
+    expect(MEMBERS.map((m) => m.id)).not.toContain(HIDDEN_MEMBER.id)
+    expect(MEMBERS.map((m) => m.name)).not.toContain(HIDDEN_MEMBER.name)
+    // 졸업 이름표("학부연구생 졸업")로 바뀌지 않고 적힌 직위 그대로, 기간은 시작–끝
+    expect(positionLabel(HIDDEN_MEMBER)).toBe('학부연구생 · 전 랩장')
+    expect(periodLabel(HIDDEN_MEMBER)).toBe('2025 – 2026')
   })
 })
 
