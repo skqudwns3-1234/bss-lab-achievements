@@ -71,7 +71,7 @@ export const PROFESSORS: Professor[] = [
 
 // 부원 — 직위는 '박사과정' · '석사과정' · '학부연구생' 중에서 고르기를 권장 (자동 완성에 뜸, 다른 글자도 됨).
 // 순서는 상관없다 — 화면은 utils/members.ts의 sortedMembers가 직위 → 연도 → 이름 순으로 정렬해 보여 준다.
-// 이름은 성과의 저자 칸과 똑같이 — 그래야 부원 카드에 활동이 자동으로 붙는다 (D-4, achievementsOf).
+// 이름은 성과의 저자 칸과 똑같이 쓰기를 권장 — P306에 부원 카드의 참여 성과는 뺐지만, 기말에 achievementsOf로 다시 붙일 때 맞아야 해서.
 // 졸업생이 생기면 status: 'GRADUATED', endYear: 졸업한 해 로 바꾼다 (UT-83이 검사)
 export const MEMBERS: Member[] = [
   {

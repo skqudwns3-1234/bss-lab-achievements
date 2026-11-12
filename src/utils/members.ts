@@ -116,6 +116,7 @@ export function splitNames(text: string): string[] {
 // 이 부원의 활동 = 실제 성과(예시 빼고, BR-20과 같은 기준) 중 저자 조각에 이름이 "정확히 같게" 있는 것, 최신순.
 // 따로 등록하지 않아도 성과를 등록·수정·삭제하면 바로 바뀐다(성과 목록 하나에서 계산). 저자 칸만 본다(지도교수 칸은 안 셈, P255).
 // 한계: 이름으로만 찾아서 동명이인은 둘 다에 붙고, 줄여 쓴 이름(홍 외 2명)·다른 표기(영어 이름)는 못 찾는다 — 기말에 부원 번호로
+// P306: 부원 카드에서 참여 성과를 빼서 지금 화면에서는 쓰지 않음 — 테스트가 있는 함수라 기말에 다시 쓰려고 남김 (사용자 결정)
 export function achievementsOf(name: string, list: Achievement[]): Achievement[] {
   const target = name.trim()
   if (target === '') return []

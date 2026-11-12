@@ -111,28 +111,7 @@
   text-underline-offset: 3px;
 }
 
-/* ── 참여 성과 (spec/04 D-4 → P289 B안: 목록은 빼고 이 버튼 한 줄만) ── */
-/* 참여 성과 N건 보기 — 흰 카드 위 테두리 알약, 화살표는 사이트의 팝업 열기 표시 */
-.member-card__more {
-  align-self: flex-start;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  min-height: 44px;
-  padding: 0 16px;
-  border: 1px solid var(--color-border-input);
-  border-radius: var(--radius-pill);
-  background: var(--color-surface);
-  color: var(--color-text);
-  font: inherit;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-}
-
-.member-card__more:hover {
-  border-color: var(--color-text);
-}
+/* 참여 성과 버튼(D-4 → P289 한 줄)은 P306에 사용자 결정으로 카드에서 뺌 */
 
 /* ── P262 A안: 부원이 3~4명이라 카드를 크게 (사용자 "좀 안보여서 사이즈 키우는거 … 크게크게", P261) ──
    위에 적힌 처음 값(시안)을 여기서 키운다: 여백 28→32, 동그라미 56→72, 이름 21→26, 직위 13→14,
@@ -170,10 +149,6 @@
   font-size: 14px;
 }
 
-.member-card__more {
-  font-size: 14px;
-}
-
 /* ── P264: 여백 줄이고 글자 한 번 더 키움 (사용자 "여백이 좀 많은거 같은데 전반적인 텍스트 사이즈 좀 키워줄 수 있을까?")
    여백 32→26, 간격 22→16, 이름 26→30, 직위 14→16, 연구 분야 15→17, 활동 14→16(P289에 활동 목록 뺌), 아래 줄 14→16px ── */
 .member-card {
@@ -202,8 +177,7 @@
 
 .member-card__bottom,
 .member-card__email,
-.member-card__period,
-.member-card__more {
+.member-card__period {
   font-size: 16px;
 }
 
